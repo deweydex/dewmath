@@ -83,7 +83,32 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 input[type=text],input[type=url],input[type=number],select,textarea{font:inherit;font-size:1rem;padding:.5rem .65rem;border:1.5px solid var(--rule);border-radius:.4rem;background:var(--field);color:var(--ink);max-width:100%}
 input[type=text],input[type=url],textarea{width:100%}
 label.check{display:flex;gap:.6rem;align-items:flex-start;padding:.35rem 0;cursor:pointer}
-label.check input[type=checkbox],label.check input[type=radio]{margin-top:.3rem;width:1.05rem;height:1.05rem;flex:none}
+label.check input[type=checkbox],label.check input[type=radio]{margin-top:.25rem;width:1.3rem;height:1.3rem;flex:none;accent-color:var(--accent)}
+label.check.skill{padding:.45rem 0;border-bottom:1px solid var(--rule)}
+label.check.skill:last-child{border-bottom:0}
+label.check.skill .ex{display:block;color:var(--ink-soft);font-size:.9rem;margin-top:.1rem}
+label.check.topic{padding:.5rem 0 .2rem}
+details.level{border:1px solid var(--rule);border-radius:.6rem;padding:.4rem 1rem .6rem;margin:0 0 1rem}
+details.level>summary{font-weight:700;font-size:1.1rem;padding:.4rem 0;list-style-position:outside}
+details.level>summary small{font-weight:400;color:var(--ink-soft);font-size:.9rem}
+details.level .desc{margin:.2rem 0 .6rem;color:var(--ink-soft)}
+.topic-block{margin:.4rem 0 .8rem;padding-left:.2rem}
+.topic-block .skills{padding-left:1.9rem}
+button.quiet.active{background:var(--accent);color:var(--accent-ink)}
+.stickybar{position:sticky;bottom:0;background:var(--paper);border-top:1px solid var(--rule);padding:.6rem 0;margin-top:2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;z-index:2}
+.encourage{margin:.6rem 0 0;padding:.6rem .9rem;background:var(--good-wash);border-left:4px solid var(--good);border-radius:0 .4rem .4rem 0;font-size:1rem}
+.opt.idk{color:var(--ink-soft);font-size:1rem}
+.tabs{display:flex;gap:.25rem;flex-wrap:wrap;border-bottom:2px solid var(--rule);margin:1rem 0 1.5rem;position:sticky;top:0;background:var(--paper);z-index:3;padding-top:.4rem}
+.tabs button{background:transparent;color:var(--ink-soft);border:0;border-bottom:3px solid transparent;border-radius:0;padding:.5rem .8rem;margin-bottom:-2px;font-family:var(--font-sans);font-size:.95rem}
+.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.pane[hidden]{display:none}
+.thr{display:grid;grid-template-columns:repeat(auto-fit,minmax(20rem,1fr));gap:.5rem 2rem}
+.thr label{display:grid;grid-template-columns:1fr 5.5rem;gap:.75rem;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--rule)}
+.thr input{width:5.5rem}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;margin:.5rem 0 1rem}
+.kv dt{font-weight:700}
+.kv dd{margin:0}
+.margin{color:var(--warn);font-weight:700}
 fieldset{border:1px solid var(--rule);border-radius:.5rem;padding:.75rem 1rem 1rem;margin:0 0 1.25rem}
 legend{padding:0 .4rem;font-weight:700}
 .topic-block{margin:0 0 1rem}
@@ -192,30 +217,35 @@ summary{cursor:pointer}
    Skill fields:  id, topic, name, tier (1 foundation, 2 core, 3 advanced), mod ("M", "C" or "MC")
    Item fields:   id, skill, plain, tech, fig?, opts (one ok:1, wrong ones carry e:"tag")
    ========================================================================== */
-const BANK_VERSION = "2026-09-18.2";
+const BANK_VERSION = "2026-09-18.3";
 
 const TOPICS = [
-  {id:"num", name:"Number, fractions and percentages"},
-  {id:"ind", name:"Indices, roots and logarithms"},
-  {id:"alg", name:"Algebraic expressions"},
-  {id:"eqn", name:"Equations and formulae"},
-  {id:"gra", name:"Graphs and functions"},
-  {id:"geo", name:"Geometry and trigonometry"},
-  {id:"dis", name:"Sets, logic and number systems"},
-  {id:"seq", name:"Sequences, notation and algorithms"},
-  {id:"prb", name:"Counting, probability and statistics"},
-  {id:"cal", name:"Limits and differentiation"}
+  {id:"num", name:"Number, fractions and percentages", desc:"Arithmetic with whole numbers, negatives, fractions, decimals, percentages, ratio and estimation."},
+  {id:"ind", name:"Indices, roots and logarithms", desc:"Powers and their laws, negative and fractional exponents, square roots, and what a logarithm means."},
+  {id:"alg", name:"Algebraic expressions", desc:"Reading notation, collecting terms, substituting, expanding and factorising, and simplifying fractions with letters in them."},
+  {id:"eqn", name:"Equations and formulae", desc:"What the equals sign means, solving linear and quadratic equations, rearranging formulae, inequalities and simultaneous equations."},
+  {id:"gra", name:"Graphs and functions", desc:"Reading a graph, matching a graph to its equation, slope and intercept, function notation, inverse and composite functions."},
+  {id:"geo", name:"Geometry and trigonometry", desc:"Pythagoras, the trigonometric ratios, radians and exact values, distance, midpoint and perpendicular slopes."},
+  {id:"dis", name:"Sets, logic and number systems", desc:"Set operations, truth tables and De Morgan's laws, binary and hexadecimal."},
+  {id:"seq", name:"Sequences, notation and algorithms", desc:"Sequences and recurrence, sigma and pi notation, matrices, and the behaviour of search and sort algorithms."},
+  {id:"prb", name:"Counting, probability and statistics", desc:"Mean and median, factorials and combinations, simple probability, spread and data types."},
+  {id:"cal", name:"Limits and differentiation", desc:"What a limit is and the first rules of differentiation."}
 ];
 const TIERS = {1:"Foundation", 2:"Core", 3:"Advanced"};
+const TIER_DESC = {
+  1:"Skills a student is assumed to bring to Level 5. A gap here needs attention before the module content will make sense.",
+  2:"The body of the two modules. These are the skills the modules teach and assess.",
+  3:"Material beyond the modules, or from their final sections. These items pick out students with a strong background and most students are expected to miss them."
+};
 
 const SKILLS = [
   {id:"num-ord",  topic:"num", name:"Order of operations",                        tier:1, mod:"MC"},
   {id:"num-neg",  topic:"num", name:"Negative numbers",                            tier:1, mod:"MC"},
-  {id:"frac-add", topic:"num", name:"Adding and subtracting fractions",            tier:1, mod:"MC"},
-  {id:"frac-mul", topic:"num", name:"Multiplying and dividing fractions",          tier:1, mod:"MC"},
+  {id:"frac-add", topic:"num", name:"Adding fractions", tier:1, mod:"MC"},
+  {id:"frac-mul", topic:"num", name:"Multiplying fractions", tier:1, mod:"MC"},
   {id:"frac-conv",topic:"num", name:"Fractions, decimals and percentages",         tier:1, mod:"MC"},
-  {id:"pct",      topic:"num", name:"Percentage calculations",                     tier:1, mod:"MC"},
-  {id:"ind-laws", topic:"ind", name:"Laws of indices",                             tier:2, mod:"MC"},
+  {id:"pct", topic:"num", name:"Percentage of an amount", tier:1, mod:"MC"},
+  {id:"ind-laws", topic:"ind", name:"Multiplying and dividing powers", tier:2, mod:"MC"},
   {id:"ind-neg",  topic:"ind", name:"Negative indices",                            tier:2, mod:"MC"},
   {id:"ind-frac", topic:"ind", name:"Fractional indices",                          tier:2, mod:"M"},
   {id:"ind-zero", topic:"ind", name:"Zero index and scientific notation",          tier:1, mod:"MC"},
@@ -266,7 +296,12 @@ const SKILLS = [
   {id:"stats-spread",topic:"prb",name:"Spread, skew and data types",               tier:3, mod:"MC"},
   {id:"deriv",    topic:"cal", name:"Differentiation",                             tier:3, mod:"M"},
   {id:"limit",    topic:"cal", name:"Limits",                                      tier:3, mod:"M"},
-  {id:"matrix",   topic:"seq", name:"Matrices",                                    tier:3, mod:"MC"}
+  {id:"matrix",   topic:"seq", name:"Matrices",                                    tier:3, mod:"MC"},
+  /* ---- added in v2.1: finer grain (appended, never reordered) ---- */
+  {id:"frac-sub", topic:"num", name:"Subtracting fractions", tier:1, mod:"MC"},
+  {id:"frac-div", topic:"num", name:"Dividing fractions", tier:1, mod:"MC"},
+  {id:"pct-rev", topic:"num", name:"Reverse percentages", tier:2, mod:"MC"},
+  {id:"ind-pow", topic:"ind", name:"Power of a power", tier:2, mod:"MC"}
 ];
 
 const ERRORS = {
@@ -347,6 +382,7 @@ const ERRORS = {
   "ind-cancelled-base":"Cancels the base and keeps a number",
   "ind-coeff-not-raised":"Raises the variable to the power but not the coefficient",
   "ind-power-added":"Adds exponents instead of multiplying under a power of a power",
+  "ind-power-raised":"Raises the exponent to the power instead of multiplying",
   "ind-coeff-multiplied":"Multiplies the coefficient by the power instead of raising it",
   "ind-neg-makes-negative":"Reads a negative exponent as a negative answer",
   "ind-neg-multiplied":"Multiplies base by exponent",
@@ -625,13 +661,19 @@ const ITEMS = [
  opts:[{t:"$7$",ok:1},{t:"$1$",e:"neg-double-minus"},{t:"$-7$",e:"neg-sign-flip"},{t:"$-1$",e:"neg-double-minus"}]},
 {id:"N05",skill:"frac-add",plain:"Add $\\frac{1}{2}$ and $\\frac{1}{3}$.",tech:"Evaluate $\\frac{1}{2} + \\frac{1}{3}$.",
  opts:[{t:"$\\frac{5}{6}$",ok:1},{t:"$\\frac{2}{5}$",e:"frac-add-across"},{t:"$\\frac{2}{6}$",e:"frac-common-den-wrong-num"},{t:"$\\frac{2}{3}$",e:"frac-num-only"}]},
-{id:"N06",skill:"frac-add",plain:"Take $\\frac{1}{6}$ away from $\\frac{3}{4}$.",tech:"Evaluate $\\frac{3}{4} - \\frac{1}{6}$.",
+{id:"N06",skill:"frac-sub",plain:"Take $\\frac{1}{6}$ away from $\\frac{3}{4}$.",tech:"Evaluate $\\frac{3}{4} - \\frac{1}{6}$.",
  opts:[{t:"$\\frac{7}{12}$",ok:1},{t:"$1$",e:"frac-add-across"},{t:"$\\frac{1}{12}$",e:"frac-common-den-wrong-num"},{t:"$\\frac{1}{3}$",e:"frac-num-only"}]},
 {id:"N15",skill:"frac-add",plain:"Add $\\frac{2}{5}$ and $\\frac{1}{5}$.",tech:"Evaluate $\\frac{2}{5} + \\frac{1}{5}$.",
  opts:[{t:"$\\frac{3}{5}$",ok:1},{t:"$\\frac{3}{10}$",e:"frac-add-across"},{t:"$\\frac{2}{25}$",e:"frac-mul-added"},{t:"$\\frac{3}{25}$",e:"frac-den-multiplied"}]},
+{id:"N19",skill:"frac-sub",plain:"Take $\\frac{1}{3}$ away from $\\frac{5}{6}$.",tech:"Evaluate $\\frac{5}{6} - \\frac{1}{3}$ in lowest terms.",
+ opts:[{t:"$\\frac{1}{2}$",ok:1},{t:"$\\frac{4}{3}$",e:"frac-add-across"},{t:"$\\frac{2}{3}$",e:"frac-common-den-wrong-num"},{t:"$\\frac{4}{18}$",e:"frac-den-multiplied"}]},
+{id:"N20",skill:"frac-div",plain:"Divide $\\frac{2}{3}$ by $4$.",tech:"Evaluate $\\frac{2}{3} \\div 4$ in lowest terms.",
+ opts:[{t:"$\\frac{1}{6}$",ok:1},{t:"$\\frac{8}{3}$",e:"frac-div-multiplied"},{t:"$6$",e:"frac-div-inverted-answer"},{t:"$\\frac{3}{8}$",e:"frac-div-wrong-flip"}]},
+{id:"N21",skill:"pct-rev",plain:"A price went up by 20% to €48. What was the price before the increase?",tech:"A price is increased by $20\\%$ to €48. Find the original price.",
+ opts:[{t:"€40",ok:1},{t:"€38.40",e:"pct-reverse-multiplied"},{t:"€28",e:"pct-as-amount"},{t:"€57.60",e:"pct-reverse-added"}]},
 {id:"N07",skill:"frac-mul",plain:"Multiply $\\frac{2}{3}$ by $\\frac{3}{5}$.",tech:"Evaluate $\\frac{2}{3} \\times \\frac{3}{5}$ in lowest terms.",
  opts:[{t:"$\\frac{2}{5}$",ok:1},{t:"$\\frac{10}{9}$",e:"frac-mul-cross"},{t:"$\\frac{19}{15}$",e:"frac-mul-added"},{t:"$\\frac{6}{5}$",e:"frac-mul-num-only"}]},
-{id:"N08",skill:"frac-mul",plain:"Divide $\\frac{3}{4}$ by $\\frac{1}{2}$.",tech:"Evaluate $\\frac{3}{4} \\div \\frac{1}{2}$.",
+{id:"N08",skill:"frac-div",plain:"Divide $\\frac{3}{4}$ by $\\frac{1}{2}$.",tech:"Evaluate $\\frac{3}{4} \\div \\frac{1}{2}$.",
  opts:[{t:"$\\frac{3}{2}$",ok:1},{t:"$\\frac{3}{8}$",e:"frac-div-multiplied"},{t:"$\\frac{8}{3}$",e:"frac-div-wrong-flip"},{t:"$\\frac{2}{3}$",e:"frac-div-inverted-answer"}]},
 {id:"N16",skill:"frac-mul",plain:"What is half of a half?",tech:"Evaluate $\\frac{1}{2} \\times \\frac{1}{2}$.",
  opts:[{t:"$\\frac{1}{4}$",ok:1},{t:"$1$",e:"frac-mul-added"},{t:"$\\frac{1}{2}$",e:"frac-mul-num-only"},{t:"$\\frac{2}{4}$",e:"frac-mul-cross"}]},
@@ -643,7 +685,7 @@ const ITEMS = [
  opts:[{t:"$5\\%$",ok:1},{t:"$0.5\\%$",e:"pct-decimal-slip"},{t:"$50\\%$",e:"dec-place-value"},{t:"$0.05\\%$",e:"pct-not-scaled"}]},
 {id:"N11",skill:"pct",plain:"Find $30\\%$ of $80$.",tech:"Calculate $30\\%$ of $80$.",
  opts:[{t:"$24$",ok:1},{t:"$50$",e:"pct-subtracted"},{t:"$2.4$",e:"pct-decimal-slip"},{t:"$2.67$",e:"pct-divided"}]},
-{id:"N12",skill:"pct",plain:"A jacket costs €60 after a 25% discount. What did it cost before the discount?",tech:"A price is reduced by $25\\%$ to €60. Find the original price.",
+{id:"N12",skill:"pct-rev",plain:"A jacket costs €60 after a 25% discount. What did it cost before the discount?",tech:"A price is reduced by $25\\%$ to €60. Find the original price.",
  opts:[{t:"€80",ok:1},{t:"€75",e:"pct-reverse-added"},{t:"€45",e:"pct-subtracted"},{t:"€85",e:"pct-as-amount"}]},
 {id:"N18",skill:"pct",plain:"Increase $40$ by $10\\%$.",tech:"Increase $40$ by $10\\%$.",
  opts:[{t:"$44$",ok:1},{t:"$50$",e:"pct-as-amount"},{t:"$4$",e:"pct-found-not-added"},{t:"$40.1$",e:"pct-decimal"}]},
@@ -673,8 +715,10 @@ const ITEMS = [
  opts:[{t:"$x^7$",ok:1},{t:"$x^{12}$",e:"ind-mult-exponents"},{t:"$2x^7$",e:"ind-base-doubled"},{t:"$2x^{12}$",e:"ind-mult-exponents"}]},
 {id:"I02",skill:"ind-laws",plain:"Write $\\frac{y^8}{y^2}$ as a single power.",tech:"Simplify $\\dfrac{y^8}{y^2}$.",
  opts:[{t:"$y^6$",ok:1},{t:"$y^4$",e:"ind-quotient-divided"},{t:"$y^{10}$",e:"ind-quotient-added"},{t:"$4$",e:"ind-cancelled-base"}]},
-{id:"I03",skill:"ind-laws",plain:"Simplify $(2a^2)^3$.",tech:"Simplify $\\left(2a^2\\right)^3$.",
+{id:"I03",skill:"ind-pow",plain:"Simplify $(2a^2)^3$.",tech:"Simplify $\\left(2a^2\\right)^3$.",
  opts:[{t:"$8a^6$",ok:1},{t:"$2a^6$",e:"ind-coeff-not-raised"},{t:"$8a^5$",e:"ind-power-added"},{t:"$6a^6$",e:"ind-coeff-multiplied"}]},
+{id:"I15",skill:"ind-pow",plain:"Write $\\left(x^2\\right)^5$ as a single power.",tech:"Simplify $\\left(x^2\\right)^5$.",
+ opts:[{t:"$x^{10}$",ok:1},{t:"$x^7$",e:"ind-power-added"},{t:"$x^{32}$",e:"ind-power-raised"}]},
 {id:"I12",skill:"ind-laws",plain:"Write $2^3 \\times 2^4$ as a single power.",tech:"Simplify $2^3 \\cdot 2^4$.",
  opts:[{t:"$2^7$",ok:1},{t:"$4^7$",e:"ind-base-multiplied"},{t:"$2^{12}$",e:"ind-mult-exponents"},{t:"$4^{12}$",e:"ind-base-multiplied"}]},
 {id:"I04",skill:"ind-neg",plain:"What is $2^{-3}$ as a number?",tech:"Evaluate $2^{-3}$.",
@@ -1007,12 +1051,12 @@ function plotSVG(fig, small){
    CONFIGURATION AND THE SHARE CODE (format 2)
    ========================================================================== */
 const ORDERS = ["Mixed together", "Easiest first", "Hardest first", "Grouped by topic"];
-const DEFAULT_CFG = {v:2, lang:0, ident:1, idk:true, conf:false, showScore:true, showItems:true, showAnswers:false, allowBack:true, order:0, drop:false, perSkill:2, viewLock:0, k:5, timer:0, maxQ:0, skills:SKILLS.map(s => s.id), seed:1, label:"", submitUrl:"", submitNote:""};
+const DEFAULT_CFG = {v:2, lang:0, ident:1, idk:true, conf:false, showScore:true, showItems:true, showAnswers:false, allowBack:true, order:0, drop:false, perSkill:2, viewLock:0, k:5, timer:0, maxQ:0, skills:SKILLS.map(s => s.id), seed:1, label:"", submitUrl:"", submitNote:"", idk2:true};
 
 function encodeCfg(c){
   const b = [2, c.lang | c.ident << 2 | (c.idk ? 16 : 0) | (c.conf ? 32 : 0) | (c.showScore ? 64 : 0) | (c.showItems ? 128 : 0),
     c.perSkill | c.viewLock << 2 | (c.k & 15) << 4,
-    (c.showAnswers ? 1 : 0) | (c.allowBack ? 2 : 0) | (c.order & 3) << 2 | (c.drop ? 16 : 0),
+    (c.showAnswers ? 1 : 0) | (c.allowBack ? 2 : 0) | (c.order & 3) << 2 | (c.drop ? 16 : 0) | (c.idk2 ? 32 : 0),
     c.timer & 255, c.maxQ & 255];
   const nb = Math.ceil(SKILLS.length / 8); b.push(nb);
   const mask = new Array(nb).fill(0);
@@ -1026,7 +1070,7 @@ function decodeCfg(code){
   const c = {v:2};
   c.lang = u[1] & 3; c.ident = u[1] >> 2 & 3; c.idk = !!(u[1] & 16); c.conf = !!(u[1] & 32); c.showScore = !!(u[1] & 64); c.showItems = !!(u[1] & 128);
   c.perSkill = u[2] & 3 || 1; c.viewLock = u[2] >> 2 & 3; c.k = u[2] >> 4 & 15 || 5;
-  c.showAnswers = !!(u[3] & 1); c.allowBack = !!(u[3] & 2); c.order = u[3] >> 2 & 3; c.drop = !!(u[3] & 16);
+  c.showAnswers = !!(u[3] & 1); c.allowBack = !!(u[3] & 2); c.order = u[3] >> 2 & 3; c.drop = !!(u[3] & 16); c.idk2 = !!(u[3] & 32);
   c.timer = u[4]; c.maxQ = u[5];
   const nb = u[6]; c.skills = SKILLS.filter((s, i) => (i >> 3) < nb && (u[7 + (i >> 3)] & (1 << (i & 7)))).map(s => s.id);
   const p = 7 + nb; c.seed = u[p] | u[p + 1] << 8;
@@ -1051,7 +1095,7 @@ function assemble(cfg){
   return items.map(it => {
     const variant = cfg.lang === 2 ? (rng() < 0.5 ? "plain" : "tech") : (cfg.lang === 1 ? "tech" : "plain");
     const opts = shuffle(it.opts.map((o, i) => ({...o, src:i})), rng);
-    if(cfg.idk) opts.push({t:"I don't know", idk:1});
+    if(cfg.idk){ opts.push({t:"I don't know", idk:"idk"}); if(cfg.idk2){ opts.push({t:"I don't understand some of the words in this question", idk:"words"}); opts.push({t:"I don't understand what the question is asking me to do", idk:"task"}); } }
     return {item:it, tier:tier(it), variant, opts};
   });
 }
@@ -1059,19 +1103,20 @@ function assemble(cfg){
 /* ==========================================================================
    RESULT BUILDER (pure: used by the sitting and by the sample class)
    ========================================================================== */
+const NOANS = {idk:"I don't know", words:"I don't understand some of the words", task:"I don't understand what the question is asking"};
 function buildResult(st){
   const {plan, skipped, cfg, answers} = st;
   const skills = {}, tiers = {};
   const rec = (p, n, a, isSkipped) => {
     const it = p.item, sk = skillById[it.skill];
-    if(!skills[sk.id]) skills[sk.id] = {name:sk.name, topic:sk.topic, tier:sk.tier, total:0, correct:0, idk:0, unanswered:0, skipped:0, errors:[]};
-    if(!tiers[sk.tier]) tiers[sk.tier] = {total:0, correct:0, idk:0, unanswered:0, skipped:0};
+    if(!skills[sk.id]) skills[sk.id] = {name:sk.name, topic:sk.topic, tier:sk.tier, total:0, correct:0, idk:0, words:0, task:0, unanswered:0, skipped:0, errors:[]};
+    if(!tiers[sk.tier]) tiers[sk.tier] = {total:0, correct:0, idk:0, words:0, task:0, unanswered:0, skipped:0};
     const S = skills[sk.id], T = tiers[sk.tier];
     const r = {n, id:it.id, skill:sk.id, topic:sk.topic, tier:sk.tier, variant:p.variant, answered:!!a && !isSkipped, skipped:!!isSkipped, choice:null, correct:null, error:null, confidence:a ? a.conf || null : null, seconds:a ? a.seconds : null};
     if(isSkipped){ S.skipped++; T.skipped++; return r; }
     S.total++; T.total++;
     if(!a){ S.unanswered++; T.unanswered++; return r; }
-    if(a.choice === "idk"){ r.choice = "I don't know"; r.correct = false; S.idk++; T.idk++; return r; }
+    if(typeof a.choice === "string"){ r.choice = NOANS[a.choice] || "I don't know"; r.noAnswer = a.choice; r.correct = false; S.idk++; T.idk++; if(a.choice !== "idk"){ S[a.choice]++; T[a.choice]++; } return r; }
     const o = p.opts[a.choice]; r.choice = plainText(o.t); r.position = a.choice; r.correct = !!o.ok; r.error = o.e || null;
     if(o.ok){ S.correct++; T.correct++; } else if(o.e) S.errors.push(o.e);
     return r;
@@ -1083,7 +1128,7 @@ function buildResult(st){
     config:{code:st.code, label:cfg.label, language:["plain", "technical", "mixed"][cfg.lang], identityMode:["anonymous", "pseudonym", "code", "name"][cfg.ident], timerMinutes:cfg.timer, order:ORDERS[cfg.order], dropOffered:cfg.drop, perSkill:cfg.perSkill, maxQuestions:cfg.maxQ, skills:cfg.skills},
     student:{identity:st.ident || null}, viewMode:["", "one-at-a-time", "all-at-once", "paged"][st.vm],
     elapsedSeconds:st.elapsed, timedOut:!!st.timedOut,
-    items, summary:{total, answered, correct, idk:items.filter(i => i.choice === "I don't know").length, skipped:(skipped || []).length, skills, tiers},
+    items, summary:{total, answered, correct, idk:items.filter(i => i.noAnswer).length, words:items.filter(i => i.noAnswer === "words").length, task:items.filter(i => i.noAnswer === "task").length, skipped:(skipped || []).length, skills, tiers},
     dictionary:{skills:Object.fromEntries(Object.keys(skills).map(k => [k, skillById[k].name])), topics:Object.fromEntries(TOPICS.map(t => [t.id, t.name])), tiers:TIERS, errors:Object.fromEntries([...new Set(items.map(i => i.error).filter(Boolean))].map(e => [e, ERRORS[e] || e]))}
   };
 }
@@ -1097,22 +1142,21 @@ const PERSONAS = [
   {name:"Ciara",  p:{1:.9,  2:.75, 3:.3},  idk:.2,  conf:"calibrated", speed:1},
   {name:"Dara",   p:{1:.8,  2:.6,  3:.3},  idk:.1,  conf:"calibrated", speed:1.1, topic:{num:.4}},
   {name:"Emma",   p:{1:.75, 2:.55, 3:.3},  idk:0,   conf:"over",       speed:.7},
-  {name:"Fionn",  p:{1:.85, 2:.65, 3:.3},  idk:.45, conf:"under",      speed:1.3},
+  {name:"Fionn",  p:{1:.85, 2:.65, 3:.3},  idk:.45, conf:"under",      speed:1.2},
   {name:"Grace",  p:{1:.85, 2:.65, 3:.35}, idk:.1,  conf:"calibrated", speed:1, topic:{alg:.35}},
-  {name:"Hassan", p:{1:.55, 2:.35, 3:.15}, idk:.25, conf:"calibrated", speed:1.4},
+  {name:"Hassan", p:{1:.55, 2:.35, 3:.15}, idk:.25, conf:"calibrated", speed:1.2, task:.4},
   {name:"Iris",   p:{1:.9,  2:.75, 3:.4},  idk:.1,  conf:"calibrated", speed:1, topic:{gra:.35}},
   {name:"Jack",   p:{1:.7,  2:.5,  3:.3},  idk:0,   conf:"guess",      speed:.4},
-  {name:"Kasia",  p:{1:.9,  2:.75, 3:.45}, idk:.1,  conf:"calibrated", speed:1.1, techPenalty:.35},
-  {name:"Liam",   p:{1:.8,  2:.6,  3:.3},  idk:.1,  conf:"calibrated", speed:1.6, stopAt:.7}
+  {name:"Kasia",  p:{1:.9,  2:.75, 3:.45}, idk:.1,  conf:"calibrated", speed:1.1, techPenalty:.35, words:.6},
+  {name:"Liam",   p:{1:.8,  2:.6,  3:.3},  idk:.1,  conf:"calibrated", speed:1.8}
 ];
 function simulateClass(){
-  const cfg = {...DEFAULT_CFG, lang:2, conf:true, ident:3, timer:90, seed:4242, label:"Sample class (simulated)"};
+  const cfg = {...DEFAULT_CFG, lang:2, conf:true, ident:3, idk2:true, timer:90, seed:4242, label:"Sample class (simulated)"};
   const code = encodeCfg(cfg), plan = assemble(cfg), start = Date.parse("2026-09-14T10:00:00Z");
   return PERSONAS.map((P, k) => {
-    const rng = mulberry32(1000 + k * 97), answers = {}; let elapsed = 0, done = 0;
-    const limit = P.stopAt ? Math.floor(plan.length * P.stopAt) : plan.length;
+    const rng = mulberry32(1000 + k * 97), answers = {}; let elapsed = 0, timedOut = false;
+    const limitSec = cfg.timer * 60;
     for(const p of plan){
-      if(done >= limit) break; done++;
       const sk = skillById[p.item.skill];
       let pc = P.p[sk.tier]; if(P.topic && P.topic[sk.topic] !== undefined) pc = Math.min(pc, P.topic[sk.topic]);
       if(P.techPenalty && p.variant === "tech") pc -= P.techPenalty;
@@ -1120,6 +1164,8 @@ function simulateClass(){
       const wrong = p.opts.map((o, i) => i).filter(i => !p.opts[i].ok && !p.opts[i].idk);
       let choice;
       if(right) choice = p.opts.findIndex(o => o.ok);
+      else if(P.words && p.variant === "tech" && rng() < P.words) choice = "words";
+      else if(P.task && rng() < P.task) choice = "task";
       else if(rng() < P.idk) choice = "idk";
       else choice = wrong[Math.floor(rng() * wrong.length)];
       let conf;
@@ -1129,10 +1175,12 @@ function simulateClass(){
       else if(P.conf === "guess") conf = r < .3 ? "Sure" : r < .5 ? "Fairly sure" : "Guessing";
       else conf = right ? (r < .7 ? "Sure" : r < .95 ? "Fairly sure" : "Guessing") : (r < .2 ? "Sure" : r < .55 ? "Fairly sure" : "Guessing");
       const seconds = Math.max(6, Math.round((12 + sk.tier * 8 + rng() * 22) * P.speed));
+      /* the real sitting stops at the time limit, so the simulation does too */
+      if(limitSec && elapsed + seconds > limitSec){ timedOut = true; elapsed = limitSec; break; }
       elapsed += seconds;
       answers[p.item.id] = {choice, conf, seconds};
     }
-    return buildResult({plan, skipped:[], cfg, answers, code, ident:P.name, vm:1, elapsed:P.stopAt ? cfg.timer * 60 : elapsed, timedOut:!!P.stopAt, finishedAt:start + k * 60000 + elapsed * 1000});
+    return buildResult({plan, skipped:[], cfg, answers, code, ident:P.name, vm:1, elapsed, timedOut, finishedAt:start + k * 60000 + elapsed * 1000});
   });
 }
 
@@ -1152,56 +1200,65 @@ function route(){
 let cfg = {...DEFAULT_CFG, seed:Math.floor(Math.random() * 65536)};
 const TIMER_PRESETS = [0, 15, 20, 30, 40, 45, 60, 90];
 
+function exampleFor(skillId){ const it = ITEMS.find(i => i.skill === skillId); return it ? plainText(it.plain).replace(/\s+/g, " ") : ""; }
+
 function renderBuilder(){
   app.className = "";
-  const topics = TOPICS.map(t => {
-    const sk = SKILLS.filter(s => s.topic === t.id); if(!sk.length) return "";
-    return `<div class="topic-block">
-      <label class="check"><input type="checkbox" data-topic="${t.id}" ${sk.every(s => cfg.skills.includes(s.id)) ? "checked" : ""}><strong>${esc(t.name)}</strong></label>
-      <div class="skills">${sk.map(s => `<label class="check"><input type="checkbox" data-skill="${s.id}" ${cfg.skills.includes(s.id) ? "checked" : ""}><span>${esc(s.name)} <small class="tier t${s.tier}">${TIERS[s.tier]}</small> <small>${ITEMS.filter(i => i.skill === s.id).length} items${s.mod === "M" ? ", Maths for IT only" : ""}</small></span></label>`).join("")}</div>
-    </div>`;
+  const levels = [1,2,3].map(t => {
+    const topicsHtml = TOPICS.map(tp => {
+      const sk = SKILLS.filter(s => s.tier === t && s.topic === tp.id); if(!sk.length) return "";
+      return `<div class="topic-block">
+        <label class="check topic"><input type="checkbox" data-topic="${tp.id}" data-tier="${t}"><span><strong>${esc(tp.name)}</strong><br><small>${esc(tp.desc)}</small></span></label>
+        <div class="skills">${sk.map(s => `<label class="check skill"><input type="checkbox" data-skill="${s.id}" ${cfg.skills.includes(s.id) ? "checked" : ""}><span>${esc(s.name)} <small>${ITEMS.filter(i => i.skill === s.id).length} items${s.mod === "M" ? ", Maths for IT only" : ""}</small><span class="ex">Example: ${esc(exampleFor(s.id))}</span></span></label>`).join("")}</div>
+      </div>`;
+    }).join("");
+    return `<details class="level" open><summary>${TIERS[t]} <small id="lvl-${t}"></small></summary>
+      <p class="desc">${esc(TIER_DESC[t])}</p>
+      <div class="row" style="margin-bottom:.5rem"><button class="quiet small" data-lvl="${t}" data-on="1">Select all ${TIERS[t].toLowerCase()}</button><button class="quiet small" data-lvl="${t}" data-on="0">Clear ${TIERS[t].toLowerCase()}</button></div>
+      ${topicsHtml}</details>`;
   }).join("");
+
   app.innerHTML = `
   <h1>Maths readiness diagnostic</h1>
-  <p class="lead">Choose what the diagnostic asks and how it behaves, then share the link with your class. Nothing is stored on a server: every setting is packed into the link itself.</p>
+  <p class="lead">Choose what the diagnostic asks and how it behaves, then share the link with your class. Every setting is packed into the link itself, so there is nothing to save and no account to make.</p>
   <p><a href="#analyse">Go to the class analysis page</a></p>
 
-  <h2>What to ask</h2>
-  <p>Every skill sits at one of three levels. Foundation skills are what a student is assumed to arrive with; core skills are the body of the Level 5 modules; advanced skills pick out students with a strong background.</p>
-  <div class="row" style="margin-bottom:.5rem">
-    <button class="quiet" data-tier="1">Foundation only</button>
-    <button class="quiet" data-tier="12">Foundation and core</button>
-    <button class="quiet" data-tier="3">Advanced only</button>
-    <button class="quiet" data-tier="123">Everything</button>
-    <button class="quiet" data-tier="">Clear</button>
-  </div>
+  <h2>1. What to ask</h2>
+  <p>Skills are grouped by level and then by topic. Each skill shows one of its questions as an example, so you can see what it asks before you include it. Tick a topic to take all of its skills, or tick skills one at a time.</p>
   <div class="row" style="margin-bottom:1rem">
-    <small>By module:</small>
-    <button class="quiet small" data-mod="M">Maths for IT (5N18396)</button>
-    <button class="quiet small" data-mod="C">Computational Methods (5N0554)</button>
+    <small>Quick picks:</small>
+    <button class="quiet small" data-pick="1">Foundation only</button>
+    <button class="quiet small" data-pick="12">Foundation and core</button>
+    <button class="quiet small" data-pick="3">Advanced only</button>
+    <button class="quiet small" data-pick="123">Everything</button>
+    <button class="quiet small" data-pick="M">Maths for IT (5N18396)</button>
+    <button class="quiet small" data-pick="C">Computational Methods (5N0554)</button>
+    <button class="quiet small" data-pick="">Clear all</button>
   </div>
-  ${topics}
+  ${levels}
   <div class="grid2">
     <label class="check"><span>Items per skill
-      <select id="perSkill">${[1,2,3].map(n => `<option value="${n}" ${cfg.perSkill === n ? "selected" : ""}>${n}</option>`).join("")}</select></span></label>
-    <label class="check"><span>Maximum number of questions <input type="number" id="maxQ" min="0" max="255" value="${cfg.maxQ}" style="width:5.5rem"> <small>0 means no cap. The cap keeps one item per skill before adding seconds.</small></span></label>
+      <select id="perSkill">${[1,2,3].map(n => `<option value="${n}" ${cfg.perSkill === n ? "selected" : ""}>${n}</option>`).join("")}</select>
+      <br><small>Two items per skill is the minimum for telling a slip from a gap.</small></span></label>
+    <label class="check"><span>Maximum number of questions <input type="number" id="maxQ" min="0" max="255" value="${cfg.maxQ}" style="width:5.5rem"> <br><small>0 means no cap. With a cap, every selected skill gets one item before any skill gets a second.</small></span></label>
   </div>
   <p class="notice" id="count"></p>
 
-  <h2>How it reads</h2>
+  <h2>2. How it reads</h2>
   <label class="check"><span>Language of the questions
     <select id="lang">
       <option value="0" ${cfg.lang === 0 ? "selected" : ""}>Everyday language</option>
       <option value="1" ${cfg.lang === 1 ? "selected" : ""}>Mathematical language</option>
       <option value="2" ${cfg.lang === 2 ? "selected" : ""}>Mixed at random (records which each student saw)</option>
     </select></span></label>
-  <label class="check"><input type="checkbox" id="idk" ${cfg.idk ? "checked" : ""}>Offer "I don't know" on every question <small>(separates a guess from a gap)</small></label>
-  <label class="check"><input type="checkbox" id="conf" ${cfg.conf ? "checked" : ""}>Ask how sure the student is after each answer <small>(lets the analysis find confident errors)</small></label>
+  <label class="check"><input type="checkbox" id="idk" ${cfg.idk ? "checked" : ""}><span>Offer "I don't know" on every question <br><small>This separates a guess from a gap.</small></span></label>
+  <label class="check"><input type="checkbox" id="idk2" ${cfg.idk2 ? "checked" : ""}><span>Also offer "I don't understand some of the words" and "I don't understand what the question is asking me to do" <br><small>These two separate a vocabulary problem and a reading problem from a maths problem. The analysis page counts each one.</small></span></label>
+  <label class="check"><input type="checkbox" id="conf" ${cfg.conf ? "checked" : ""}><span>Ask how sure the student is after each answer <br><small>This lets the analysis page find confident wrong answers, which usually mean a firmly held misconception.</small></span></label>
 
-  <h2>How it runs</h2>
+  <h2>3. How it runs</h2>
   <label class="check"><span>Order of the questions
     <select id="order">${ORDERS.map((o, i) => `<option value="${i}" ${cfg.order === i ? "selected" : ""}>${o}</option>`).join("")}</select></span></label>
-  <label class="check"><input type="checkbox" id="drop" ${cfg.drop ? "checked" : ""}><span>When the order is hardest first, offer to skip the rest of a level after three misses in four at that level <small>(only in one-at-a-time or paged layouts; skipped questions are recorded as skipped, not wrong)</small></span></label>
+  <label class="check"><input type="checkbox" id="drop" ${cfg.drop ? "checked" : ""}><span>When the order is hardest first, offer to skip the rest of a level after three misses in four at that level <br><small>This works in the one-at-a-time and paged layouts. Skipped questions are recorded as skipped and count as neither right nor wrong.</small></span></label>
   <label class="check"><span>Layout
     <select id="viewLock">
       <option value="0" ${cfg.viewLock === 0 ? "selected" : ""}>Student chooses</option>
@@ -1215,15 +1272,15 @@ function renderBuilder(){
       <select id="timerPreset">${TIMER_PRESETS.map(m => `<option value="${m}" ${cfg.timer === m ? "selected" : ""}>${m ? m + " minutes" : "No limit"}</option>`).join("")}<option value="custom" ${TIMER_PRESETS.includes(cfg.timer) ? "" : "selected"}>Other</option></select>
       <span>or type minutes: <input type="number" id="timer" min="0" max="255" value="${cfg.timer}" style="width:5.5rem"></span>
     </div>
-    <small>When time runs out, whatever has been answered is recorded and the rest is marked not attempted.</small>
+    <small>When time runs out, whatever has been answered is recorded and the rest is marked as unattempted. The analysis page treats unattempted questions as missing data and leaves them out of every percentage.</small>
   </fieldset>
 
-  <h2>What the student sees at the end</h2>
+  <h2>4. What the student sees at the end</h2>
   <label class="check"><input type="checkbox" id="showScore" ${cfg.showScore ? "checked" : ""}>Their score</label>
   <label class="check"><input type="checkbox" id="showItems" ${cfg.showItems ? "checked" : ""}>Which questions they got right and wrong</label>
   <label class="check"><input type="checkbox" id="showAnswers" ${cfg.showAnswers ? "checked" : ""}>The correct answers</label>
 
-  <h2>Who took it</h2>
+  <h2>5. Who took it</h2>
   <label class="check"><span>Ask the student for
     <select id="ident">
       <option value="0" ${cfg.ident === 0 ? "selected" : ""}>Nothing (fully anonymous)</option>
@@ -1232,43 +1289,52 @@ function renderBuilder(){
       <option value="3" ${cfg.ident === 3 ? "selected" : ""}>Their name</option>
     </select></span></label>
 
-  <h2>Where students send their file</h2>
+  <h2>6. Where students send their file</h2>
   <p>At the end, each student downloads a small results file. Tell them where it goes. A OneDrive "Request files" link, a Microsoft Form with a file-upload question, or an email address all work; the finish page shows the link as a button.</p>
-  <label class="check"><span>Link or email address <input type="url" id="submitUrl" value="${esc(cfg.submitUrl)}" placeholder="https://forms.office.com/… or mailto:you@college.ie"></span></label>
+  <label class="check"><span>Link or email address <input type="url" id="submitUrl" value="${esc(cfg.submitUrl)}" placeholder="https://forms.office.com/… or you@college.ie"></span></label>
   <label class="check"><span>A short note to go with it <input type="text" id="submitNote" value="${esc(cfg.submitNote)}" placeholder="Upload it before Friday's class" maxlength="120"></span></label>
 
-  <h2>Share it</h2>
+  <h2>7. Share it</h2>
   <label class="check"><span>A short label the student sees, such as the class and date <input type="text" id="label" value="${esc(cfg.label)}" placeholder="Maths for IT, September" maxlength="40"></span></label>
   <div class="row"><button class="quiet" id="reseed">Draw a different set of questions</button><small>Everyone who opens the same link sees the same questions in the same order.</small></div>
   <p style="margin-top:1rem">Send this link to your students:</p>
   <div class="urlbox code" id="url"></div>
   <div class="row"><button id="copy">Copy link</button><a class="btn quiet" id="preview" href="#" target="_blank">Try it as a student</a></div>
-  <p class="muted" style="margin-top:1rem">Students download a results file when they finish. Collect those files however suits you and open them together on the <a href="#analyse">analysis page</a>.</p>
+  <p class="muted" style="margin-top:1rem">Collect the results files however suits you and open them together on the <a href="#analyse">analysis page</a>.</p>
   <hr>
-  <p class="muted">Bank version ${BANK_VERSION}. ${ITEMS.length} items across ${SKILLS.length} skills: ${[1,2,3].map(t => SKILLS.filter(s => s.tier === t).length + " " + TIERS[t].toLowerCase()).join(", ")}.</p>`;
+  <p class="muted">Bank version ${BANK_VERSION}. ${ITEMS.length} items across ${SKILLS.length} skills: ${[1,2,3].map(t => SKILLS.filter(s => s.tier === t).length + " " + TIERS[t].toLowerCase()).join(", ")}.</p>
+  <div class="stickybar"><span id="countShort"></span><span class="row"><button class="quiet small" id="copy2">Copy link</button></span></div>`;
 
+  const skillBoxes = [...app.querySelectorAll("[data-skill]")];
+  const setSel = fn => { skillBoxes.forEach(b => b.checked = !!fn(skillById[b.dataset.skill])); sync(); };
   const sync = () => {
-    cfg.skills = [...app.querySelectorAll("[data-skill]")].filter(i => i.checked).map(i => i.dataset.skill);
-    app.querySelectorAll("[data-topic]").forEach(t => { t.checked = SKILLS.filter(s => s.topic === t.dataset.topic).every(s => cfg.skills.includes(s.id)); });
-    cfg.perSkill = +$("#perSkill").value; cfg.maxQ = Math.max(0, Math.min(255, +$("#maxQ").value || 0)); cfg.lang = +$("#lang").value; cfg.idk = $("#idk").checked; cfg.conf = $("#conf").checked;
+    cfg.skills = skillBoxes.filter(i => i.checked).map(i => i.dataset.skill);
+    app.querySelectorAll("[data-topic]").forEach(t => { t.checked = SKILLS.filter(s => s.topic === t.dataset.topic && s.tier === +t.dataset.tier).every(s => cfg.skills.includes(s.id)); });
+    [1,2,3].forEach(t => { const all = SKILLS.filter(s => s.tier === t), on = all.filter(s => cfg.skills.includes(s.id)); $("#lvl-" + t).textContent = `${on.length} of ${all.length} skills selected`; });
+    const sel = new Set(cfg.skills), same = list => list.length === sel.size && list.every(s => sel.has(s.id));
+    app.querySelectorAll("[data-pick]").forEach(b => { const k = b.dataset.pick; const list = k === "" ? [] : /^[123]+$/.test(k) ? SKILLS.filter(s => k.includes(String(s.tier))) : SKILLS.filter(s => s.mod.includes(k)); b.classList.toggle("active", same(list)); });
+    cfg.perSkill = +$("#perSkill").value; cfg.maxQ = Math.max(0, Math.min(255, +$("#maxQ").value || 0)); cfg.lang = +$("#lang").value; cfg.idk = $("#idk").checked; cfg.idk2 = $("#idk2").checked; cfg.conf = $("#conf").checked;
     cfg.order = +$("#order").value; cfg.drop = $("#drop").checked; cfg.viewLock = +$("#viewLock").value; cfg.k = Math.max(2, Math.min(15, +$("#k").value || 5)); cfg.allowBack = $("#allowBack").checked;
     cfg.timer = Math.max(0, Math.min(255, +$("#timer").value || 0)); cfg.showScore = $("#showScore").checked; cfg.showItems = $("#showItems").checked; cfg.showAnswers = $("#showAnswers").checked;
     cfg.ident = +$("#ident").value; cfg.label = $("#label").value.trim();
     cfg.submitUrl = $("#submitUrl").value.trim().replace(/^(\S+@\S+\.\S+)$/, "mailto:$1"); cfg.submitNote = $("#submitNote").value.trim();
-    $("#drop").disabled = cfg.order !== 2;
+    $("#drop").disabled = cfg.order !== 2; $("#idk2").disabled = !cfg.idk;
     const plan = assemble(cfg), byTier = [1,2,3].map(t => plan.filter(p => p.tier === t).length);
-    $("#count").innerHTML = plan.length ? `<strong>${plan.length} questions</strong> (${byTier.map((n, i) => n + " " + TIERS[i + 1].toLowerCase()).join(", ")}), roughly ${Math.ceil(plan.length * 1.25)} minutes at a steady pace.` : "No skills selected yet.";
+    const mins = Math.ceil(plan.length * 1.25);
+    $("#count").innerHTML = plan.length ? `<strong>${plan.length} questions</strong> (${byTier.map((n, i) => n + " " + TIERS[i + 1].toLowerCase()).join(", ")}), roughly ${mins} minutes at a steady pace.` : "No skills selected yet.";
+    $("#countShort").textContent = plan.length ? `${plan.length} questions, about ${mins} minutes` : "No skills selected";
     const url = baseUrl() + "#c=" + encodeCfg(cfg);
     $("#url").textContent = url; $("#preview").href = url;
   };
-  app.querySelectorAll("[data-topic]").forEach(t => t.addEventListener("change", () => { app.querySelectorAll("[data-skill]").forEach(s => { if(skillById[s.dataset.skill].topic === t.dataset.topic) s.checked = t.checked; }); sync(); }));
-  app.querySelectorAll("[data-tier]").forEach(b => b.addEventListener("click", () => { const ts = b.dataset.tier; app.querySelectorAll("[data-skill]").forEach(s => { s.checked = ts.includes(String(skillById[s.dataset.skill].tier)); }); sync(); }));
-  app.querySelectorAll("[data-mod]").forEach(b => b.addEventListener("click", () => { app.querySelectorAll("[data-skill]").forEach(s => { s.checked = skillById[s.dataset.skill].mod.includes(b.dataset.mod); }); sync(); }));
-  $("#timerPreset").addEventListener("change", e => { if(e.target.value !== "custom"){ $("#timer").value = e.target.value; } sync(); });
+  app.querySelectorAll("[data-topic]").forEach(t => t.addEventListener("change", () => { skillBoxes.forEach(b => { const s = skillById[b.dataset.skill]; if(s.topic === t.dataset.topic && s.tier === +t.dataset.tier) b.checked = t.checked; }); sync(); }));
+  app.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.pick; setSel(k === "" ? () => false : /^[123]+$/.test(k) ? s => k.includes(String(s.tier)) : s => s.mod.includes(k)); }));
+  app.querySelectorAll("[data-lvl]").forEach(b => b.addEventListener("click", () => { const t = +b.dataset.lvl, on = b.dataset.on === "1"; skillBoxes.forEach(x => { if(skillById[x.dataset.skill].tier === t) x.checked = on; }); sync(); }));
+  $("#timerPreset").addEventListener("change", e => { if(e.target.value !== "custom") $("#timer").value = e.target.value; sync(); });
   $("#timer").addEventListener("input", () => { const v = +$("#timer").value || 0; $("#timerPreset").value = TIMER_PRESETS.includes(v) ? String(v) : "custom"; });
   app.querySelectorAll("input, select").forEach(el => el.addEventListener("input", sync));
   $("#reseed").addEventListener("click", () => { cfg.seed = Math.floor(Math.random() * 65536); sync(); });
-  $("#copy").addEventListener("click", () => { navigator.clipboard.writeText($("#url").textContent).then(() => { $("#copy").textContent = "Copied"; setTimeout(() => $("#copy").textContent = "Copy link", 1500); }); });
+  const copy = btn => () => navigator.clipboard.writeText($("#url").textContent).then(() => { const t = btn.textContent; btn.textContent = "Copied"; setTimeout(() => btn.textContent = t, 1500); });
+  $("#copy").addEventListener("click", copy($("#copy"))); $("#copy2").addEventListener("click", copy($("#copy2")));
   sync();
 }
 
@@ -1290,8 +1356,8 @@ function renderIntro(code){
     <label class="check"><input type="radio" name="vm" value="3">A few at a time (${c.k} per page)</label>` : "";
   app.innerHTML = `
   <h1>${esc(c.label || "Maths readiness check")}</h1>
-  <p class="lead">This is not a test with a pass mark. It is a way of finding out which parts of maths you are comfortable with, so that teaching can start from where you are.</p>
-  <p>There are ${plan.length} questions. Each has one correct answer${c.idk ? ", and every question also has an \"I don't know\" option, which is a perfectly good answer to give" : ""}. ${c.order === 2 ? "The questions start with the hardest material and get easier, so do not be put off by the first few. " : ""}${c.timer ? `You have ${c.timer} minutes; if the time runs out, the questions you have answered are still recorded.` : "There is no time limit."} Have some rough paper beside you. Your answers are saved on this device as you go, so if the page closes you can come back to this link and carry on.</p>
+  <p class="lead">This is a way of finding out which parts of maths you are comfortable with, so that teaching can start from where you are. There is no pass mark.</p>
+  <p>There are ${plan.length} questions. Each has one correct answer${c.idk ? `, and every question also lets you say "I don't know"${c.idk2 ? `, "I don't understand some of the words" or "I don't understand what the question is asking me to do". All three are good answers to give` : ", which is a good answer to give"}` : ""}. ${c.order === 2 ? "The questions start with the hardest material and get easier, so do not be put off by the first few. " : ""}${c.timer ? `You have ${c.timer} minutes; if the time runs out, the questions you have answered are still recorded.` : "There is no time limit."} Have some rough paper beside you. Your answers are saved on this device as you go, so if the page closes you can come back to this link and carry on.</p>
   ${c.ident ? `<h2>${c.ident === 3 ? "Your name" : c.ident === 2 ? "Your code" : "A nickname"}</h2><p>${identLabel}</p><input type="text" id="ident" maxlength="60" autocomplete="off">` : ""}
   ${layoutChoice}
   ${saved ? `<div class="notice">You started this before on this device. <button class="quiet" id="resume">Carry on where you left off</button></div>` : ""}
@@ -1339,12 +1405,12 @@ function checkDrop(tier){
   if(!c.drop || c.order !== 2 || run.vm === 2 || run.offered[tier]) return;
   const done = plan.filter(p => p.tier === tier && answers[p.item.id]);
   if(done.length < 4) return;
-  const last4 = done.slice(-4), misses = last4.filter(p => { const a = answers[p.item.id]; return a.choice === "idk" || !p.opts[a.choice].ok; }).length;
+  const last4 = done.slice(-4), misses = last4.filter(p => { const a = answers[p.item.id]; return typeof a.choice === "string" || !p.opts[a.choice].ok; }).length;
   const remaining = plan.filter(p => p.tier === tier && !answers[p.item.id]).length;
   const lowerExists = plan.some(p => p.tier < tier && !answers[p.item.id]);
   if(misses >= 3 && remaining > 0 && lowerExists){ run.offered[tier] = true; run.offer = {tier, remaining}; persist(); showOffer(); }
 }
-function offerHTML(){ return `<div class="notice" id="offer"><p><strong>These questions are pitched at a high level, and the last few have not gone in.</strong> That is expected: the harder material comes first here. You can skip the remaining ${run.offer.remaining} question${run.offer.remaining > 1 ? "s" : ""} at this level and move on to the next. Skipped questions are recorded as skipped, not as wrong.</p><div class="row"><button id="doDrop">Skip to the next level</button><button class="quiet" id="noDrop">Keep going</button></div></div>`; }
+function offerHTML(){ return `<div class="notice" id="offer"><p><strong>These questions are pitched at a high level, and the last few have not gone in.</strong> That is expected: the harder material comes first here. You can skip the remaining ${run.offer.remaining} question${run.offer.remaining > 1 ? "s" : ""} at this level and move on to the next. Skipped questions are recorded as skipped and count as neither right nor wrong.</p><div class="row"><button id="doDrop">Skip to the next level</button><button class="quiet" id="noDrop">Keep going</button></div></div>`; }
 function showOffer(){
   if($("#offer")) $("#offer").remove();
   app.querySelector(".topbar").insertAdjacentHTML("afterend", offerHTML());
@@ -1360,6 +1426,11 @@ function dropTier(tier){
   run.offer = null; persist(); renderPage(); window.scrollTo(0, 0);
 }
 
+const ENCOURAGE = {
+  idk:"That is fine. This is about finding out where to start, and there is no shame in not knowing something yet.",
+  words:"Thank you for saying so. That tells your teacher which words to go over, and it is one of the most useful answers you can give.",
+  task:"Thank you for saying so. Knowing which questions are hard to read is as useful to your teacher as knowing which sums are hard."
+};
 function renderPage(){
   app.className = "";
   const {plan, pageSize, c} = run;
@@ -1375,9 +1446,10 @@ function renderPage(){
       <p class="stem">${tex(p.variant === "tech" ? it.tech : it.plain)}</p>
       ${it.fig ? plotSVG(it.fig) : ""}
       <div class="opts ${figOpts ? "figs" : ""}" role="radiogroup">
-        ${p.opts.map((o, i) => { const v = o.idk ? "idk" : i, chk = String(a.choice) === String(v) ? "checked" : "";
+        ${p.opts.map((o, i) => { const v = o.idk ? o.idk : i, chk = String(a.choice) === String(v) ? "checked" : "";
           return `<label class="opt ${o.fig ? "fig" : ""} ${o.idk ? "idk" : ""}">${o.fig ? plotSVG(o.fig, true) + `<span class="caption"><input type="radio" name="q-${it.id}" value="${v}" ${chk}> Graph ${"ABCDEF"[i]}</span>` : `<input type="radio" name="q-${it.id}" value="${v}" ${chk}><span>${tex(o.t)}</span>`}</label>`; }).join("")}
       </div>
+      <p class="encourage" data-enc hidden></p>
       ${c.conf ? `<div class="conf">How sure are you? ${["Sure", "Fairly sure", "Guessing"].map(l => `<button type="button" data-conf="${l}" class="${a.conf === l ? "on" : ""}">${l}</button>`).join("")}</div>` : ""}
     </section>`;
   }).join("");
@@ -1393,8 +1465,11 @@ function renderPage(){
   app.querySelectorAll("input[type=radio]").forEach(r => r.addEventListener("change", e => {
     const id = e.target.name.slice(2), now = Date.now();
     const prev = run.answers[id] || {};
-    run.answers[id] = {choice:e.target.value === "idk" ? "idk" : +e.target.value, conf:prev.conf, seconds:prev.seconds ?? Math.round((now - run.lastEvent) / 1000)};
+    const v = e.target.value, kind = /^\d+$/.test(v) ? null : v;
+    run.answers[id] = {choice:kind || +v, conf:prev.conf, seconds:prev.seconds ?? Math.round((now - run.lastEvent) / 1000)};
     run.lastEvent = now; persist();
+    const enc = e.target.closest(".item").querySelector("[data-enc]");
+    if(kind){ enc.textContent = ENCOURAGE[kind]; enc.hidden = false; } else enc.hidden = true;
     const bar = app.querySelector(".progress div"); if(bar) bar.style.width = (plan.filter(p => run.answers[p.item.id]).length / plan.length * 100) + "%";
     checkDrop(+e.target.closest(".item").dataset.tier);
   }));
@@ -1403,6 +1478,7 @@ function renderPage(){
     b.parentElement.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); persist();
   }));
   if(run.offer) showOffer();
+  app.querySelectorAll(".item").forEach(sec => { const a = run.answers[sec.dataset.id]; if(a && typeof a.choice === "string"){ const enc = sec.querySelector("[data-enc]"); enc.textContent = ENCOURAGE[a.choice]; enc.hidden = false; } });
   if($("#prev")) $("#prev").addEventListener("click", () => { run.page--; run.offer = null; persist(); renderPage(); window.scrollTo(0, 0); });
   if($("#next")) $("#next").addEventListener("click", () => { run.page++; run.offer = null; persist(); renderPage(); window.scrollTo(0, 0); });
   if($("#finish")) $("#finish").addEventListener("click", () => {
@@ -1426,7 +1502,7 @@ function finishRun(){
     ? `<li><span>${isMail ? `Email the file as an attachment. <a class="btn quiet" href="${esc(c.submitUrl)}?subject=${encodeURIComponent("Maths diagnostic: " + (r.student.identity || "results"))}">Open a new email</a>` : `Upload the file where your teacher asked. <a class="btn quiet" href="${esc(c.submitUrl)}" target="_blank" rel="noopener">Open the upload page</a>`}${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`
     : `<li><span>Send it to your teacher in the way they asked: by email, through a form, or into a shared folder.${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`;
   const list = c.showItems ? `<h2>Question by question</h2><ul class="result-list">${r.items.filter(i => !i.skipped).map((i, k) => {
-    const p = run.plan[k]; const mark = !i.answered ? ["skip", "–", "Not attempted"] : i.choice === "I don't know" ? ["skip", "?", "I don't know"] : i.correct ? ["ok", "✓", "Correct"] : ["no", "✗", "Not this time"];
+    const p = run.plan[k]; const mark = !i.answered ? ["skip", "–", "Not attempted"] : i.noAnswer ? ["skip", "?", i.choice] : i.correct ? ["ok", "✓", "Correct"] : ["no", "✗", "Wrong this time"];
     const ans = c.showAnswers && !i.correct ? `<small>Correct answer: ${p.opts.find(o => o.ok).fig ? "Graph " + "ABCDEF"[p.opts.findIndex(o => o.ok)] : tex(p.opts.find(o => o.ok).t)}</small>` : "";
     return `<li><span class="mark ${mark[0]}">${mark[1]}</span><span>${tex(p.variant === "tech" ? p.item.tech : p.item.plain)}<br><small>${esc(skillById[i.skill].name)}</small></span><span>${mark[2]}<br>${ans}</span></li>`; }).join("")}</ul>` : "";
   app.innerHTML = `
@@ -1434,11 +1510,11 @@ function finishRun(){
   ${run.timedOut ? `<p class="notice">The time ran out, so this is what you had answered by then.</p>` : ""}
   <p class="lead">Thank you. Two more steps and you are done.</p>
   <ol class="steps">
-    <li><span>Download your results file. <a class="btn" id="dl" href="${href}" download="${fname}">Download my results file</a><br><small>It is called <span class="code">${esc(fname)}</span> and will be in your Downloads folder. It records your answers and nothing else, and it does not leave this device until you send it.</small></span></li>
+    <li><span>Download your results file. <a class="btn" id="dl" href="${href}" download="${fname}">Download my results file</a><br><small>It is called <span class="code">${esc(fname)}</span> and will be in your Downloads folder. It records only your answers. It stays on this device until you send it.</small></span></li>
     ${send}
   </ol>
   <p class="muted">If you lose the file, open this same link again on this device and you can download it again.</p>
-  ${c.showScore ? `<h2>Your score</h2><p class="lead">${r.summary.correct} out of ${r.summary.total}${r.summary.answered < r.summary.total ? ` (${r.summary.total - r.summary.answered} not attempted)` : ""}${r.summary.skipped ? `, with ${r.summary.skipped} skipped` : ""}</p><p>A low score on some topics is the useful outcome here: it tells your teacher where to start.</p>` : ""}
+  ${c.showScore ? `<h2>Your score</h2><p class="lead">${r.summary.correct} out of ${r.summary.total}${r.summary.answered < r.summary.total ? ` (${r.summary.total - r.summary.answered} not attempted)` : ""}${r.summary.skipped ? `, with ${r.summary.skipped} skipped` : ""}</p><p>A low score on some topics is a useful outcome here. It tells your teacher where to start.</p>` : ""}
   ${list}`;
   window.scrollTo(0, 0);
 }
@@ -1450,7 +1526,7 @@ function renderAnalysis(){
   app.className = "wide";
   app.innerHTML = `
   <h1>Class analysis</h1>
-  <p class="lead">Open the results files your students downloaded. Everything is worked out in this page; nothing is uploaded anywhere.</p>
+  <p class="lead">Open the results files your students downloaded. Everything is worked out in this page and nothing is uploaded anywhere.</p>
   <p><a href="${baseUrl()}">Back to the builder</a></p>
   <div class="row"><input type="file" id="files" multiple accept=".json,application/json"><button class="quiet" id="sample">Load a sample class of 12</button><button class="quiet" id="clear">Clear</button></div>
   <p><small>Select all the files at once, or add more in a second selection. The sample class is simulated from twelve invented profiles so you can see every chart with data in it.</small></p>
@@ -1459,7 +1535,7 @@ function renderAnalysis(){
   $("#files").addEventListener("change", async e => {
     for(const f of e.target.files){
       try { const r = JSON.parse(await f.text()); if(!/^dewmath-result\/[12]$/.test(r.schema)) throw 0; r._file = f.name; results.push(r); }
-      catch(err){ $("#out").insertAdjacentHTML("afterbegin", `<p class="notice bad">${esc(f.name)} is not a results file from this diagnostic, so it was skipped.</p>`); }
+      catch(err){ $("#out").insertAdjacentHTML("afterbegin", `<p class="notice bad">${esc(f.name)} was skipped because it is not a results file from this diagnostic.</p>`); }
     }
     e.target.value = ""; renderReport(results);
   });
@@ -1467,7 +1543,6 @@ function renderAnalysis(){
   $("#clear").addEventListener("click", () => { results = []; $("#out").innerHTML = ""; });
 }
 
-/* Small SVG chart helpers */
 function hbars(rows, opts){
   const o = {max:1, fmt:v => Math.round(v * 100) + "%", w:640, rowH:22, labelW:230, ...opts};
   const h = rows.length * o.rowH + 6, bw = o.w - o.labelW - 60;
@@ -1497,32 +1572,57 @@ function vbars(rows, opts){
   return s + "</svg>";
 }
 const TOPIC_COLORS = {num:"#2A6F8F", ind:"#3B7A57", alg:"#8A6D1F", eqn:"#7A4E8F", gra:"#B4553A", geo:"#4E8F8A", dis:"#5C6B8F", seq:"#8F5C6B", prb:"#6B8F5C", cal:"#8F7A5C"};
-const BANDS = {strong:"Strong background", ready:"Ready for the module", core:"Core gaps", foundation:"Foundation support"};
-const BAND_COLORS = {strong:"var(--good)", ready:"var(--accent)", core:"var(--warn)", foundation:"var(--bad)"};
+const BANDS = {strong:"Strong background", ready:"Ready for the module", core:"Core gaps", foundation:"Foundation support", unclear:"Too little data"};
+const BAND_COLORS = {strong:"var(--good)", ready:"var(--accent)", core:"var(--warn)", foundation:"var(--bad)", unclear:"var(--ink-soft)"};
 
-/* Percentages count attempted items only, so a student who ran out of time is not marked down for what they never saw. */
+/* ---- thresholds: the teacher owns these; stored in the browser ---- */
+const TH_DEFAULT = {found:70, strongAdv:65, strongCore:75, readyCore:50, flag:50, watch:60, minItems:6, timeoutPct:80, margin:5};
+const TH_TEXT = {
+  found:"Foundation support: a student goes here when their foundation percentage is below",
+  strongAdv:"Strong background: advanced percentage at least",
+  strongCore:"Strong background: and core percentage at least",
+  readyCore:"Ready for the module: core percentage at least (otherwise Core gaps)",
+  flag:"A skill is flagged for a student when their percentage on it is below",
+  watch:"A skill is marked worth checking when the percentage is below (and above the flag line)",
+  minItems:"A level counts towards a band only when the student attempted at least this many of its items",
+  timeoutPct:"A student who ran out of time before reaching this percentage of the questions goes to Foundation support",
+  margin:"A band is marked as a narrow decision when it was decided by this many points or fewer"
+};
+function loadTH(){ try { return {...TH_DEFAULT, ...JSON.parse(localStorage.getItem("dewmath:thresholds") || "{}")}; } catch(e){ return {...TH_DEFAULT}; } }
+function saveTH(t){ try { localStorage.setItem("dewmath:thresholds", JSON.stringify(t)); } catch(e){} }
+
+/* Percentages count attempted items only, so a student who ran out of time is judged on what they saw. */
 function attempted(S){ return S ? S.total - (S.unanswered || 0) : 0; }
-function tierPct(r, t){ const T = (r.summary.tiers || {})[t]; return T && attempted(T) ? T.correct / attempted(T) : null; }
-function bandOf(r){
-  const p1 = tierPct(r, 1), p2 = tierPct(r, 2), p3 = tierPct(r, 3);
-  if(p1 !== null && p1 < 0.7) return "foundation";
-  if(p3 !== null && p3 >= 0.65 && (p2 === null || p2 >= 0.75)) return "strong";
-  if(p2 === null || p2 >= 0.5) return "ready";
-  return "core";
+function tierPct(r, t, TH){ const T = (r.summary.tiers || {})[t]; if(!T) return null; const n = attempted(T); if(!n || (TH && n < TH.minItems)) return null; return T.correct / n; }
+
+/* The band, with the reason and the margin it was decided by. */
+function bandOf(r, TH){
+  const p1 = tierPct(r, 1, TH), p2 = tierPct(r, 2, TH), p3 = tierPct(r, 3, TH);
+  const pt = p => Math.round(p * 100), reached = r.summary.total ? Math.round(100 * r.summary.answered / r.summary.total) : 0;
+  if(r.timedOut && reached < TH.timeoutPct) return {band:"foundation", why:`ran out of time after reaching ${reached}% of the questions, below the ${TH.timeoutPct}% line`, margin:null};
+  if(p1 !== null && p1 * 100 < TH.found) return {band:"foundation", why:`foundation items at ${pt(p1)}%, below the ${TH.found}% line`, margin:TH.found - pt(p1)};
+  if(p1 === null && (r.summary.tiers || {})[1]) return {band:"unclear", why:`fewer than ${TH.minItems} foundation items were attempted`, margin:null};
+  if(p3 !== null && p3 * 100 >= TH.strongAdv && (p2 === null || p2 * 100 >= TH.strongCore)) return {band:"strong", why:`advanced items at ${pt(p3)}% (line ${TH.strongAdv}%)${p2 !== null ? ` and core at ${pt(p2)}% (line ${TH.strongCore}%)` : ""}`, margin:Math.min(pt(p3) - TH.strongAdv, p2 !== null ? pt(p2) - TH.strongCore : 99)};
+  if(p2 === null || p2 * 100 >= TH.readyCore) return {band:"ready", why:p2 === null ? "no core items were attempted, so the foundation result decides" : `core items at ${pt(p2)}%, at or above the ${TH.readyCore}% line`, margin:p2 === null ? null : pt(p2) - TH.readyCore};
+  return {band:"core", why:`core items at ${pt(p2)}%, below the ${TH.readyCore}% line`, margin:TH.readyCore - pt(p2)};
 }
-/* Older (format 1) files have no tier summary; rebuild one from the bank. */
 function upgrade(r){
-  if(r.summary.tiers) return r;
-  const tiers = {};
-  r.items.forEach(i => { const t = (skillById[i.skill] || {}).tier || 2; i.tier = t; tiers[t] = tiers[t] || {total:0, correct:0, idk:0, unanswered:0, skipped:0}; tiers[t].total++; if(i.correct) tiers[t].correct++; if(i.choice === "I don't know") tiers[t].idk++; if(!i.answered) tiers[t].unanswered++; });
-  r.summary.tiers = tiers; r.summary.idk = r.items.filter(i => i.choice === "I don't know").length; r.summary.skipped = 0;
-  Object.values(r.summary.skills).forEach(S => { S.tier = S.tier || 2; S.skipped = 0; });
+  if(!r.summary.tiers){
+    const tiers = {};
+    r.items.forEach(i => { const t = (skillById[i.skill] || {}).tier || 2; i.tier = t; tiers[t] = tiers[t] || {total:0, correct:0, idk:0, words:0, task:0, unanswered:0, skipped:0}; tiers[t].total++; if(i.correct) tiers[t].correct++; if(i.choice === "I don't know") tiers[t].idk++; if(!i.answered) tiers[t].unanswered++; });
+    r.summary.tiers = tiers; r.summary.idk = r.items.filter(i => i.choice === "I don't know").length; r.summary.skipped = 0;
+    Object.values(r.summary.skills).forEach(S => { S.tier = S.tier || 2; S.skipped = 0; });
+  }
+  r.summary.words = r.summary.words || 0; r.summary.task = r.summary.task || 0;
+  r.items.forEach(i => { if(!i.noAnswer && i.choice === "I don't know") i.noAnswer = "idk"; });
   return r;
 }
 
+let activeTab = "overview";
 function renderReport(results){
   if(!results.length) return;
   results = results.map(upgrade);
+  const TH = loadTH();
   const names = results.map((r, i) => r.student.identity || `Student ${i + 1}`);
   const skillIds = [...new Set(results.flatMap(r => Object.keys(r.summary.skills)))].sort((a, b) => SKILLS.findIndex(s => s.id === a) - SKILLS.findIndex(s => s.id === b));
   const skillName = id => (skillById[id] || {}).name || results.find(r => r.dictionary.skills[id])?.dictionary.skills[id] || id;
@@ -1530,148 +1630,180 @@ function renderReport(results){
   const skillTopic = id => (skillById[id] || {}).topic || results.find(r => r.summary.skills[id])?.summary.skills[id].topic || "num";
   const errName = e => ERRORS[e] || results.find(r => r.dictionary.errors[e])?.dictionary.errors[e] || e;
   const pctOf = S => S && attempted(S) ? S.correct / attempted(S) : null;
-  const flagged = S => S && attempted(S) && S.correct / attempted(S) < 0.5;
-  const watch = S => S && attempted(S) && S.correct / attempted(S) === 0.5;
+  const flagged = S => { const p = pctOf(S); return p !== null && p * 100 < TH.flag; };
+  const watch = S => { const p = pctOf(S); return p !== null && p * 100 >= TH.flag && p * 100 < TH.watch; };
   const meanOf = id => { const Ss = results.map(r => r.summary.skills[id]).filter(S => S && attempted(S)); return Ss.length ? Ss.reduce((a, S) => a + pctOf(S), 0) / Ss.length : null; };
-  const cell = p => p === null ? `<td class="c muted">–</td>` : `<td class="c" style="background:${p < .5 ? "var(--bad-wash)" : p === .5 ? "var(--warn-wash)" : p < 1 ? "var(--wash)" : "var(--good-wash)"}">${Math.round(p * 100)}</td>`;
-  const bands = results.map(bandOf);
-  const scores = results.map(r => r.summary.total ? r.summary.correct / r.summary.total : 0);
+  const cell = p => p === null ? `<td class="c muted">–</td>` : `<td class="c" style="background:${p * 100 < TH.flag ? "var(--bad-wash)" : p * 100 < TH.watch ? "var(--warn-wash)" : p < 1 ? "var(--wash)" : "var(--good-wash)"}">${Math.round(p * 100)}</td>`;
+  const bands = results.map(r => bandOf(r, TH));
+  const scores = results.map(r => r.summary.answered ? r.summary.correct / r.summary.answered : 0);
   const anyConf = results.some(r => r.items.some(i => i.confidence));
   const anyMixed = results.some(r => r.config.language === "mixed");
+  const anyWords = results.some(r => r.summary.words || r.summary.task);
+  const bandTag = b => `<span class="band" style="color:${BAND_COLORS[b.band]}">${BANDS[b.band]}</span>`;
+  const marginNote = b => b.margin !== null && b.margin <= TH.margin ? ` <span class="margin">narrow: ${b.margin} point${b.margin === 1 ? "" : "s"}</span>` : "";
 
-  /* overview */
+  /* ---------- overview ---------- */
   const meanScore = scores.reduce((a, b) => a + b, 0) / scores.length;
   const bins = [0,0,0,0,0]; scores.forEach(s => bins[Math.min(4, Math.floor(s * 5))]++);
   const hist = vbars(["0–19%","20–39%","40–59%","60–79%","80–100%"].map((l, i) => ({label:l, value:bins[i]})), {h:170, label:"Score distribution", fmt:v => v ? v : ""});
-  const bandCounts = Object.keys(BANDS).map(b => ({label:BANDS[b], value:bands.filter(x => x === b).length, color:BAND_COLORS[b]}));
-
-  /* priorities */
+  const bandCounts = Object.keys(BANDS).map(b => ({label:BANDS[b], value:bands.filter(x => x.band === b).length, color:BAND_COLORS[b]})).filter(x => x.value || x.label !== BANDS.unclear);
   const flagCounts = skillIds.map(id => ({id, n:results.filter(r => flagged(r.summary.skills[id])).length, tier:skillTier(id)})).filter(x => x.n > 0);
   const priorities = flagCounts.filter(x => x.tier < 3).sort((a, b) => a.tier - b.tier || b.n - a.n || meanOf(a.id) - meanOf(b.id)).slice(0, 6);
   const stretch = flagCounts.filter(x => x.tier === 3).sort((a, b) => b.n - a.n || meanOf(a.id) - meanOf(b.id)).slice(0, 4);
-
-  /* by tier and by topic */
   const tierRows = [1,2,3].map(t => { const ps = results.map(r => tierPct(r, t)).filter(p => p !== null); return {label:`${TIERS[t]} (${ps.length} students)`, value:ps.length ? ps.reduce((a, b) => a + b, 0) / ps.length : 0}; });
-  const topicRows = TOPICS.map(t => { const ids = skillIds.filter(id => skillTopic(id) === t.id); if(!ids.length) return null; const ms = ids.map(meanOf).filter(m => m !== null); return {label:t.name, value:ms.reduce((a, b) => a + b, 0) / ms.length, color:TOPIC_COLORS[t.id]}; }).filter(Boolean).sort((a, b) => a.value - b.value);
+  const topicRows = TOPICS.map(t => { const ids = skillIds.filter(id => skillTopic(id) === t.id); if(!ids.length) return null; const ms = ids.map(meanOf).filter(m => m !== null); return ms.length ? {label:t.name, value:ms.reduce((a, b) => a + b, 0) / ms.length, color:TOPIC_COLORS[t.id]} : null; }).filter(Boolean).sort((a, b) => a.value - b.value);
+  const overview = `
+    <h2>${results.length} result${results.length > 1 ? "s" : ""}: mean score ${Math.round(meanScore * 100)}% of questions attempted</h2>
+    ${priorities.length ? `<div class="notice good"><strong>Where to start:</strong> ${priorities.map(p => `${esc(skillName(p.id))} (${p.n} of ${results.length} students flagged)`).join("; ")}.</div>` : `<div class="notice good">No foundation or core skill is flagged for any student.</div>`}
+    ${stretch.length ? `<p class="muted"><strong>Advanced material most often missed</strong> (expected before the module): ${stretch.map(p => `${esc(skillName(p.id))} (${p.n})`).join("; ")}.</p>` : ""}
+    <div class="grid2">
+      <div><h3>Score distribution</h3>${hist}</div>
+      <div><h3>Readiness bands</h3>${hbars(bandCounts, {max:results.length, fmt:v => v + " student" + (v === 1 ? "" : "s"), labelW:190, w:520, label:"Students per band"})}
+      <p class="muted">Each band has a stated rule and a stated cutoff. The rules are listed on the Students tab and the cutoffs can be changed on the Thresholds tab.</p></div>
+    </div>
+    <div class="grid2">
+      <div><h3>By level</h3>${hbars(tierRows, {labelW:200, w:520, label:"Mean percent correct by level"})}</div>
+      <div><h3>By topic, weakest first</h3>${hbars(topicRows, {labelW:230, w:520, label:"Mean percent correct by topic"})}</div>
+    </div>`;
 
-  /* by skill */
+  /* ---------- students ---------- */
+  const rules = `<details><summary>How the bands are decided</summary>
+    <p>Every percentage below counts attempted questions only. Unattempted questions, from running out of time, are left out.</p>
+    <dl class="kv">
+      <dt>${BANDS.foundation}</dt><dd>Foundation percentage below ${TH.found}%. A student who ran out of time before reaching ${TH.timeoutPct}% of the questions also goes here, because the pace itself is a signal.</dd>
+      <dt>${BANDS.strong}</dt><dd>Foundation at or above ${TH.found}%, advanced at or above ${TH.strongAdv}%, and core at or above ${TH.strongCore}%.</dd>
+      <dt>${BANDS.ready}</dt><dd>Foundation at or above ${TH.found}% and core at or above ${TH.readyCore}%, without meeting the strong rule.</dd>
+      <dt>${BANDS.core}</dt><dd>Foundation at or above ${TH.found}% and core below ${TH.readyCore}%.</dd>
+      <dt>${BANDS.unclear}</dt><dd>Fewer than ${TH.minItems} foundation items were attempted, so there is too little to decide.</dd>
+    </dl>
+    <p>The rules are checked in that order and the first one that fits is the band. A band decided by ${TH.margin} points or fewer is marked as narrow; treat a narrow band as a prompt to read the report card before relying on the label. All of these numbers can be changed on the Thresholds tab.</p></details>`;
+  const studentRows = results.map((r, i) => {
+    const fl = [1,2,3].map(t => skillIds.filter(id => skillTier(id) === t && flagged(r.summary.skills[id])).length);
+    return `<tr><td>${esc(names[i])}</td><td>${bandTag(bands[i])}${marginNote(bands[i])}</td><td class="c">${r.summary.correct}/${r.summary.answered}</td>${cell(tierPct(r, 1, TH))}${cell(tierPct(r, 2, TH))}${cell(tierPct(r, 3, TH))}<td class="c">${r.summary.idk || 0}</td><td class="c">${Math.round(r.elapsedSeconds / 60)} min${r.timedOut ? ` (timed out at ${Math.round(100 * r.summary.answered / r.summary.total)}%)` : ""}</td><td class="c">${fl[0]}</td><td class="c">${fl[1]}</td><td class="c">${fl[2]}</td></tr>`;
+  }).join("");
+  const cards = results.map((r, i) => {
+    const b = bands[i];
+    const fl = [1,2,3].map(t => skillIds.filter(id => skillTier(id) === t && flagged(r.summary.skills[id])));
+    const wt = skillIds.filter(id => skillTier(id) < 3 && watch(r.summary.skills[id]));
+    const errs = {}; r.items.forEach(it => { if(it.error) errs[it.error] = (errs[it.error] || 0) + 1; });
+    const topErr = Object.entries(errs).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const cw = r.items.filter(it => it.confidence === "Sure" && it.answered && it.correct === false && !it.noAnswer);
+    const lst = a => a.map(skillName).join(", ");
+    const start = fl[0].length ? `Start with the foundation gaps: ${lst(fl[0])}.${fl[1].length ? ` Core gaps to follow: ${lst(fl[1])}.` : ""}` : fl[1].length ? `Foundations are secure. Start with: ${lst(fl[1])}.` : fl[2].length ? `Core is secure. The gaps are in stretch material: ${lst(fl[2])}.` : "No skill was flagged. This student can be given extension work from the start.";
+    const adv = (fl[0].length || fl[1].length) && fl[2].length ? ` Advanced skills flagged: ${fl[2].length} of ${skillIds.filter(id => skillTier(id) === 3).length}.` : "";
+    /* wording signals */
+    const P = r.items.filter(it => it.answered && it.variant === "plain"), T = r.items.filter(it => it.answered && it.variant === "tech");
+    const gap = P.length && T.length ? (P.filter(x => x.correct).length / P.length) - (T.filter(x => x.correct).length / T.length) : null;
+    const lang = [];
+    if(r.summary.words) lang.push(`chose "I don't understand some of the words" ${r.summary.words} time${r.summary.words > 1 ? "s" : ""}`);
+    if(r.summary.task) lang.push(`chose "I don't understand what the question is asking" ${r.summary.task} time${r.summary.task > 1 ? "s" : ""}`);
+    if(gap !== null && gap >= 0.15) lang.push(`scored ${Math.round(gap * 100)} points higher on everyday wording than on mathematical wording`);
+    const langNote = lang.length ? `<p><strong>Wording signal.</strong> This student ${lang.join(", and ")}. Some of the gaps above may be vocabulary; check the words before the maths.</p>` : "";
+    return `<details class="card"><summary><strong>${esc(names[i])}</strong> ${bandTag(b)}${marginNote(b)} <small>${r.summary.correct}/${r.summary.answered} attempted${r.summary.skipped ? `, ${r.summary.skipped} skipped` : ""}${r.timedOut ? ", timed out" : ""}</small></summary>
+      <p><strong>Band.</strong> ${BANDS[b.band]}, because ${esc(b.why)}.${b.margin !== null && b.margin <= TH.margin ? ` This was decided by ${b.margin} point${b.margin === 1 ? "" : "s"}, which is a narrow margin; read the skill list before relying on the label.` : ""}</p>
+      <p>${esc(start + adv)}</p>
+      ${wt.length ? `<p class="muted">Worth checking (between ${TH.flag}% and ${TH.watch}%): ${esc(wt.map(skillName).join(", "))}.</p>` : ""}
+      ${langNote}
+      ${hbars([1,2,3].map(t => { const p = tierPct(r, t, TH); const T = (r.summary.tiers || {})[t]; return {label:TIERS[t], value:p ?? 0, note:p === null ? (T ? `(${attempted(T)} attempted, too few)` : "(not asked)") : `(${attempted(T)} attempted)`}; }), {labelW:110, w:460, rowH:20, label:"Percent correct by level"})}
+      ${topErr.length ? `<p><strong>Most repeated errors</strong><br>${topErr.map(([e, n]) => `<span class="tag">${esc(errName(e))} (${n})</span>`).join(" ")}</p>` : ""}
+      ${cw.length ? `<p><strong>Confident wrong answers</strong> (${cw.length}): ${cw.map(it => esc(skillName(it.skill))).join(", ")}</p>` : ""}
+      ${r.summary.idk ? `<p>Gave a "don't know" answer ${r.summary.idk} time${r.summary.idk > 1 ? "s" : ""}${r.summary.words || r.summary.task ? ` (${r.summary.words || 0} about words, ${r.summary.task || 0} about what was being asked)` : ""}.</p>` : ""}
+    </details>`;
+  }).join("");
+  const students = `
+    <h2>Students</h2>
+    ${rules}
+    <div class="scroll"><table><thead><tr><th>Student</th><th>Band</th><th>Score</th><th>Foundation %</th><th>Core %</th><th>Advanced %</th><th>Don't know</th><th>Time</th><th>Foundation flags</th><th>Core flags</th><th>Advanced flags</th></tr></thead><tbody>${studentRows}</tbody></table></div>
+    <h3>Report cards</h3>
+    ${cards}`;
+
+  /* ---------- skills ---------- */
   const skillRows = skillIds.map(id => {
     const Ss = results.map(r => r.summary.skills[id]).filter(S => S && attempted(S));
     const errs = {}; Ss.forEach(S => S.errors.forEach(e => errs[e] = (errs[e] || 0) + 1));
     const top = Object.entries(errs).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e, n]) => `<span class="tag">${esc(errName(e))} (${n})</span>`).join(" ");
-    return `<tr><td>${esc(skillName(id))}<br><small class="tier t${skillTier(id)}">${TIERS[skillTier(id)]}</small> <small>${esc((topicById[skillTopic(id)] || {}).name || "")}</small></td><td class="c">${Ss.length}</td>${cell(meanOf(id))}<td class="c">${Ss.filter(flagged).length}${Ss.filter(watch).length ? ` <small>(+${Ss.filter(watch).length})</small>` : ""}</td><td class="c">${Ss.reduce((a, S) => a + S.idk, 0)}</td><td>${top || "<span class='muted'>none recorded</span>"}</td></tr>`;
+    return `<tr><td>${esc(skillName(id))}<br><small class="tier t${skillTier(id)}">${TIERS[skillTier(id)]}</small> <small>${esc((topicById[skillTopic(id)] || {}).name || "")}</small></td><td class="c">${Ss.length}</td>${cell(meanOf(id))}<td class="c">${Ss.filter(flagged).length}${Ss.filter(watch).length ? ` <small>(+${Ss.filter(watch).length})</small>` : ""}</td><td class="c">${Ss.reduce((a, S) => a + S.idk, 0)}</td><td class="c">${Ss.reduce((a, S) => a + (S.words || 0), 0)}</td><td>${top || "<span class='muted'>none recorded</span>"}</td></tr>`;
   }).join("");
   const skillChart = hbars(skillIds.map(id => ({label:skillName(id), value:meanOf(id) || 0, color:TOPIC_COLORS[skillTopic(id)]})).sort((a, b) => a.value - b.value), {rowH:20, label:"Mean percent correct by skill, lowest first"});
+  const skills = `
+    <h2>Skills</h2>
+    <p class="muted">A skill is flagged for a student when their percentage on it is below ${TH.flag}%, and marked worth checking between ${TH.flag}% and ${TH.watch}%. With two items per skill, a flag means both were missed. The Flagged column shows flags, with worth-checking counts in brackets. Bars are coloured by topic.</p>
+    ${skillChart}
+    <div class="scroll"><table><thead><tr><th>Skill</th><th>Students</th><th>Mean %</th><th>Flagged</th><th>Don't know</th><th>Words</th><th>Most common errors</th></tr></thead><tbody>${skillRows}</tbody></table></div>`;
 
-  /* errors */
+  /* ---------- errors ---------- */
   const errAll = {}; results.forEach(r => r.items.forEach(i => { if(i.error) errAll[i.error] = (errAll[i.error] || 0) + 1; }));
   const errRows = Object.entries(errAll).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([e, n]) => ({label:errName(e).length > 60 ? errName(e).slice(0, 58) + "…" : errName(e), value:n}));
-  const errChart = errRows.length ? hbars(errRows, {max:Math.max(...errRows.map(r => r.value)), fmt:v => v + (v === 1 ? " student-item" : " student-items"), labelW:380, w:700, rowH:20, label:"Most frequent tagged errors"}) : "<p class='muted'>No tagged errors yet.</p>";
+  const errors = `
+    <h2>Errors</h2>
+    <p class="muted">Every wrong option in the bank is tagged with the misunderstanding it most likely shows. Each count here is one student giving that tagged answer once, so the same student can appear more than once for the same tag.</p>
+    ${errRows.length ? hbars(errRows, {max:Math.max(...errRows.map(r => r.value)), fmt:v => v + (v === 1 ? " answer" : " answers"), labelW:380, w:700, rowH:20, label:"Most frequent tagged errors"}) : "<p class='muted'>No tagged errors yet.</p>"}`;
 
-  /* confidence */
-  let confBlock = "";
+  /* ---------- confidence and wording ---------- */
+  let confBlock = "<p class='muted'>Confidence was not asked in these sittings.</p>";
   if(anyConf){
     const M = {}; ["Sure", "Fairly sure", "Guessing"].forEach(c => M[c] = {right:0, wrong:0, idk:0});
-    results.forEach(r => r.items.forEach(i => { if(!i.confidence || !i.answered) return; const m = M[i.confidence] || (M[i.confidence] = {right:0, wrong:0, idk:0}); if(i.choice === "I don't know") m.idk++; else if(i.correct) m.right++; else m.wrong++; }));
-    const cw = results.map((r, i) => ({name:names[i], n:r.items.filter(it => it.confidence === "Sure" && it.answered && it.correct === false && it.choice !== "I don't know").length})).sort((a, b) => b.n - a.n);
-    confBlock = `<h2>Confidence against correctness</h2>
-    <p class="muted">A confident wrong answer is a held misconception rather than a gap, and it is the first thing to teach against. Answers marked "Sure" that were wrong are counted below.</p>
+    results.forEach(r => r.items.forEach(i => { if(!i.confidence || !i.answered) return; const m = M[i.confidence] || (M[i.confidence] = {right:0, wrong:0, idk:0}); if(i.noAnswer) m.idk++; else if(i.correct) m.right++; else m.wrong++; }));
+    const cw = results.map((r, i) => ({name:names[i], n:r.items.filter(it => it.confidence === "Sure" && it.answered && it.correct === false && !it.noAnswer).length})).sort((a, b) => b.n - a.n);
+    confBlock = `<p class="muted">A confident wrong answer is one marked "Sure" that was wrong. It usually shows a firmly held misconception, and those are the first things to teach against.</p>
     <div class="grid2"><div class="scroll"><table><thead><tr><th>Student said</th><th>Right</th><th>Wrong</th><th>Don't know</th><th>Accuracy</th></tr></thead><tbody>
     ${Object.entries(M).map(([c, m]) => `<tr><td>${esc(c)}</td><td class="c">${m.right}</td><td class="c">${m.wrong}</td><td class="c">${m.idk}</td>${cell(m.right + m.wrong ? m.right / (m.right + m.wrong) : null)}</tr>`).join("")}</tbody></table></div>
     <div>${hbars(cw.slice(0, 12).map(x => ({label:x.name, value:x.n, color:"var(--bad)"})), {max:Math.max(1, ...cw.map(x => x.n)), fmt:v => v + " confident wrong", labelW:120, w:520, rowH:20, label:"Confident wrong answers by student"})}</div></div>`;
   }
-
-  /* language */
+  let wordsBlock = "";
+  if(anyWords){
+    const rows = results.map((r, i) => ({name:names[i], words:r.summary.words || 0, task:r.summary.task || 0, idk:(r.summary.idk || 0) - (r.summary.words || 0) - (r.summary.task || 0)})).sort((a, b) => (b.words + b.task) - (a.words + a.task));
+    const bySkill = skillIds.map(id => ({id, n:results.reduce((a, r) => a + ((r.summary.skills[id] || {}).words || 0), 0)})).filter(x => x.n).sort((a, b) => b.n - a.n).slice(0, 8);
+    wordsBlock = `<h3>Students who said they did not understand</h3>
+    <p class="muted">"Words" counts the answer "I don't understand some of the words in this question". "Asking" counts "I don't understand what the question is asking me to do". Both point at language before mathematics.</p>
+    <div class="grid2"><div class="scroll"><table><thead><tr><th>Student</th><th>Words</th><th>Asking</th><th>Plain don't know</th></tr></thead><tbody>${rows.map(x => `<tr><td>${esc(x.name)}</td><td class="c">${x.words}</td><td class="c">${x.task}</td><td class="c">${x.idk}</td></tr>`).join("")}</tbody></table></div>
+    <div>${bySkill.length ? `<h4 style="margin:.5rem 0">Skills whose wording was flagged most</h4>` + hbars(bySkill.map(x => ({label:skillName(x.id), value:x.n})), {max:Math.max(...bySkill.map(x => x.n)), fmt:v => v + (v === 1 ? " time" : " times"), labelW:230, w:520, rowH:20, label:"Words not understood, by skill"}) : ""}</div></div>`;
+  }
   let langBlock = "";
   if(anyMixed){
     const per = results.map((r, i) => { const P = r.items.filter(it => it.answered && it.variant === "plain"), T = r.items.filter(it => it.answered && it.variant === "tech"); return {name:names[i], plain:P.length ? P.filter(x => x.correct).length / P.length : null, tech:T.length ? T.filter(x => x.correct).length / T.length : null}; });
     const gap = per.filter(x => x.plain !== null && x.tech !== null).map(x => ({...x, gap:x.plain - x.tech})).sort((a, b) => b.gap - a.gap);
-    langBlock = `<h2>Everyday against mathematical wording</h2>
-    <p class="muted">Where a student does much better on the everyday wording of the same kind of question, the gap is vocabulary rather than mathematics. The two halves of each student's sitting are different questions, so treat gaps under 15 points as noise.</p>
+    langBlock = `<h3>Everyday against mathematical wording</h3>
+    <p class="muted">When a student does much better on the everyday wording, the difference points to vocabulary. The two halves of each student's sitting are different questions, so treat a gap under 15 points as noise.</p>
     <div class="scroll"><table><thead><tr><th>Student</th><th>Everyday wording</th><th>Mathematical wording</th><th>Gap</th></tr></thead><tbody>
     ${gap.map(x => `<tr><td>${esc(x.name)}</td>${cell(x.plain)}${cell(x.tech)}<td class="c" style="${x.gap >= .15 ? "color:var(--bad);font-weight:700" : ""}">${Math.round(x.gap * 100) > 0 ? "+" : ""}${Math.round(x.gap * 100)}</td></tr>`).join("")}</tbody></table></div>`;
   }
+  const confidence = `<h2>Confidence and wording</h2>${confBlock}${wordsBlock}${langBlock}`;
 
-  /* time */
+  /* ---------- time ---------- */
   const timeRows = [1,2,3].map(t => { const ss = results.flatMap(r => r.items.filter(i => i.tier === t && i.seconds)).map(i => i.seconds); return ss.length ? {label:TIERS[t], value:ss.reduce((a, b) => a + b, 0) / ss.length} : null; }).filter(Boolean);
+  const time = `<h2>Time</h2>
+    <p class="muted">Seconds per question are measured from the previous answer, so they are exact in the one-at-a-time layout and approximate on a single page. A red bar marks a student who ran out of time.</p>
+    <div class="grid2"><div>${hbars(timeRows, {max:Math.max(1, ...timeRows.map(r => r.value)), fmt:v => Math.round(v) + " s per question", labelW:110, w:420, label:"Mean seconds per question by level"})}</div>
+    <div>${hbars(results.map((r, i) => ({label:names[i], value:r.elapsedSeconds / 60, color:r.timedOut ? "var(--bad)" : "var(--accent)"})).sort((a, b) => b.value - a.value), {max:Math.max(1, ...results.map(r => r.elapsedSeconds / 60)), fmt:v => Math.round(v) + " min", labelW:120, w:420, rowH:18, label:"Total time by student"})}</div></div>`;
 
-  /* by student */
-  const studentRows = results.map((r, i) => {
-    const fl = [1,2,3].map(t => skillIds.filter(id => skillTier(id) === t && flagged(r.summary.skills[id])).length);
-    return `<tr><td>${esc(names[i])}</td><td><span class="band" style="color:${BAND_COLORS[bands[i]]}">${BANDS[bands[i]]}</span></td><td class="c">${r.summary.correct}/${r.summary.total}</td>${cell(tierPct(r, 1))}${cell(tierPct(r, 2))}${cell(tierPct(r, 3))}<td class="c">${r.summary.idk || 0}</td><td class="c">${Math.round(r.elapsedSeconds / 60)} min${r.timedOut ? " (timed out)" : ""}</td><td class="c">${fl[0]}</td><td class="c">${fl[1]}</td><td class="c">${fl[2]}</td></tr>`;
-  }).join("");
-
-  const cards = results.map((r, i) => {
-    const fl = [1,2,3].map(t => skillIds.filter(id => skillTier(id) === t && flagged(r.summary.skills[id])));
-    const errs = {}; r.items.forEach(it => { if(it.error) errs[it.error] = (errs[it.error] || 0) + 1; });
-    const topErr = Object.entries(errs).sort((a, b) => b[1] - a[1]).slice(0, 5);
-    const cw = r.items.filter(it => it.confidence === "Sure" && it.answered && it.correct === false && it.choice !== "I don't know");
-    const wt = skillIds.filter(id => skillTier(id) < 3 && watch(r.summary.skills[id]));
-    const lst = a => a.map(skillName).join(", ");
-    const start = fl[0].length ? `Start with the foundation gaps: ${lst(fl[0])}.${fl[1].length ? ` Core gaps to follow: ${lst(fl[1])}.` : ""}` : fl[1].length ? `Foundations are secure. Start with: ${lst(fl[1])}.` : fl[2].length ? `Core is secure. Stretch material is where the gaps are: ${lst(fl[2])}.` : "No skill was flagged. This student can be given extension work from the start.";
-    const adv = fl[0].length || fl[1].length ? (fl[2].length ? ` Advanced skills flagged: ${fl[2].length} of ${skillIds.filter(id => skillTier(id) === 3).length}.` : "") : "";
-    return `<details class="card"><summary><strong>${esc(names[i])}</strong> <span class="band" style="color:${BAND_COLORS[bands[i]]}">${BANDS[bands[i]]}</span> <small>${r.summary.correct}/${r.summary.total}${r.summary.skipped ? `, ${r.summary.skipped} skipped` : ""}${r.timedOut ? ", timed out" : ""}</small></summary>
-      <p>${esc(start + adv)}</p>
-      ${wt.length ? `<p class="muted">Worth checking (half right): ${esc(wt.map(skillName).join(", "))}.</p>` : ""}
-      ${hbars([1,2,3].map(t => ({label:TIERS[t], value:tierPct(r, t) ?? 0, note:tierPct(r, t) === null ? "(not asked)" : ""})), {labelW:110, w:420, rowH:20, label:"Percent correct by level"})}
-      ${topErr.length ? `<p><strong>Most repeated errors</strong><br>${topErr.map(([e, n]) => `<span class="tag">${esc(errName(e))} (${n})</span>`).join(" ")}</p>` : ""}
-      ${cw.length ? `<p><strong>Confident wrong answers</strong> (${cw.length}): ${cw.map(it => esc(skillName(it.skill))).join(", ")}</p>` : ""}
-      ${r.summary.idk ? `<p>Said "I don't know" ${r.summary.idk} time${r.summary.idk > 1 ? "s" : ""}.</p>` : ""}
-    </details>`;
-  }).join("");
-
+  /* ---------- data ---------- */
   const heat = `<div class="scroll"><table class="heat"><thead><tr><th></th>${skillIds.map(id => `<th class="rot">${esc(skillName(id))}</th>`).join("")}</tr></thead><tbody>${results.map((r, i) => `<tr><td>${esc(names[i])}</td>${skillIds.map(id => cell(pctOf(r.summary.skills[id]))).join("")}</tr>`).join("")}</tbody></table></div>`;
+  const data = `<h2>Data</h2>
+    <p class="muted">Percent correct for every student on every skill. Red is below ${TH.flag}%, amber is below ${TH.watch}%, green is 100%. A dash means the skill was not attempted.</p>
+    ${heat}
+    <p><button class="quiet" id="csv">Download this grid as CSV</button> <button class="quiet" id="csv2">Download the student summary as CSV</button></p>`;
 
-  $("#out").innerHTML = `
-  <h2>${results.length} result${results.length > 1 ? "s" : ""}: mean score ${Math.round(meanScore * 100)}%</h2>
-  ${priorities.length ? `<div class="notice good"><strong>Where to start:</strong> ${priorities.map(p => `${esc(skillName(p.id))} (${p.n} of ${results.length})`).join("; ")}.</div>` : `<div class="notice good">No foundation or core skill is flagged for any student.</div>`}
-  ${stretch.length ? `<p class="muted"><strong>Advanced material most often missed</strong> (expected at this stage): ${stretch.map(p => `${esc(skillName(p.id))} (${p.n})`).join("; ")}.</p>` : ""}
-  <div class="grid2">
-    <div><h3>Score distribution</h3>${hist}</div>
-    <div><h3>Readiness bands</h3>${hbars(bandCounts, {max:results.length, fmt:v => v + " student" + (v === 1 ? "" : "s"), labelW:190, w:520, label:"Students per band"})}</div>
-  </div>
-  <details><summary>How the diagnostic criteria are worked out</summary>
-    <p>A skill is <strong>flagged</strong> for a student when they got fewer than half of its attempted items right (both wrong, with two items), with "I don't know" counted as a miss and unattempted items (time ran out) left out. Exactly half right is shown in amber as <strong>worth checking</strong> and counted in brackets. With two or three items per skill a flag is a prompt to look closer, not a verdict.</p>
-    <p><strong>Readiness bands</strong> use the percent correct at each level. <em>Foundation support</em>: below 70% on foundation items. Otherwise <em>Strong background</em>: at least 65% on advanced items and at least 75% on core. Otherwise <em>Ready for the module</em>: at least 50% on core. Otherwise <em>Core gaps</em>. A level that was not asked is ignored.</p>
-    <p><strong>Where to start</strong> lists foundation and core skills only, foundation first, then by how many students are flagged, then by the class mean; advanced material is reported separately because gaps there are expected before the module. A <strong>confident wrong</strong> answer is one marked "Sure" that was wrong and was not "I don't know".</p>
-  </details>
+  /* ---------- thresholds ---------- */
+  const thresholds = `<h2>Thresholds</h2>
+    <p>Every label on this page comes from a number on this tab. Change a number and the whole report is redrawn. The settings are kept in this browser, so they will still be here next time.</p>
+    <div class="thr">${Object.keys(TH_DEFAULT).map(k => `<label><span>${esc(TH_TEXT[k])}${k === "minItems" ? "" : k === "margin" ? " points" : "%"}</span><input type="number" data-th="${k}" value="${TH[k]}" min="0" max="${k === "minItems" ? 50 : 100}"></label>`).join("")}</div>
+    <div class="row" style="margin-top:1rem"><button class="quiet" id="thReset">Reset to the defaults</button><small>Defaults: foundation below ${TH_DEFAULT.found}%, strong at ${TH_DEFAULT.strongAdv}% advanced and ${TH_DEFAULT.strongCore}% core, ready at ${TH_DEFAULT.readyCore}% core, flag below ${TH_DEFAULT.flag}%, worth checking below ${TH_DEFAULT.watch}%, ${TH_DEFAULT.minItems} items per level, timeout line ${TH_DEFAULT.timeoutPct}%, narrow margin ${TH_DEFAULT.margin} points.</small></div>`;
 
-  <div class="grid2">
-    <div><h3>By level</h3>${hbars(tierRows, {labelW:200, w:520, label:"Mean percent correct by level"})}</div>
-    <div><h3>By topic, weakest first</h3>${hbars(topicRows, {labelW:230, w:520, label:"Mean percent correct by topic"})}</div>
-  </div>
-
-  <h2>By skill</h2>
-  ${skillChart}
-  <div class="scroll"><table><thead><tr><th>Skill</th><th>Students</th><th>Mean %</th><th>Flagged</th><th>Don't know</th><th>Most common errors</th></tr></thead><tbody>${skillRows}</tbody></table></div>
-
-  <h2>Most frequent errors across the class</h2>
-  <p class="muted">Each count is one student giving that tagged wrong answer once. The same student can appear more than once for the same tag.</p>
-  ${errChart}
-
-  ${confBlock}
-  ${langBlock}
-
-  <h2>Time spent</h2>
-  <div class="grid2"><div>${hbars(timeRows, {max:Math.max(1, ...timeRows.map(r => r.value)), fmt:v => Math.round(v) + " s per question", labelW:110, w:420, label:"Mean seconds per question by level"})}</div>
-  <div>${hbars(results.map((r, i) => ({label:names[i], value:r.elapsedSeconds / 60, color:r.timedOut ? "var(--bad)" : "var(--accent)"})).sort((a, b) => b.value - a.value), {max:Math.max(1, ...results.map(r => r.elapsedSeconds / 60)), fmt:v => Math.round(v) + " min", labelW:120, w:420, rowH:18, label:"Total time by student"})}</div></div>
-
-  <h2>By student</h2>
-  <div class="scroll"><table><thead><tr><th>Student</th><th>Band</th><th>Score</th><th>Foundation %</th><th>Core %</th><th>Advanced %</th><th>Don't know</th><th>Time</th><th>Foundation flags</th><th>Core flags</th><th>Advanced flags</th></tr></thead><tbody>${studentRows}</tbody></table></div>
-
-  <h2>Individual report cards</h2>
-  ${cards}
-
-  <h2>Percent correct, student by skill</h2>
-  ${heat}
-  <p><button class="quiet" id="csv">Download this grid as CSV</button> <button class="quiet" id="csv2">Download the student summary as CSV</button></p>`;
+  const tabs = [["overview","Overview"],["students","Students"],["skills","Skills"],["errors","Errors"],["confidence","Confidence and wording"],["time","Time"],["data","Data"],["thresholds","Thresholds"]];
+  const panes = {overview, students, skills, errors, confidence, time, data, thresholds};
+  $("#out").innerHTML = `<nav class="tabs" aria-label="Report sections">${tabs.map(([k, l]) => `<button data-tab="${k}" class="${k === activeTab ? "active" : ""}">${l}</button>`).join("")}</nav>
+    ${tabs.map(([k]) => `<section class="pane" data-pane="${k}" ${k === activeTab ? "" : "hidden"}>${panes[k]}</section>`).join("")}`;
+  $("#out").querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => { activeTab = b.dataset.tab; $("#out").querySelectorAll("[data-tab]").forEach(x => x.classList.toggle("active", x === b)); $("#out").querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== activeTab); window.scrollTo(0, 0); }));
+  $("#out").querySelectorAll("[data-th]").forEach(inp => inp.addEventListener("change", () => { const t = loadTH(); t[inp.dataset.th] = Math.max(0, +inp.value || 0); saveTH(t); renderReport(results); }));
+  $("#thReset").addEventListener("click", () => { saveTH({...TH_DEFAULT}); renderReport(results); });
   $("#csv").addEventListener("click", () => {
-    const rows = [["student", "band", ...skillIds.map(skillName)], ...results.map((r, i) => [names[i], BANDS[bands[i]], ...skillIds.map(id => { const p = pctOf(r.summary.skills[id]); return p === null ? "" : Math.round(p * 100); })])];
+    const rows = [["student", "band", ...skillIds.map(skillName)], ...results.map((r, i) => [names[i], BANDS[bands[i].band], ...skillIds.map(id => { const p = pctOf(r.summary.skills[id]); return p === null ? "" : Math.round(p * 100); })])];
     downloadCSV(rows, "dewmath-class-skills.csv");
   });
   $("#csv2").addEventListener("click", () => {
-    const rows = [["student", "band", "correct", "total", "foundation %", "core %", "advanced %", "dont know", "skipped", "minutes", "timed out", "flagged skills"],
-      ...results.map((r, i) => [names[i], BANDS[bands[i]], r.summary.correct, r.summary.total, ...[1,2,3].map(t => { const p = tierPct(r, t); return p === null ? "" : Math.round(p * 100); }), r.summary.idk || 0, r.summary.skipped || 0, Math.round(r.elapsedSeconds / 60), r.timedOut ? "yes" : "no", skillIds.filter(id => flagged(r.summary.skills[id])).map(skillName).join("; ")])];
+    const rows = [["student", "band", "band reason", "correct", "attempted", "total", "foundation %", "core %", "advanced %", "dont know", "words", "asking", "skipped", "minutes", "timed out", "flagged skills"],
+      ...results.map((r, i) => [names[i], BANDS[bands[i].band], bands[i].why, r.summary.correct, r.summary.answered, r.summary.total, ...[1,2,3].map(t => { const p = tierPct(r, t, TH); return p === null ? "" : Math.round(p * 100); }), r.summary.idk || 0, r.summary.words || 0, r.summary.task || 0, r.summary.skipped || 0, Math.round(r.elapsedSeconds / 60), r.timedOut ? "yes" : "no", skillIds.filter(id => flagged(r.summary.skills[id])).map(skillName).join("; ")])];
     downloadCSV(rows, "dewmath-class-students.csv");
   });
 }

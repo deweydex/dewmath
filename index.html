@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dewmath · maths tools for further education</title>
+<script>(function(){try{var p=JSON.parse(localStorage.getItem("dewmath:display")||"{}");var h=document.documentElement;["theme","palette","font","size","width"].forEach(function(k){if(p[k])h.setAttribute("data-"+k,p[k]);});}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+@font-face{font-family:"OpenDyslexic";src:url("fonts/OpenDyslexic-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"OpenDyslexic";src:url("fonts/OpenDyslexic-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"OpenDyslexic";src:url("fonts/OpenDyslexic-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+
+/* ---- palettes: navy and burnt orange (default), slate and teal ---- */
+:root{
+  --paper:#F8F5EF; --ink:#14213D; --ink-soft:#4A5570; --rule:#D8D3C8; --field:#FFFFFF;
+  --accent:#B85C1C; --accent-ink:#FFFFFF; --wash:#F2E6D8;
+  --good:#2E6B4F; --bad:#9E2B25; --warn:#8A6D1F; --good-wash:#E3EEE6; --bad-wash:#F4E1DD; --warn-wash:#F3ECD6;
+  --font-serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --font-sans:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-dys:"OpenDyslexic","Atkinson Hyperlegible",system-ui,sans-serif;
+  --font:var(--font-serif); --lh:1.6; --col:44rem; --col-wide:72rem;
+}
+:root[data-palette="slate"]{
+  --paper:#F7F8F6; --ink:#1E2A32; --ink-soft:#4A5860; --rule:#D5DBDD; --field:#FFFFFF;
+  --accent:#2A6F8F; --accent-ink:#FFFFFF; --wash:#E8F0F4;
+  --good:#3B7A57; --bad:#B4553A; --warn:#8A6D1F; --good-wash:#E6F0EA; --bad-wash:#F5E6E1; --warn-wash:#F3ECD6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1A2E; --ink:#EDE7DC; --ink-soft:#B3AC9F; --rule:#2C3A55; --field:#172540;
+    --accent:#E38A4A; --accent-ink:#14213D; --wash:#22314F;
+    --good:#7FC29B; --bad:#E48A7A; --warn:#D9B85E; --good-wash:#1E3529; --bad-wash:#3E2622; --warn-wash:#3A3320;
+  }
+  :root:not([data-theme="light"])[data-palette="slate"]{
+    --paper:#171C20; --ink:#E8ECEE; --ink-soft:#A9B4BA; --rule:#3A444B; --field:#1F262B;
+    --accent:#6FB1CE; --accent-ink:#0F1418; --wash:#22303A;
+    --good:#7FC29B; --bad:#E0907A; --warn:#D9B85E; --good-wash:#1F3128; --bad-wash:#3A2620; --warn-wash:#3A3320;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1A2E; --ink:#EDE7DC; --ink-soft:#B3AC9F; --rule:#2C3A55; --field:#172540;
+  --accent:#E38A4A; --accent-ink:#14213D; --wash:#22314F;
+  --good:#7FC29B; --bad:#E48A7A; --warn:#D9B85E; --good-wash:#1E3529; --bad-wash:#3E2622; --warn-wash:#3A3320;
+}
+:root[data-theme="dark"][data-palette="slate"]{
+  --paper:#171C20; --ink:#E8ECEE; --ink-soft:#A9B4BA; --rule:#3A444B; --field:#1F262B;
+  --accent:#6FB1CE; --accent-ink:#0F1418; --wash:#22303A;
+  --good:#7FC29B; --bad:#E0907A; --warn:#D9B85E; --good-wash:#1F3128; --bad-wash:#3A2620; --warn-wash:#3A3320;
+}
+/* ---- type, size, width ---- */
+:root[data-font="sans"]{--font:var(--font-sans);--lh:1.55}
+:root[data-font="dyslexic"]{--font:var(--font-dys);--lh:1.75}
+html{font-size:17px}
+:root[data-size="small"]{font-size:15px}
+:root[data-size="large"]{font-size:19.5px}
+:root[data-width="narrow"]{--col:36rem;--col-wide:56rem}
+:root[data-width="wide"]{--col:58rem;--col-wide:92rem}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);line-height:var(--lh)}
+:root[data-font="dyslexic"] body{word-spacing:.06em}
+main{max-width:var(--col);margin:0 auto;padding:2.5rem 1.25rem 5rem}
+main.wide{max-width:var(--col-wide)}
+h1{font-size:1.9rem;line-height:1.2;margin:0 0 .75rem;font-weight:700}
+h2{font-size:1.3rem;margin:2.25rem 0 .75rem;font-weight:700}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem;font-weight:700}
+p{margin:0 0 1rem}
+p.lead{font-size:1.12rem;color:var(--ink-soft)}
+a{color:var(--accent)}
+small,.muted{color:var(--ink-soft)}
+hr{border:0;border-top:1px solid var(--rule);margin:2rem 0}
+button,.btn{font:inherit;font-size:1rem;padding:.6rem 1.1rem;border-radius:.4rem;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer;text-decoration:none;display:inline-block;line-height:1.3}
+button.quiet,.btn.quiet{background:transparent;color:var(--accent)}
+button.small{padding:.3rem .7rem;font-size:.9rem}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,label.opt:focus-within,summary:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+input[type=text],input[type=url],input[type=number],select,textarea{font:inherit;font-size:1rem;padding:.5rem .65rem;border:1.5px solid var(--rule);border-radius:.4rem;background:var(--field);color:var(--ink);max-width:100%}
+input[type=text],input[type=url],textarea{width:100%}
+label.check{display:flex;gap:.6rem;align-items:flex-start;padding:.35rem 0;cursor:pointer}
+label.check input[type=checkbox],label.check input[type=radio]{margin-top:.3rem;width:1.05rem;height:1.05rem;flex:none}
+fieldset{border:1px solid var(--rule);border-radius:.5rem;padding:.75rem 1rem 1rem;margin:0 0 1.25rem}
+legend{padding:0 .4rem;font-weight:700}
+.topic-block{margin:0 0 1rem}
+.topic-block .skills{padding-left:1.7rem}
+.notice{background:var(--wash);border-left:4px solid var(--accent);padding:.75rem 1rem;border-radius:0 .4rem .4rem 0;margin:1rem 0}
+.notice.bad{border-color:var(--bad);background:var(--bad-wash)}
+.notice.good{border-color:var(--good);background:var(--good-wash)}
+code,.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em}
+.urlbox{display:block;width:100%;padding:.75rem;border:1.5px solid var(--rule);border-radius:.4rem;background:var(--field);word-break:break-all;margin:.5rem 0}
+.tier{padding:.05rem .4rem;border-radius:.3rem;font-size:.8em;font-family:var(--font-sans)}
+.tier.t1{background:var(--wash)} .tier.t2{background:var(--good-wash)} .tier.t3{background:var(--bad-wash)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:1.5rem;align-items:start}
+.chart{width:100%;height:auto;display:block;margin:.25rem 0 1rem;font-family:var(--font-sans)}
+.band{font-weight:700}
+details.card{border:1px solid var(--rule);border-radius:.5rem;padding:.5rem .9rem;margin:.5rem 0}
+details.card[open]{padding-bottom:1rem}
+details.card .chart{max-width:420px}
+.steps{list-style:none;counter-reset:s;padding:0;margin:1rem 0}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2.2rem 1fr;gap:.6rem;padding:.6rem 0;border-bottom:1px solid var(--rule)}
+.steps li::before{content:counter(s);font-weight:700;color:var(--accent);font-size:1.3rem;line-height:1.2}
+/* ---- the sitting ---- */
+.topbar{position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--rule);padding:.6rem 0;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;z-index:2}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.timer.low{color:var(--bad)}
+.saved{font-size:.85rem;color:var(--ink-soft);font-family:var(--font-sans)}
+.item{padding:1.5rem 0 1.75rem;border-bottom:1px solid var(--rule)}
+.item:last-of-type{border-bottom:0}
+.item .num{color:var(--ink-soft);margin-bottom:.35rem;font-family:var(--font-sans);font-size:.95rem}
+.stem{font-size:1.28rem;line-height:1.45;margin:0 0 1rem}
+.stem .katex{font-size:1.02em}
+.plot{width:100%;max-width:280px;height:auto;display:block;margin:.5rem 0 1rem;font-family:var(--font-sans)}
+.opts{display:grid;gap:.5rem;margin:0}
+.opts.figs{grid-template-columns:repeat(auto-fit,minmax(11rem,1fr))}
+.opts.figs .opt.idk{grid-column:1/-1;justify-content:center}
+label.opt{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1.5px solid var(--rule);border-radius:.5rem;background:var(--field);cursor:pointer;font-size:1.08rem}
+label.opt input{width:1.15rem;height:1.15rem;flex:none;margin:0}
+label.opt:has(input:checked){border-color:var(--accent);background:var(--wash)}
+label.opt .katex{font-size:1.05em}
+label.opt .plot{margin:0;max-width:100%}
+label.opt.fig{flex-direction:column;align-items:stretch}
+label.opt.fig .plot{max-width:none}
+label.opt.fig .caption{display:flex;gap:.6rem;align-items:center}
+.opt.idk{color:var(--ink-soft)}
+.conf{margin-top:.75rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;color:var(--ink-soft)}
+.conf button{padding:.3rem .7rem;font-size:.92rem;border-color:var(--rule);background:transparent;color:var(--ink)}
+.conf button.on{border-color:var(--accent);background:var(--wash)}
+.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}
+.progress{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:.4rem}
+.progress div{height:100%;background:var(--accent);transition:width .25s}
+.result-list{list-style:none;padding:0;margin:0}
+.result-list li{padding:.6rem 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1.6rem 1fr auto;gap:.6rem;align-items:baseline}
+.mark{font-weight:700}
+.mark.ok{color:var(--good)}.mark.no{color:var(--bad)}.mark.skip{color:var(--ink-soft)}
+/* ---- analysis ---- */
+table{border-collapse:collapse;width:100%;font-size:.95rem;margin:.5rem 0 1.5rem}
+th,td{text-align:left;padding:.45rem .55rem;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:700}
+.scroll{overflow-x:auto}
+.heat td.c{text-align:center;font-variant-numeric:tabular-nums;min-width:2.6rem}
+.heat th.rot{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:400;white-space:nowrap;padding:.3rem;font-family:var(--font-sans);font-size:.85rem}
+td.c{text-align:center}
+.tag{display:inline-block;padding:.1rem .45rem;border-radius:.3rem;background:var(--wash);font-size:.9em;margin:.1rem .2rem .1rem 0}
+details{margin:.5rem 0}
+summary{cursor:pointer}
+/* ---- display settings ---- */
+.prefs-toggle{position:fixed;top:.6rem;right:.6rem;z-index:5;padding:.35rem .7rem;font-size:.85rem;font-family:var(--font-sans);border-color:var(--rule);background:var(--paper);color:var(--ink-soft)}
+.prefs{position:fixed;top:2.9rem;right:.6rem;z-index:5;width:min(20rem,calc(100vw - 1.2rem));background:var(--field);border:1px solid var(--rule);border-radius:.6rem;padding:1rem;box-shadow:0 8px 24px rgba(0,0,0,.12);font-family:var(--font-sans);font-size:.95rem}
+.prefs[hidden]{display:none}
+.prefs label{display:grid;grid-template-columns:7.5rem 1fr;gap:.5rem;align-items:center;margin:.4rem 0}
+.prefs select{padding:.3rem .5rem;font-size:.92rem}
+.prefs .row{margin-top:.6rem;justify-content:space-between}
+@media (prefers-reduced-motion:reduce){.progress div{transition:none}}
+@media (max-width:600px){html{font-size:16px} :root[data-size="large"]{font-size:18px} main{padding:3rem 1rem 4rem} .stem{font-size:1.15rem} .prefs label{grid-template-columns:1fr}}
+
+/* ---- landing ---- */
+.site{max-width:var(--col);margin:0 auto;padding:2.5rem 1.25rem 4rem}
+.masthead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;padding-bottom:1.25rem;border-bottom:1px solid var(--rule);margin-bottom:2.5rem}
+.wordmark{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+.wordmark span{color:var(--accent)}
+.masthead nav a{margin-left:1.1rem;font-family:var(--font-sans);font-size:.95rem;text-decoration:none;color:var(--ink-soft)}
+.masthead nav a:hover{color:var(--accent)}
+.hero h1{font-size:2.5rem;line-height:1.12;max-width:20ch;margin-bottom:1rem}
+.hero p.lead{max-width:60ch;font-size:1.2rem}
+.cta{display:flex;gap:.75rem;flex-wrap:wrap;margin:1.5rem 0 3rem}
+.threes{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem 2rem;margin:1rem 0 2.5rem}
+.threes h3{margin:0 0 .4rem;font-size:1.05rem}
+.threes .k{font-family:var(--font-sans);font-size:.85rem;color:var(--accent);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem}
+table.dl td:first-child{white-space:nowrap}
+table.dl{font-size:.98rem}
+.pill{display:inline-block;padding:.1rem .5rem;border-radius:1rem;background:var(--wash);font-family:var(--font-sans);font-size:.8rem;color:var(--ink-soft)}
+.pill.now{background:var(--good-wash);color:var(--good)}
+.stages{list-style:none;padding:0;margin:0}
+.stages li{display:grid;grid-template-columns:5rem 1fr;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--rule)}
+.stages .pill{justify-self:start;align-self:start;margin-top:.15rem}
+footer{margin-top:3rem;padding-top:1.25rem;border-top:1px solid var(--rule);font-family:var(--font-sans);font-size:.88rem;color:var(--ink-soft)}
+@media (max-width:700px){.hero h1{font-size:1.9rem} .threes{grid-template-columns:1fr} .stages li{grid-template-columns:1fr;gap:.2rem}}
+</style>
+</head>
+<body>
+<button class="prefs-toggle" id="prefsToggle" aria-expanded="false" aria-controls="prefs">Display</button>
+<div class="prefs" id="prefs" hidden>
+  <strong>Display settings</strong>
+  <label>Appearance <select data-pref="theme"><option value="">Match device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+  <label>Colours <select data-pref="palette"><option value="">Navy and burnt orange</option><option value="slate">Slate and teal</option></select></label>
+  <label>Font <select data-pref="font"><option value="">Serif</option><option value="sans">Sans-serif</option><option value="dyslexic">OpenDyslexic</option></select></label>
+  <label>Text size <select data-pref="size"><option value="small">Smaller</option><option value="">Normal</option><option value="large">Larger</option></select></label>
+  <label>Column width <select data-pref="width"><option value="narrow">Narrow</option><option value="">Normal</option><option value="wide">Wide</option></select></label>
+  <div class="row"><small>Saved on this device only.</small><button class="quiet small" id="prefsReset">Reset</button></div>
+</div>
+<main class="site">
+  <header class="masthead">
+    <a class="wordmark" href="./">dew<span>math</span></a>
+    <nav><a href="diagnostic.html">Diagnostic</a><a href="diagnostic.html#analyse">Class analysis</a><a href="#downloads">Downloads</a><a href="#about">About</a></nav>
+  </header>
+
+  <section class="hero">
+    <h1>Find out where a maths class is starting from.</h1>
+    <p class="lead">dewmath is a small set of tools for teaching mathematics in further education. The first of them is a readiness diagnostic for QQI Level 5 Mathematics for IT and Computational Methods: a teacher configures it in a browser, students sit it from a link, and every wrong answer is read as a particular misunderstanding rather than as a mark lost.</p>
+    <div class="cta"><a class="btn" href="diagnostic.html">Build a diagnostic</a><a class="btn quiet" href="diagnostic.html#analyse">Analyse a class</a></div>
+  </section>
+
+  <h2>How it works</h2>
+  <div class="threes">
+    <div><div class="k">Configure</div><h3>Choose what to ask</h3><p>Pick skills across three levels, foundation, core and advanced, set the wording, the order, a time limit and a question cap. Everything is packed into a short link. There is no server and no account.</p></div>
+    <div><div class="k">Sit</div><h3>Students answer from the link</h3><p>One question at a time, all on one page, or a few per page, with an "I don't know" option and an optional confidence check. Answers save as they go. At the end each student downloads a small results file.</p></div>
+    <div><div class="k">Read</div><h3>Open the files together</h3><p>The analysis page groups the class by readiness, ranks the skills to teach first, charts the most common misconceptions, and writes a short report card for each student. Nothing leaves the browser.</p></div>
+  </div>
+
+  <h2 id="downloads">Downloads</h2>
+  <p>Every tool is one HTML file. Save it, open it, and it works; put it on any web host and the links it makes will point there.</p>
+  <div class="scroll"><table class="dl">
+    <thead><tr><th>File</th><th>What it is</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><a href="diagnostic.html" download>diagnostic.html</a> <span class="pill now">current</span></td><td>The readiness diagnostic, v2: 153 items across 56 skills, tiered levels, hardest-first mode with a drop-a-level offer, class analysis with charts and a built-in sample class.</td><td><a href="diagnostic.html">open</a></td></tr>
+      <tr><td><a href="samples/sample-class-v2.zip" download>sample-class-v2.zip</a></td><td>Twelve simulated students' results files, for trying the analysis page. The same class is available from a button on the page itself.</td><td></td></tr>
+      <tr><td><a href="versions/diagnostic-v2.0.html" download>diagnostic-v2.0.html</a> <span class="pill">stage 2</span></td><td>v2 before the display settings were added. Same item bank and share-code format as the current file.</td><td><a href="versions/diagnostic-v2.0.html">open</a></td></tr>
+      <tr><td><a href="versions/diagnostic-v1.html" download>diagnostic-v1.html</a> <span class="pill">stage 1</span></td><td>The first version: 56 items, 28 skills, no levels. Its links use an older share code and do not open in v2.</td><td><a href="versions/diagnostic-v1.html">open</a></td></tr>
+      <tr><td><a href="samples/sample-result-v1.json" download>sample-result-v1.json</a></td><td>One results file in the v1 format, which the current analysis page still reads.</td><td></td></tr>
+      <tr><td><a href="https://github.com/deweydex/dewmath">Source on GitHub</a></td><td>Everything on this page, including the item bank, which is a plain list near the top of the diagnostic file.</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Stages</h2>
+  <ul class="stages">
+    <li><span class="pill now">done</span><span><strong>Readiness diagnostic.</strong> Tagged distractors, three levels, share links, class analysis, sample class, display settings including a dyslexia-friendly font.</span></li>
+    <li><span class="pill">next</span><span><strong>Item authoring in Markdown.</strong> A plain-text format for questions, with LaTeX, that compiles into the bank so that colleagues can contribute items without touching the code.</span></li>
+    <li><span class="pill">later</span><span><strong>Adaptive flow.</strong> Choosing the next question from the answers so far, so a strong student is not asked forty foundation items and a struggling one is not sent through calculus.</span></li>
+    <li><span class="pill">later</span><span><strong>Submission without files.</strong> Results posted straight to a shared store, so students do not need to handle a download.</span></li>
+  </ul>
+
+  <h2 id="about">About</h2>
+  <p>dewmath is built by Joshua Aaron, a further education lecturer in Dublin, for the maths and computing modules he teaches. This page is its home; the tools, their earlier stages and the sample data will collect here as they are made. Questions, corrections to items and offers of new questions are welcome on <a href="https://github.com/deweydex/dewmath">GitHub</a>.</p>
+
+  <footer>Fonts: Source Serif 4 and Atkinson Hyperlegible via Google Fonts; OpenDyslexic by Abbie Gonzalez, SIL Open Font License, served from this site. Use the Display button at the top right to change the colours, font, text size and column width; the choice stays on your device.</footer>
+</main>
+<script>
+/* ---- display settings, shared by every dewmath page ---- */
+(function(){
+  const KEY = "dewmath:display", h = document.documentElement, panel = document.getElementById("prefs"), toggle = document.getElementById("prefsToggle");
+  if(!panel) return;
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){ return {}; } };
+  const apply = p => { ["theme","palette","font","size","width"].forEach(k => { if(p[k]) h.setAttribute("data-" + k, p[k]); else h.removeAttribute("data-" + k); }); panel.querySelectorAll("[data-pref]").forEach(s => s.value = p[s.dataset.pref] || ""); };
+  apply(load());
+  panel.querySelectorAll("[data-pref]").forEach(s => s.addEventListener("change", () => { const p = load(); if(s.value) p[s.dataset.pref] = s.value; else delete p[s.dataset.pref]; try { localStorage.setItem(KEY, JSON.stringify(p)); } catch(e){} apply(p); }));
+  document.getElementById("prefsReset").addEventListener("click", () => { try { localStorage.removeItem(KEY); } catch(e){} apply({}); });
+  toggle.addEventListener("click", () => { const open = panel.hidden; panel.hidden = !open; toggle.setAttribute("aria-expanded", String(open)); });
+  document.addEventListener("click", e => { if(!panel.hidden && !panel.contains(e.target) && e.target !== toggle){ panel.hidden = true; toggle.setAttribute("aria-expanded", "false"); } });
+})();
+</script>
+</body>
+</html>

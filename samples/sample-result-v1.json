@@ -1,0 +1,1189 @@
+{
+ "schema": "dewmath-result/1",
+ "bankVersion": "2026-09-17.1",
+ "generatedAt": "2026-09-17T23:04:43.565Z",
+ "config": {
+  "code": "AdRSBgD___8PwGI",
+  "label": "",
+  "language": "plain",
+  "identityMode": "pseudonym",
+  "timerMinutes": 0,
+  "skills": [
+   "num-ord",
+   "num-neg",
+   "frac-add",
+   "frac-mul",
+   "frac-conv",
+   "pct",
+   "ind-laws",
+   "ind-neg",
+   "ind-frac",
+   "ind-zero",
+   "roots",
+   "log-def",
+   "log-laws",
+   "alg-like",
+   "alg-sub",
+   "alg-exp",
+   "alg-sq",
+   "alg-dbl",
+   "alg-fac",
+   "alg-frac",
+   "eq-lin",
+   "eq-trans",
+   "eq-ineq",
+   "eq-expr",
+   "gr-read",
+   "gr-match",
+   "gr-slope",
+   "gr-fn"
+  ]
+ },
+ "student": {
+  "identity": "Bee"
+ },
+ "viewMode": "all-at-once",
+ "elapsedSeconds": 6,
+ "timedOut": false,
+ "items": [
+  {
+   "n": 1,
+   "id": "N07",
+   "skill": "frac-mul",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "10/9",
+   "correct": false,
+   "error": "frac-mul-cross",
+   "confidence": null,
+   "seconds": 3
+  },
+  {
+   "n": 2,
+   "id": "N05",
+   "skill": "frac-add",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "2/6",
+   "correct": false,
+   "error": "frac-common-den-wrong-num",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 3,
+   "id": "I09",
+   "skill": "ind-zero",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "32 000",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 4,
+   "id": "N06",
+   "skill": "frac-add",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "1/12",
+   "correct": false,
+   "error": "frac-common-den-wrong-num",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 5,
+   "id": "G06",
+   "skill": "gr-slope",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "3",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 6,
+   "id": "I07",
+   "skill": "ind-frac",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "4",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 7,
+   "id": "N10",
+   "skill": "frac-conv",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "0.4%",
+   "correct": false,
+   "error": "pct-not-scaled",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 8,
+   "id": "I10",
+   "skill": "roots",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "12.5",
+   "correct": false,
+   "error": "root-halved",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 9,
+   "id": "L03",
+   "skill": "log-laws",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "log(a + b)",
+   "correct": false,
+   "error": "log-sum-inside",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 10,
+   "id": "A14",
+   "skill": "alg-frac",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x^2 - 3",
+   "correct": false,
+   "error": "afrac-single-term-cancel",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 11,
+   "id": "N09",
+   "skill": "frac-conv",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "375/100",
+   "correct": false,
+   "error": "dec-place-value",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 12,
+   "id": "I08",
+   "skill": "ind-zero",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "0",
+   "correct": false,
+   "error": "ind-zero-is-zero",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 13,
+   "id": "I02",
+   "skill": "ind-laws",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "y^4",
+   "correct": false,
+   "error": "ind-quotient-divided",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 14,
+   "id": "A04",
+   "skill": "alg-sub",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "-2",
+   "correct": false,
+   "error": "sub-double-negative",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 15,
+   "id": "A12",
+   "skill": "alg-fac",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "(x + 5)(x + 6)",
+   "correct": false,
+   "error": "fac-coefficients-copied",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 16,
+   "id": "G08",
+   "skill": "gr-fn",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "-10",
+   "correct": false,
+   "error": "fn-neg-squared-negative",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 17,
+   "id": "I11",
+   "skill": "roots",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "6",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 18,
+   "id": "A03",
+   "skill": "alg-sub",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "2",
+   "correct": false,
+   "error": "sub-sign-slip",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 19,
+   "id": "N04",
+   "skill": "num-neg",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "-10",
+   "correct": false,
+   "error": "neg-mult-as-add",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 20,
+   "id": "G03",
+   "skill": "gr-match",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "Graph D",
+   "correct": false,
+   "error": "gr-match-degree",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 21,
+   "id": "G02",
+   "skill": "gr-read",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x = 2 only",
+   "correct": false,
+   "error": "gr-one-root",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 22,
+   "id": "A05",
+   "skill": "alg-exp",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "3x + 4",
+   "correct": false,
+   "error": "exp-partial",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 23,
+   "id": "N01",
+   "skill": "num-ord",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "9",
+   "correct": false,
+   "error": "ord-op-confusion",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 24,
+   "id": "E06",
+   "skill": "eq-ineq",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x ≤ 11/3",
+   "correct": false,
+   "error": "lin-constant-sign",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 25,
+   "id": "A01",
+   "skill": "alg-like",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "2x + 7y",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 26,
+   "id": "E04",
+   "skill": "eq-trans",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "r = A/π",
+   "correct": false,
+   "error": "trans-square-ignored",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 27,
+   "id": "L01",
+   "skill": "log-def",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "16",
+   "correct": false,
+   "error": "log-as-product",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 28,
+   "id": "G04",
+   "skill": "gr-match",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "Graph C",
+   "correct": false,
+   "error": "gr-match-intercept-sign",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 29,
+   "id": "G01",
+   "skill": "gr-read",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "2",
+   "correct": false,
+   "error": "gr-identity",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 30,
+   "id": "N08",
+   "skill": "frac-mul",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "2/3",
+   "correct": false,
+   "error": "frac-div-inverted-answer",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 31,
+   "id": "E03",
+   "skill": "eq-trans",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x = y + 2/3",
+   "correct": false,
+   "error": "trans-sign",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 32,
+   "id": "A10",
+   "skill": "alg-dbl",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x^2 + 12",
+   "correct": false,
+   "error": "dbl-outer-inner-missed",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 33,
+   "id": "I04",
+   "skill": "ind-neg",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "-8",
+   "correct": false,
+   "error": "ind-neg-makes-negative",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 34,
+   "id": "I06",
+   "skill": "ind-frac",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "1/16",
+   "correct": false,
+   "error": "ind-frac-as-reciprocal",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 35,
+   "id": "A07",
+   "skill": "alg-sq",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x^2 + 9",
+   "correct": false,
+   "error": "sq-termwise",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 36,
+   "id": "G05",
+   "skill": "gr-slope",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "3",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 37,
+   "id": "E05",
+   "skill": "eq-ineq",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x > -3",
+   "correct": false,
+   "error": "ineq-not-flipped",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 38,
+   "id": "E08",
+   "skill": "eq-expr",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "A shorter expression, such as 5x",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 39,
+   "id": "A11",
+   "skill": "alg-fac",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "3x(2x + 3)",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 40,
+   "id": "I03",
+   "skill": "ind-laws",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "8a^6",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 41,
+   "id": "L02",
+   "skill": "log-def",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "20",
+   "correct": false,
+   "error": "log-multiplied",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 42,
+   "id": "N11",
+   "skill": "pct",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "24",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 43,
+   "id": "A06",
+   "skill": "alg-exp",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "-2x - 5",
+   "correct": false,
+   "error": "exp-partial",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 44,
+   "id": "E02",
+   "skill": "eq-lin",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x = 12/7",
+   "correct": false,
+   "error": "lin-both-added",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 45,
+   "id": "N02",
+   "skill": "num-ord",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "14",
+   "correct": false,
+   "error": "ord-power-ignored",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 46,
+   "id": "A02",
+   "skill": "alg-like",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "3a^2 + 3a",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 47,
+   "id": "E07",
+   "skill": "eq-expr",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "3x^2 - 4x",
+   "correct": false,
+   "error": "expr-eq-confused",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 48,
+   "id": "I05",
+   "skill": "ind-neg",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "-2x",
+   "correct": false,
+   "error": "ind-neg-multiplied",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 49,
+   "id": "N12",
+   "skill": "pct",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "€75",
+   "correct": false,
+   "error": "pct-reverse-added",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 50,
+   "id": "G07",
+   "skill": "gr-fn",
+   "topic": "gra",
+   "variant": "plain",
+   "answered": true,
+   "choice": "9",
+   "correct": false,
+   "error": "fn-notation-misread",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 51,
+   "id": "E01",
+   "skill": "eq-lin",
+   "topic": "eqn",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x = 54",
+   "correct": false,
+   "error": "lin-multiplied",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 52,
+   "id": "A09",
+   "skill": "alg-dbl",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x^2 - 10",
+   "correct": false,
+   "error": "dbl-outer-inner-missed",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 53,
+   "id": "N03",
+   "skill": "num-neg",
+   "topic": "num",
+   "variant": "plain",
+   "answered": true,
+   "choice": "2",
+   "correct": false,
+   "error": "neg-magnitudes",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 54,
+   "id": "A13",
+   "skill": "alg-frac",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "x + 2",
+   "correct": true,
+   "error": null,
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 55,
+   "id": "A08",
+   "skill": "alg-sq",
+   "topic": "alg",
+   "variant": "plain",
+   "answered": true,
+   "choice": "4a^2 + 4ab + b^2",
+   "correct": false,
+   "error": "sq-sign",
+   "confidence": null,
+   "seconds": 0
+  },
+  {
+   "n": 56,
+   "id": "L04",
+   "skill": "log-laws",
+   "topic": "ind",
+   "variant": "plain",
+   "answered": true,
+   "choice": "(log x)^3",
+   "correct": false,
+   "error": "log-power-outside",
+   "confidence": null,
+   "seconds": 0
+  }
+ ],
+ "summary": {
+  "total": 56,
+  "answered": 56,
+  "correct": 12,
+  "skills": {
+   "frac-mul": {
+    "name": "Multiplying and dividing fractions",
+    "topic": "num",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "frac-mul-cross",
+     "frac-div-inverted-answer"
+    ]
+   },
+   "frac-add": {
+    "name": "Adding and subtracting fractions",
+    "topic": "num",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "frac-common-den-wrong-num",
+     "frac-common-den-wrong-num"
+    ]
+   },
+   "ind-zero": {
+    "name": "Zero index and scientific notation",
+    "topic": "ind",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "ind-zero-is-zero"
+    ]
+   },
+   "gr-slope": {
+    "name": "Slope and intercept",
+    "topic": "gra",
+    "total": 2,
+    "correct": 2,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": []
+   },
+   "ind-frac": {
+    "name": "Fractional indices",
+    "topic": "ind",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "ind-frac-as-reciprocal"
+    ]
+   },
+   "frac-conv": {
+    "name": "Fractions, decimals and percentages",
+    "topic": "num",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "pct-not-scaled",
+     "dec-place-value"
+    ]
+   },
+   "roots": {
+    "name": "Square roots",
+    "topic": "ind",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "root-halved"
+    ]
+   },
+   "log-laws": {
+    "name": "Laws of logarithms",
+    "topic": "ind",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "log-sum-inside",
+     "log-power-outside"
+    ]
+   },
+   "alg-frac": {
+    "name": "Simplifying algebraic fractions",
+    "topic": "alg",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "afrac-single-term-cancel"
+    ]
+   },
+   "ind-laws": {
+    "name": "Laws of indices",
+    "topic": "ind",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "ind-quotient-divided"
+    ]
+   },
+   "alg-sub": {
+    "name": "Substituting values, including negatives",
+    "topic": "alg",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "sub-double-negative",
+     "sub-sign-slip"
+    ]
+   },
+   "alg-fac": {
+    "name": "Factorising",
+    "topic": "alg",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "fac-coefficients-copied"
+    ]
+   },
+   "gr-fn": {
+    "name": "Function notation",
+    "topic": "gra",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "fn-neg-squared-negative",
+     "fn-notation-misread"
+    ]
+   },
+   "num-neg": {
+    "name": "Negative numbers",
+    "topic": "num",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "neg-mult-as-add",
+     "neg-magnitudes"
+    ]
+   },
+   "gr-match": {
+    "name": "Matching a graph to its equation",
+    "topic": "gra",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "gr-match-degree",
+     "gr-match-intercept-sign"
+    ]
+   },
+   "gr-read": {
+    "name": "Reading values from a graph",
+    "topic": "gra",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "gr-one-root",
+     "gr-identity"
+    ]
+   },
+   "alg-exp": {
+    "name": "Expanding a single bracket",
+    "topic": "alg",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "exp-partial",
+     "exp-partial"
+    ]
+   },
+   "num-ord": {
+    "name": "Order of operations",
+    "topic": "num",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "ord-op-confusion",
+     "ord-power-ignored"
+    ]
+   },
+   "eq-ineq": {
+    "name": "Linear inequalities",
+    "topic": "eqn",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "lin-constant-sign",
+     "ineq-not-flipped"
+    ]
+   },
+   "alg-like": {
+    "name": "Collecting like terms",
+    "topic": "alg",
+    "total": 2,
+    "correct": 2,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": []
+   },
+   "eq-trans": {
+    "name": "Transposing a formula",
+    "topic": "eqn",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "trans-square-ignored",
+     "trans-sign"
+    ]
+   },
+   "log-def": {
+    "name": "Meaning of a logarithm",
+    "topic": "ind",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "log-as-product",
+     "log-multiplied"
+    ]
+   },
+   "alg-dbl": {
+    "name": "Multiplying two brackets",
+    "topic": "alg",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "dbl-outer-inner-missed",
+     "dbl-outer-inner-missed"
+    ]
+   },
+   "ind-neg": {
+    "name": "Negative indices",
+    "topic": "ind",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "ind-neg-makes-negative",
+     "ind-neg-multiplied"
+    ]
+   },
+   "alg-sq": {
+    "name": "Squaring a bracket",
+    "topic": "alg",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "sq-termwise",
+     "sq-sign"
+    ]
+   },
+   "eq-expr": {
+    "name": "Expression versus equation",
+    "topic": "eqn",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "expr-eq-confused"
+    ]
+   },
+   "pct": {
+    "name": "Percentage calculations",
+    "topic": "num",
+    "total": 2,
+    "correct": 1,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "pct-reverse-added"
+    ]
+   },
+   "eq-lin": {
+    "name": "Solving linear equations",
+    "topic": "eqn",
+    "total": 2,
+    "correct": 0,
+    "idk": 0,
+    "unanswered": 0,
+    "errors": [
+     "lin-both-added",
+     "lin-multiplied"
+    ]
+   }
+  }
+ },
+ "dictionary": {
+  "skills": {
+   "frac-mul": "Multiplying and dividing fractions",
+   "frac-add": "Adding and subtracting fractions",
+   "ind-zero": "Zero index and scientific notation",
+   "gr-slope": "Slope and intercept",
+   "ind-frac": "Fractional indices",
+   "frac-conv": "Fractions, decimals and percentages",
+   "roots": "Square roots",
+   "log-laws": "Laws of logarithms",
+   "alg-frac": "Simplifying algebraic fractions",
+   "ind-laws": "Laws of indices",
+   "alg-sub": "Substituting values, including negatives",
+   "alg-fac": "Factorising",
+   "gr-fn": "Function notation",
+   "num-neg": "Negative numbers",
+   "gr-match": "Matching a graph to its equation",
+   "gr-read": "Reading values from a graph",
+   "alg-exp": "Expanding a single bracket",
+   "num-ord": "Order of operations",
+   "eq-ineq": "Linear inequalities",
+   "alg-like": "Collecting like terms",
+   "eq-trans": "Transposing a formula",
+   "log-def": "Meaning of a logarithm",
+   "alg-dbl": "Multiplying two brackets",
+   "ind-neg": "Negative indices",
+   "alg-sq": "Squaring a bracket",
+   "eq-expr": "Expression versus equation",
+   "pct": "Percentage calculations",
+   "eq-lin": "Solving linear equations"
+  },
+  "topics": {
+   "num": "Number, fractions and percentages",
+   "ind": "Indices, roots and logarithms",
+   "alg": "Algebraic expressions",
+   "eqn": "Equations and formulae",
+   "gra": "Graphs and functions"
+  },
+  "errors": {
+   "frac-mul-cross": "Cross-multiplies when it should multiply straight across",
+   "frac-common-den-wrong-num": "Finds a common denominator but does not scale the numerators",
+   "pct-not-scaled": "Converts to a decimal but forgets to multiply by 100",
+   "root-halved": "Halves instead of taking the square root",
+   "log-sum-inside": "Thinks log a + log b = log(a + b)",
+   "afrac-single-term-cancel": "Cancels one letter from a sum",
+   "dec-place-value": "Misreads decimal place value",
+   "ind-zero-is-zero": "Thinks anything to the power zero is zero",
+   "ind-quotient-divided": "Divides exponents instead of subtracting them",
+   "sub-double-negative": "Mishandles subtracting a negative",
+   "fac-coefficients-copied": "Copies the coefficients directly into the brackets",
+   "fn-neg-squared-negative": "Squares a negative and gets a negative",
+   "sub-sign-slip": "Sign error in the final arithmetic",
+   "neg-mult-as-add": "Adds the numbers instead of multiplying",
+   "gr-match-degree": "Confuses linear, quadratic and cubic shapes",
+   "gr-one-root": "Finds one root and misses the other",
+   "exp-partial": "Multiplies only the first term inside the bracket",
+   "ord-op-confusion": "Treats × as + (or loses an operation)",
+   "lin-constant-sign": "Sign error when moving a constant across",
+   "trans-square-ignored": "Ignores the square when making the variable the subject",
+   "log-as-product": "Multiplies the number by the base",
+   "gr-match-intercept-sign": "Gets the sign of the intercept wrong",
+   "gr-identity": "Repeats the given x value",
+   "frac-div-inverted-answer": "Gets the reciprocal of the correct answer",
+   "trans-sign": "Sign error when moving a term across",
+   "dbl-outer-inner-missed": "Multiplies first and last terms only",
+   "ind-neg-makes-negative": "Reads a negative exponent as a negative answer",
+   "ind-frac-as-reciprocal": "Confuses a fractional exponent with a reciprocal",
+   "sq-termwise": "Squares each term separately: (a+b)² = a² + b²",
+   "ineq-not-flipped": "Divides by a negative without reversing the inequality",
+   "log-multiplied": "Multiplies base by the log value instead of raising",
+   "lin-both-added": "Adds both x-terms and constants",
+   "ord-power-ignored": "Ignores the power entirely",
+   "expr-eq-confused": "Cannot distinguish an expression from an equation",
+   "ind-neg-multiplied": "Multiplies base by exponent",
+   "pct-reverse-added": "Adds the discount percentage of the sale price back on",
+   "fn-notation-misread": "Reads f(3) as a product or misplaces the substitution",
+   "lin-multiplied": "Multiplies instead of dividing in the last step",
+   "neg-magnitudes": "Subtracts magnitudes instead of moving further negative",
+   "sq-sign": "Gets the sign of the middle term wrong",
+   "log-power-outside": "Puts the power on the log instead of bringing it down"
+  }
+ }
+}

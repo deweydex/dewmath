@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dewmath · Maths readiness diagnostic</title>
+<script>(function(){try{var p=JSON.parse(localStorage.getItem("dewmath:display")||"{}");var h=document.documentElement;["theme","palette","font","size","width"].forEach(function(k){if(p[k])h.setAttribute("data-"+k,p[k]);});}catch(e){}})();</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+@font-face{font-family:"OpenDyslexic";src:url("fonts/OpenDyslexic-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"OpenDyslexic";src:url("fonts/OpenDyslexic-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"OpenDyslexic";src:url("fonts/OpenDyslexic-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+
+/* ---- palettes: navy and burnt orange (default), slate and teal ---- */
+:root{
+  --paper:#F8F5EF; --ink:#14213D; --ink-soft:#4A5570; --rule:#D8D3C8; --field:#FFFFFF;
+  --accent:#B85C1C; --accent-ink:#FFFFFF; --wash:#F2E6D8;
+  --good:#2E6B4F; --bad:#9E2B25; --warn:#8A6D1F; --good-wash:#E3EEE6; --bad-wash:#F4E1DD; --warn-wash:#F3ECD6;
+  --font-serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --font-sans:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-dys:"OpenDyslexic","Atkinson Hyperlegible",system-ui,sans-serif;
+  --font:var(--font-serif); --lh:1.6; --col:44rem; --col-wide:72rem;
+}
+:root[data-palette="slate"]{
+  --paper:#F7F8F6; --ink:#1E2A32; --ink-soft:#4A5860; --rule:#D5DBDD; --field:#FFFFFF;
+  --accent:#2A6F8F; --accent-ink:#FFFFFF; --wash:#E8F0F4;
+  --good:#3B7A57; --bad:#B4553A; --warn:#8A6D1F; --good-wash:#E6F0EA; --bad-wash:#F5E6E1; --warn-wash:#F3ECD6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1A2E; --ink:#EDE7DC; --ink-soft:#B3AC9F; --rule:#2C3A55; --field:#172540;
+    --accent:#E38A4A; --accent-ink:#14213D; --wash:#22314F;
+    --good:#7FC29B; --bad:#E48A7A; --warn:#D9B85E; --good-wash:#1E3529; --bad-wash:#3E2622; --warn-wash:#3A3320;
+  }
+  :root:not([data-theme="light"])[data-palette="slate"]{
+    --paper:#171C20; --ink:#E8ECEE; --ink-soft:#A9B4BA; --rule:#3A444B; --field:#1F262B;
+    --accent:#6FB1CE; --accent-ink:#0F1418; --wash:#22303A;
+    --good:#7FC29B; --bad:#E0907A; --warn:#D9B85E; --good-wash:#1F3128; --bad-wash:#3A2620; --warn-wash:#3A3320;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1A2E; --ink:#EDE7DC; --ink-soft:#B3AC9F; --rule:#2C3A55; --field:#172540;
+  --accent:#E38A4A; --accent-ink:#14213D; --wash:#22314F;
+  --good:#7FC29B; --bad:#E48A7A; --warn:#D9B85E; --good-wash:#1E3529; --bad-wash:#3E2622; --warn-wash:#3A3320;
+}
+:root[data-theme="dark"][data-palette="slate"]{
+  --paper:#171C20; --ink:#E8ECEE; --ink-soft:#A9B4BA; --rule:#3A444B; --field:#1F262B;
+  --accent:#6FB1CE; --accent-ink:#0F1418; --wash:#22303A;
+  --good:#7FC29B; --bad:#E0907A; --warn:#D9B85E; --good-wash:#1F3128; --bad-wash:#3A2620; --warn-wash:#3A3320;
+}
+/* ---- type, size, width ---- */
+:root[data-font="sans"]{--font:var(--font-sans);--lh:1.55}
+:root[data-font="dyslexic"]{--font:var(--font-dys);--lh:1.75}
+html{font-size:17px}
+:root[data-size="small"]{font-size:15px}
+:root[data-size="large"]{font-size:19.5px}
+:root[data-width="narrow"]{--col:36rem;--col-wide:56rem}
+:root[data-width="wide"]{--col:58rem;--col-wide:92rem}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);line-height:var(--lh)}
+:root[data-font="dyslexic"] body{word-spacing:.06em}
+main{max-width:var(--col);margin:0 auto;padding:2.5rem 1.25rem 5rem}
+main.wide{max-width:var(--col-wide)}
+h1{font-size:1.9rem;line-height:1.2;margin:0 0 .75rem;font-weight:700}
+h2{font-size:1.3rem;margin:2.25rem 0 .75rem;font-weight:700}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem;font-weight:700}
+p{margin:0 0 1rem}
+p.lead{font-size:1.12rem;color:var(--ink-soft)}
+a{color:var(--accent)}
+small,.muted{color:var(--ink-soft)}
+hr{border:0;border-top:1px solid var(--rule);margin:2rem 0}
+button,.btn{font:inherit;font-size:1rem;padding:.6rem 1.1rem;border-radius:.4rem;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer;text-decoration:none;display:inline-block;line-height:1.3}
+button.quiet,.btn.quiet{background:transparent;color:var(--accent)}
+button.small{padding:.3rem .7rem;font-size:.9rem}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,label.opt:focus-within,summary:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+input[type=text],input[type=url],input[type=number],select,textarea{font:inherit;font-size:1rem;padding:.5rem .65rem;border:1.5px solid var(--rule);border-radius:.4rem;background:var(--field);color:var(--ink);max-width:100%}
+input[type=text],input[type=url],textarea{width:100%}
+label.check{display:flex;gap:.6rem;align-items:flex-start;padding:.35rem 0;cursor:pointer}
+label.check input[type=checkbox],label.check input[type=radio]{margin-top:.3rem;width:1.05rem;height:1.05rem;flex:none}
+fieldset{border:1px solid var(--rule);border-radius:.5rem;padding:.75rem 1rem 1rem;margin:0 0 1.25rem}
+legend{padding:0 .4rem;font-weight:700}
+.topic-block{margin:0 0 1rem}
+.topic-block .skills{padding-left:1.7rem}
+.notice{background:var(--wash);border-left:4px solid var(--accent);padding:.75rem 1rem;border-radius:0 .4rem .4rem 0;margin:1rem 0}
+.notice.bad{border-color:var(--bad);background:var(--bad-wash)}
+.notice.good{border-color:var(--good);background:var(--good-wash)}
+code,.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em}
+.urlbox{display:block;width:100%;padding:.75rem;border:1.5px solid var(--rule);border-radius:.4rem;background:var(--field);word-break:break-all;margin:.5rem 0}
+.tier{padding:.05rem .4rem;border-radius:.3rem;font-size:.8em;font-family:var(--font-sans)}
+.tier.t1{background:var(--wash)} .tier.t2{background:var(--good-wash)} .tier.t3{background:var(--bad-wash)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:1.5rem;align-items:start}
+.chart{width:100%;height:auto;display:block;margin:.25rem 0 1rem;font-family:var(--font-sans)}
+.band{font-weight:700}
+details.card{border:1px solid var(--rule);border-radius:.5rem;padding:.5rem .9rem;margin:.5rem 0}
+details.card[open]{padding-bottom:1rem}
+details.card .chart{max-width:420px}
+.steps{list-style:none;counter-reset:s;padding:0;margin:1rem 0}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2.2rem 1fr;gap:.6rem;padding:.6rem 0;border-bottom:1px solid var(--rule)}
+.steps li::before{content:counter(s);font-weight:700;color:var(--accent);font-size:1.3rem;line-height:1.2}
+/* ---- the sitting ---- */
+.topbar{position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--rule);padding:.6rem 0;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;z-index:2}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.timer.low{color:var(--bad)}
+.saved{font-size:.85rem;color:var(--ink-soft);font-family:var(--font-sans)}
+.item{padding:1.5rem 0 1.75rem;border-bottom:1px solid var(--rule)}
+.item:last-of-type{border-bottom:0}
+.item .num{color:var(--ink-soft);margin-bottom:.35rem;font-family:var(--font-sans);font-size:.95rem}
+.stem{font-size:1.28rem;line-height:1.45;margin:0 0 1rem}
+.stem .katex{font-size:1.02em}
+.plot{width:100%;max-width:280px;height:auto;display:block;margin:.5rem 0 1rem;font-family:var(--font-sans)}
+.opts{display:grid;gap:.5rem;margin:0}
+.opts.figs{grid-template-columns:repeat(auto-fit,minmax(11rem,1fr))}
+.opts.figs .opt.idk{grid-column:1/-1;justify-content:center}
+label.opt{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1.5px solid var(--rule);border-radius:.5rem;background:var(--field);cursor:pointer;font-size:1.08rem}
+label.opt input{width:1.15rem;height:1.15rem;flex:none;margin:0}
+label.opt:has(input:checked){border-color:var(--accent);background:var(--wash)}
+label.opt .katex{font-size:1.05em}
+label.opt .plot{margin:0;max-width:100%}
+label.opt.fig{flex-direction:column;align-items:stretch}
+label.opt.fig .plot{max-width:none}
+label.opt.fig .caption{display:flex;gap:.6rem;align-items:center}
+.opt.idk{color:var(--ink-soft)}
+.conf{margin-top:.75rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;color:var(--ink-soft)}
+.conf button{padding:.3rem .7rem;font-size:.92rem;border-color:var(--rule);background:transparent;color:var(--ink)}
+.conf button.on{border-color:var(--accent);background:var(--wash)}
+.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}
+.progress{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:.4rem}
+.progress div{height:100%;background:var(--accent);transition:width .25s}
+.result-list{list-style:none;padding:0;margin:0}
+.result-list li{padding:.6rem 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1.6rem 1fr auto;gap:.6rem;align-items:baseline}
+.mark{font-weight:700}
+.mark.ok{color:var(--good)}.mark.no{color:var(--bad)}.mark.skip{color:var(--ink-soft)}
+/* ---- analysis ---- */
+table{border-collapse:collapse;width:100%;font-size:.95rem;margin:.5rem 0 1.5rem}
+th,td{text-align:left;padding:.45rem .55rem;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:700}
+.scroll{overflow-x:auto}
+.heat td.c{text-align:center;font-variant-numeric:tabular-nums;min-width:2.6rem}
+.heat th.rot{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:400;white-space:nowrap;padding:.3rem;font-family:var(--font-sans);font-size:.85rem}
+td.c{text-align:center}
+.tag{display:inline-block;padding:.1rem .45rem;border-radius:.3rem;background:var(--wash);font-size:.9em;margin:.1rem .2rem .1rem 0}
+details{margin:.5rem 0}
+summary{cursor:pointer}
+/* ---- display settings ---- */
+.prefs-toggle{position:fixed;top:.6rem;right:.6rem;z-index:5;padding:.35rem .7rem;font-size:.85rem;font-family:var(--font-sans);border-color:var(--rule);background:var(--paper);color:var(--ink-soft)}
+.prefs{position:fixed;top:2.9rem;right:.6rem;z-index:5;width:min(20rem,calc(100vw - 1.2rem));background:var(--field);border:1px solid var(--rule);border-radius:.6rem;padding:1rem;box-shadow:0 8px 24px rgba(0,0,0,.12);font-family:var(--font-sans);font-size:.95rem}
+.prefs[hidden]{display:none}
+.prefs label{display:grid;grid-template-columns:7.5rem 1fr;gap:.5rem;align-items:center;margin:.4rem 0}
+.prefs select{padding:.3rem .5rem;font-size:.92rem}
+.prefs .row{margin-top:.6rem;justify-content:space-between}
+@media (prefers-reduced-motion:reduce){.progress div{transition:none}}
+@media (max-width:600px){html{font-size:16px} :root[data-size="large"]{font-size:18px} main{padding:3rem 1rem 4rem} .stem{font-size:1.15rem} .prefs label{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<button class="prefs-toggle" id="prefsToggle" aria-expanded="false" aria-controls="prefs">Display</button>
+<div class="prefs" id="prefs" hidden>
+  <strong>Display settings</strong>
+  <label>Appearance <select data-pref="theme"><option value="">Match device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+  <label>Colours <select data-pref="palette"><option value="">Navy and burnt orange</option><option value="slate">Slate and teal</option></select></label>
+  <label>Font <select data-pref="font"><option value="">Serif</option><option value="sans">Sans-serif</option><option value="dyslexic">OpenDyslexic</option></select></label>
+  <label>Text size <select data-pref="size"><option value="small">Smaller</option><option value="">Normal</option><option value="large">Larger</option></select></label>
+  <label>Column width <select data-pref="width"><option value="narrow">Narrow</option><option value="">Normal</option><option value="wide">Wide</option></select></label>
+  <div class="row"><small>Saved on this device only.</small><button class="quiet small" id="prefsReset">Reset</button></div>
+</div>
+<main id="app"></main>
+<script>
+/* ---- display settings, shared by every dewmath page ---- */
+(function(){
+  const KEY = "dewmath:display", h = document.documentElement, panel = document.getElementById("prefs"), toggle = document.getElementById("prefsToggle");
+  if(!panel) return;
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){ return {}; } };
+  const apply = p => { ["theme","palette","font","size","width"].forEach(k => { if(p[k]) h.setAttribute("data-" + k, p[k]); else h.removeAttribute("data-" + k); }); panel.querySelectorAll("[data-pref]").forEach(s => s.value = p[s.dataset.pref] || ""); };
+  apply(load());
+  panel.querySelectorAll("[data-pref]").forEach(s => s.addEventListener("change", () => { const p = load(); if(s.value) p[s.dataset.pref] = s.value; else delete p[s.dataset.pref]; try { localStorage.setItem(KEY, JSON.stringify(p)); } catch(e){} apply(p); }));
+  document.getElementById("prefsReset").addEventListener("click", () => { try { localStorage.removeItem(KEY); } catch(e){} apply({}); });
+  toggle.addEventListener("click", () => { const open = panel.hidden; panel.hidden = !open; toggle.setAttribute("aria-expanded", String(open)); });
+  document.addEventListener("click", e => { if(!panel.hidden && !panel.contains(e.target) && e.target !== toggle){ panel.hidden = true; toggle.setAttribute("aria-expanded", "false"); } });
+})();
+/* ==========================================================================
+   ITEM BANK (v2)
+   To add an item, append it to ITEMS. To add a skill, append it to SKILLS and
+   never reorder: a skill's position is its bit in the share code.
+
+   Skill fields:  id, topic, name, tier (1 foundation, 2 core, 3 advanced), mod ("M", "C" or "MC")
+   Item fields:   id, skill, plain, tech, fig?, opts (one ok:1, wrong ones carry e:"tag")
+   ========================================================================== */
+const BANK_VERSION = "2026-09-18.2";
+
+const TOPICS = [
+  {id:"num", name:"Number, fractions and percentages"},
+  {id:"ind", name:"Indices, roots and logarithms"},
+  {id:"alg", name:"Algebraic expressions"},
+  {id:"eqn", name:"Equations and formulae"},
+  {id:"gra", name:"Graphs and functions"},
+  {id:"geo", name:"Geometry and trigonometry"},
+  {id:"dis", name:"Sets, logic and number systems"},
+  {id:"seq", name:"Sequences, notation and algorithms"},
+  {id:"prb", name:"Counting, probability and statistics"},
+  {id:"cal", name:"Limits and differentiation"}
+];
+const TIERS = {1:"Foundation", 2:"Core", 3:"Advanced"};
+
+const SKILLS = [
+  {id:"num-ord",  topic:"num", name:"Order of operations",                        tier:1, mod:"MC"},
+  {id:"num-neg",  topic:"num", name:"Negative numbers",                            tier:1, mod:"MC"},
+  {id:"frac-add", topic:"num", name:"Adding and subtracting fractions",            tier:1, mod:"MC"},
+  {id:"frac-mul", topic:"num", name:"Multiplying and dividing fractions",          tier:1, mod:"MC"},
+  {id:"frac-conv",topic:"num", name:"Fractions, decimals and percentages",         tier:1, mod:"MC"},
+  {id:"pct",      topic:"num", name:"Percentage calculations",                     tier:1, mod:"MC"},
+  {id:"ind-laws", topic:"ind", name:"Laws of indices",                             tier:2, mod:"MC"},
+  {id:"ind-neg",  topic:"ind", name:"Negative indices",                            tier:2, mod:"MC"},
+  {id:"ind-frac", topic:"ind", name:"Fractional indices",                          tier:2, mod:"M"},
+  {id:"ind-zero", topic:"ind", name:"Zero index and scientific notation",          tier:1, mod:"MC"},
+  {id:"roots",    topic:"ind", name:"Square roots",                                tier:2, mod:"M"},
+  {id:"log-def",  topic:"ind", name:"Meaning of a logarithm",                      tier:2, mod:"M"},
+  {id:"log-laws", topic:"ind", name:"Laws of logarithms",                          tier:3, mod:"M"},
+  {id:"alg-like", topic:"alg", name:"Collecting like terms",                       tier:1, mod:"MC"},
+  {id:"alg-sub",  topic:"alg", name:"Substituting values, including negatives",    tier:1, mod:"MC"},
+  {id:"alg-exp",  topic:"alg", name:"Expanding a single bracket",                  tier:1, mod:"MC"},
+  {id:"alg-sq",   topic:"alg", name:"Squaring a bracket",                          tier:2, mod:"M"},
+  {id:"alg-dbl",  topic:"alg", name:"Multiplying two brackets",                    tier:2, mod:"M"},
+  {id:"alg-fac",  topic:"alg", name:"Factorising",                                 tier:2, mod:"M"},
+  {id:"alg-frac", topic:"alg", name:"Simplifying algebraic fractions",             tier:2, mod:"M"},
+  {id:"eq-lin",   topic:"eqn", name:"Solving linear equations",                    tier:1, mod:"MC"},
+  {id:"eq-trans", topic:"eqn", name:"Transposing a formula",                       tier:2, mod:"MC"},
+  {id:"eq-ineq",  topic:"eqn", name:"Linear inequalities",                         tier:2, mod:"M"},
+  {id:"eq-expr",  topic:"eqn", name:"Expression versus equation",                  tier:1, mod:"MC"},
+  {id:"gr-read",  topic:"gra", name:"Reading values from a graph",                 tier:1, mod:"MC"},
+  {id:"gr-match", topic:"gra", name:"Matching a graph to its equation",            tier:2, mod:"M"},
+  {id:"gr-slope", topic:"gra", name:"Slope and intercept",                         tier:2, mod:"MC"},
+  {id:"gr-fn",    topic:"gra", name:"Function notation",                           tier:2, mod:"MC"},
+  /* ---- added in v2: foundation ---- */
+  {id:"dec-place",topic:"num", name:"Decimals, place value and rounding",          tier:1, mod:"MC"},
+  {id:"frac-equiv",topic:"num",name:"Equivalent fractions and comparing fractions", tier:1, mod:"MC"},
+  {id:"ratio",    topic:"num", name:"Ratio and proportion",                        tier:1, mod:"MC"},
+  {id:"eq-sign",  topic:"eqn", name:"Meaning of the equals sign",                  tier:1, mod:"MC"},
+  {id:"alg-not",  topic:"alg", name:"Reading algebraic notation",                  tier:1, mod:"MC"},
+  {id:"sign-pow", topic:"ind", name:"Signs with powers",                           tier:1, mod:"MC"},
+  {id:"stats-avg",topic:"prb", name:"Mean and median",                             tier:1, mod:"MC"},
+  {id:"estimate", topic:"num", name:"Estimation and units",                        tier:1, mod:"MC"},
+  /* ---- added in v2: advanced ---- */
+  {id:"quad-solve",topic:"eqn",name:"Solving quadratic equations",                 tier:3, mod:"M"},
+  {id:"quad-form",topic:"eqn", name:"Completing the square and the vertex",        tier:3, mod:"M"},
+  {id:"simult",   topic:"eqn", name:"Simultaneous equations",                      tier:3, mod:"MC"},
+  {id:"fn-inv",   topic:"gra", name:"Inverse and composite functions",             tier:3, mod:"MC"},
+  {id:"exp-eq",   topic:"ind", name:"Exponential and logarithmic equations",       tier:3, mod:"M"},
+  {id:"pyth",     topic:"geo", name:"Pythagoras and right-triangle ratios",        tier:3, mod:"M"},
+  {id:"trig-units",topic:"geo",name:"Degrees, radians and exact values",           tier:3, mod:"M"},
+  {id:"coord",    topic:"geo", name:"Distance, midpoint and perpendicular lines",  tier:3, mod:"MC"},
+  {id:"sets",     topic:"dis", name:"Set operations and cardinality",              tier:3, mod:"MC"},
+  {id:"logic",    topic:"dis", name:"Truth tables and De Morgan's laws",           tier:3, mod:"MC"},
+  {id:"binary",   topic:"dis", name:"Binary and hexadecimal",                      tier:3, mod:"MC"},
+  {id:"sequence", topic:"seq", name:"Sequences and recurrence",                    tier:3, mod:"MC"},
+  {id:"sigma",    topic:"seq", name:"Sigma and pi notation",                       tier:3, mod:"MC"},
+  {id:"algo",     topic:"seq", name:"Searching and sorting",                       tier:3, mod:"MC"},
+  {id:"count",    topic:"prb", name:"Counting, permutations and combinations",     tier:3, mod:"MC"},
+  {id:"prob",     topic:"prb", name:"Probability",                                 tier:3, mod:"MC"},
+  {id:"stats-spread",topic:"prb",name:"Spread, skew and data types",               tier:3, mod:"MC"},
+  {id:"deriv",    topic:"cal", name:"Differentiation",                             tier:3, mod:"M"},
+  {id:"limit",    topic:"cal", name:"Limits",                                      tier:3, mod:"M"},
+  {id:"matrix",   topic:"seq", name:"Matrices",                                    tier:3, mod:"MC"}
+];
+
+const ERRORS = {
+  "ord-left-to-right":"Works left to right, ignoring that multiplication comes before addition",
+  "ord-op-confusion":"Treats × as + (or loses an operation)",
+  "ord-power-scope":"Applies the power to the wrong part (e.g. squares the product instead of the base)",
+  "ord-power-ignored":"Ignores the power entirely",
+  "ord-div-mul-order":"Does multiplication before division instead of left to right",
+  "neg-magnitudes":"Subtracts magnitudes instead of moving further negative",
+  "neg-sign-flip":"Gets the magnitude right but the sign wrong",
+  "neg-sign-dropped":"Drops the negative sign entirely",
+  "neg-product-sign":"Thinks negative × negative is negative",
+  "neg-mult-as-add":"Adds the numbers instead of multiplying",
+  "neg-double-minus":"Mishandles subtracting a negative",
+  "frac-add-across":"Adds (or subtracts) numerators and denominators separately",
+  "frac-common-den-wrong-num":"Finds a common denominator but does not scale the numerators",
+  "frac-num-only":"Combines numerators and leaves the denominator unchanged, without a common denominator",
+  "frac-den-multiplied":"Multiplies denominators but adds the original numerators",
+  "frac-mul-cross":"Cross-multiplies when it should multiply straight across",
+  "frac-mul-added":"Adds the fractions instead of multiplying",
+  "frac-mul-num-only":"Multiplies the numerators but does not multiply the denominators",
+  "frac-div-multiplied":"Multiplies instead of dividing (no reciprocal)",
+  "frac-div-wrong-flip":"Inverts the first fraction instead of the second",
+  "frac-div-inverted-answer":"Gets the reciprocal of the correct answer",
+  "frac-add-one-to-both":"Adds the same number to top and bottom to make an equivalent fraction",
+  "frac-scale-num-only":"Scales the numerator but not the denominator",
+  "frac-scale-den-only":"Scales the denominator but not the numerator",
+  "frac-bigger-numbers-bigger":"Thinks the fraction with bigger numbers is bigger",
+  "frac-larger-den-larger":"Thinks a larger denominator means a larger fraction",
+  "frac-gap-rule":"Judges fractions by the gap between numerator and denominator",
+  "dec-place-value":"Misreads decimal place value",
+  "dec-digits-as-fraction":"Turns the decimal digits into a fraction without regard to place value",
+  "dec-approximation":"Substitutes a nearby familiar fraction",
+  "dec-longer-is-larger":"Thinks a decimal with more digits is larger",
+  "dec-equal":"Treats two different decimals as equal",
+  "dec-ignore-point":"Ignores the decimal point",
+  "round-truncate":"Truncates instead of rounding",
+  "round-wrong-place":"Rounds to the wrong number of places",
+  "round-to-integer":"Rounds to a whole number instead of the requested place",
+  "pct-not-scaled":"Converts to a decimal but forgets to multiply by 100",
+  "pct-halved":"Uses the numerator as tens (2/5 read as 20%)",
+  "pct-inverted":"Inverts the fraction before converting",
+  "pct-subtracted":"Subtracts the percentage as a number instead of finding a fraction of the amount",
+  "pct-decimal-slip":"Correct method but the decimal point is misplaced",
+  "pct-divided":"Divides by the percentage instead of multiplying by it as a fraction",
+  "pct-reverse-multiplied":"Reverses a discount by multiplying the sale price by (1 + rate) instead of dividing by (1 − rate)",
+  "pct-reverse-added":"Adds the discount percentage of the sale price back on",
+  "pct-as-amount":"Treats the percentage as a number of euro",
+  "pct-found-not-added":"Finds the percentage but forgets to add it to the original",
+  "pct-decimal":"Adds the decimal form of the percentage instead of the amount",
+  "ratio-divide-by-part":"Divides the total by one part of the ratio instead of the sum of parts",
+  "ratio-half":"Shares equally regardless of the ratio",
+  "ratio-parts-only":"Finds the value of one part and stops",
+  "ratio-doubled":"Doubles instead of scaling by the correct factor",
+  "ratio-additive":"Adds the same amount as the difference in people, instead of scaling",
+  "ratio-inverted":"Scales the wrong way (divides instead of multiplies)",
+  "est-magnitude":"Estimate is out by a factor of ten",
+  "est-added":"Adds instead of multiplies when estimating",
+  "unit-wrong-direction":"Converts units the wrong way",
+  "unit-place":"Unit conversion out by a factor of ten",
+  "unit-concatenate":"Writes the two unit values side by side instead of converting",
+  "eq-sign-as-answer":"Reads the equals sign as \"the answer is\" rather than as a balance",
+  "eq-sign-add-all":"Adds every number in the statement",
+  "eq-sign-chained":"Chains equals signs across steps so the statement is untrue",
+  "not-repeated-add-as-power":"Writes repeated addition as a power (n + n + n = n³)",
+  "not-add-count":"Reads 3n as 3 + n",
+  "not-juxtaposition-digits":"Reads 3x with x = 5 as the digits 35",
+  "not-double-vs-square":"Confuses 2x with x²",
+  "not-power":"Confuses multiplication with raising to a power",
+  "sign-square-includes-minus":"Squares the minus sign along with the number in −3²",
+  "sign-bracket-ignored":"Ignores brackets round a negative base",
+  "sign-odd-power-positive":"Thinks an odd power of a negative is positive",
+  "ind-mult-exponents":"Multiplies exponents when multiplying powers of the same base",
+  "ind-base-doubled":"Adds the exponents correctly but also doubles the coefficient",
+  "ind-base-multiplied":"Multiplies the bases as well as adding the exponents",
+  "ind-quotient-divided":"Divides exponents instead of subtracting them",
+  "ind-quotient-added":"Adds exponents when dividing",
+  "ind-cancelled-base":"Cancels the base and keeps a number",
+  "ind-coeff-not-raised":"Raises the variable to the power but not the coefficient",
+  "ind-power-added":"Adds exponents instead of multiplying under a power of a power",
+  "ind-coeff-multiplied":"Multiplies the coefficient by the power instead of raising it",
+  "ind-neg-makes-negative":"Reads a negative exponent as a negative answer",
+  "ind-neg-multiplied":"Multiplies base by exponent",
+  "ind-neg-sign-kept":"Finds the reciprocal but also makes the answer negative",
+  "ind-neg-outside":"Puts the minus sign on the term instead of the exponent",
+  "ind-reciprocal-as-root":"Confuses a reciprocal with a root",
+  "ind-frac-divided":"Divides the base by the denominator instead of taking a root",
+  "ind-frac-as-reciprocal":"Confuses a fractional exponent with a reciprocal",
+  "ind-frac-wrong-root":"Takes the wrong root",
+  "ind-frac-multiplied":"Multiplies base by the fraction",
+  "ind-frac-power-ignored":"Takes the root but ignores the numerator",
+  "ind-frac-root-ignored":"Applies the numerator but ignores the root",
+  "ind-zero-is-zero":"Thinks anything to the power zero is zero",
+  "ind-zero-is-base":"Thinks anything to the power zero is the base",
+  "ind-zero-undefined":"Thinks a zero exponent is undefined",
+  "sci-off-by-one":"Moves the decimal point the wrong number of places",
+  "sci-multiplied-exponent":"Multiplies the mantissa by the exponent",
+  "sci-direction":"Moves the decimal point the wrong way",
+  "root-over-sum":"Splits a square root over an addition (√(a+b) = √a + √b)",
+  "root-halved":"Halves instead of taking the square root",
+  "root-ignored":"Ignores the root",
+  "root-squared":"Squares instead of taking the root",
+  "root-positive-only":"Gives only the positive solution of x² = k",
+  "root-cannot-simplify":"Does not see that an expression cannot be simplified",
+  "log-as-quotient":"Divides the number by the base",
+  "log-as-product":"Multiplies the number by the base",
+  "log-as-power":"Raises the number to the base",
+  "log-multiplied":"Multiplies base by the log value instead of raising",
+  "log-inverted":"Uses a negative exponent or reciprocal by mistake",
+  "log-sum-inside":"Thinks log a + log b = log(a + b)",
+  "log-product-of-logs":"Thinks log(ab) = log a × log b",
+  "log-power-outside":"Puts the power on the log instead of bringing it down",
+  "log-power-inside":"Moves the exponent inside as a multiplier of x",
+  "log-1-is-1":"Thinks log 1 = 1",
+  "log-1-undefined":"Thinks log 1 is undefined",
+  "log-neg-lost":"Loses the negative sign of a logarithm of a fraction",
+  "log-diff-inside":"Thinks log a − log b = log(a − b)",
+  "log-quotient-of-logs":"Thinks log(a/b) = log a ÷ log b",
+  "exp-divided":"Solves 2^x = 32 by dividing 32 by 2",
+  "exp-off-by-one":"Off by one in the exponent",
+  "exp-subtracted":"Subtracts the base from the result",
+  "exp-rounded-badly":"Rounds to the nearest whole power",
+  "exp-linear-interpolation":"Interpolates linearly between powers",
+  "like-all-combined":"Combines unlike terms into one term",
+  "like-sign-ignored":"Ignores a subtraction sign when collecting",
+  "like-wrong-pair":"Combines a term with the wrong partner",
+  "like-powers-merged":"Combines terms with different powers of the same letter",
+  "sub-neg-squared-negative":"Squares a negative and gets a negative",
+  "sub-sign-dropped":"Drops the sign of a negative value when substituting",
+  "sub-sign-slip":"Sign error in the final arithmetic",
+  "sub-double-negative":"Mishandles subtracting a negative",
+  "sub-term-ignored":"Leaves out a term",
+  "exp-partial":"Multiplies only the first term inside the bracket",
+  "exp-terms-merged":"Adds instead of multiplying, merging terms",
+  "exp-neg-not-distributed":"Distributes a negative to the first term only",
+  "exp-sign-flipped":"Flips both signs incorrectly",
+  "sq-termwise":"Squares each term separately: (a+b)² = a² + b²",
+  "sq-middle-not-doubled":"Finds the cross term but does not double it",
+  "sq-constant-doubled":"Doubles the constant instead of squaring it",
+  "sq-coeff-not-squared":"Squares the variable but not its coefficient",
+  "sq-sign":"Gets the sign of the middle term wrong",
+  "dbl-outer-inner-missed":"Multiplies first and last terms only",
+  "dbl-sign":"Sign error in the middle term",
+  "dbl-middle-sign":"Subtracts where it should add when combining the middle terms",
+  "fac-partial-hcf":"Takes out a factor that is not the highest common factor",
+  "fac-merged":"Multiplies the terms together instead of factorising",
+  "fac-product-only":"Chooses factors whose product is right but whose sum is wrong",
+  "fac-coefficients-copied":"Copies the coefficients directly into the brackets",
+  "fac-sign":"Sign error in one factor",
+  "afrac-partial-cancel":"Cancels the denominator with only one term of the numerator",
+  "afrac-terms-merged":"Merges unlike terms in the numerator before dividing",
+  "afrac-termwise-cancel":"Cancels matching letters or numbers term by term",
+  "afrac-not-factorised":"Does not factorise before cancelling",
+  "afrac-single-term-cancel":"Cancels one letter from a sum",
+  "afrac-reciprocal-sum":"Thinks 1/x + 1/y = 1/(x+y)",
+  "afrac-double-num":"Doubles the numerator when adding two unit fractions",
+  "lin-final-division-skipped":"Stops after isolating the x-term",
+  "lin-wrong-inverse":"Uses the wrong inverse operation (subtracts instead of divides, etc.)",
+  "lin-multiplied":"Multiplies instead of dividing in the last step",
+  "lin-x-terms-added":"Adds the x-terms instead of subtracting when collecting to one side",
+  "lin-constant-sign":"Sign error when moving a constant across",
+  "lin-both-added":"Adds both x-terms and constants",
+  "lin-bracket-ignored":"Ignores the bracket when solving",
+  "trans-order":"Reverses the order of undoing operations",
+  "trans-sign":"Sign error when moving a term across",
+  "trans-wrong-inverse":"Uses the wrong inverse operation",
+  "trans-root-partial":"Takes the root of only part of the expression",
+  "trans-square-ignored":"Ignores the square when making the variable the subject",
+  "ineq-not-flipped":"Divides by a negative without reversing the inequality",
+  "ineq-sign-dropped":"Loses the negative sign",
+  "ineq-both":"Loses the sign and does not reverse",
+  "expr-eq-confused":"Cannot distinguish an expression from an equation",
+  "gr-axes-swapped":"Reads the axes the wrong way round",
+  "gr-off-by-one":"Reads a neighbouring grid line",
+  "gr-identity":"Repeats the given x value",
+  "gr-y-intercept":"Reads the y-intercept when asked for x-intercepts",
+  "gr-vertex":"Reads the turning point instead of the roots",
+  "gr-one-root":"Finds one root and misses the other",
+  "gr-match-sign":"Confuses a graph with its reflection",
+  "gr-match-degree":"Confuses linear, quadratic and cubic shapes",
+  "gr-match-slope-sign":"Reads a negative slope as positive",
+  "gr-match-intercept-sign":"Gets the sign of the intercept wrong",
+  "gr-match-constant":"Confuses a sloped line with a horizontal line",
+  "gr-steeper-is-lower":"Reads the steeper line as the smaller slope",
+  "slope-intercept-confused":"Swaps slope and intercept",
+  "slope-term-not-coefficient":"Gives the term rather than the coefficient",
+  "slope-inverted":"Uses run over rise",
+  "slope-run-ignored":"Uses the change in y alone",
+  "slope-differences-wrong":"Subtracts the wrong pairs of coordinates",
+  "fn-multiplied-only":"Multiplies but forgets the constant",
+  "fn-notation-misread":"Reads f(3) as a product or misplaces the substitution",
+  "fn-x-times-f":"Treats f(x) as f multiplied by x",
+  "fn-neg-squared-negative":"Squares a negative and gets a negative",
+  "fn-sign-slip":"Sign error in the arithmetic",
+  "fn-square-as-double":"Doubles instead of squaring",
+  "stats-median-for-mean":"Gives the median when asked for the mean",
+  "stats-sum-not-divided":"Adds the values but does not divide",
+  "stats-max-for-mean":"Gives the largest value as the mean",
+  "stats-median-unsorted":"Takes the middle of the unsorted list",
+  "stats-mean-for-median":"Gives the mean when asked for the median",
+  "stats-off-by-one":"Picks a neighbour of the middle value",
+  "stats-mean-with-outlier":"Prefers the mean even when an outlier distorts it",
+  "stats-range-as-average":"Confuses the range with an average",
+  "stats-median-distrust":"Assumes a mean–median gap means a calculation error",
+  "stats-mean-always-larger":"Believes the mean is always larger than the median",
+  "stats-sd-shifts":"Thinks adding a constant changes the spread",
+  "stats-swapped":"Swaps the effect on mean and standard deviation",
+  "data-discrete-continuous":"Confuses discrete and continuous data",
+  "data-cat-num":"Confuses categorical and numerical data",
+  "quad-sign-roots":"Gets the signs of both roots wrong",
+  "quad-coeff-ignored":"Ignores the leading coefficient",
+  "quad-formula-missing-4":"Uses b² − ac instead of b² − 4ac",
+  "quad-no-complex":"Believes a negative discriminant means no solution at all",
+  "quad-root-of-negative":"Takes √(−4) as ±2",
+  "quad-linear-treatment":"Treats the quadratic as if it were linear",
+  "cs-constant-not-adjusted":"Keeps the original constant after completing the square",
+  "cs-coefficient-not-halved":"Does not halve the coefficient of x",
+  "cs-added-instead":"Adds the square of half the coefficient instead of subtracting",
+  "cs-vertex-sign":"Gets the sign of a vertex coordinate wrong",
+  "cs-vertex-swapped":"Swaps the vertex coordinates",
+  "sim-swapped":"Swaps the values of x and y",
+  "sim-back-sub-error":"Sign error when substituting back",
+  "sim-sub-into-wrong":"Rearranges the second equation incorrectly when substituting",
+  "sim-no-check":"Does not notice the equations are multiples of each other",
+  "sim-parallel-confused":"Confuses dependent equations with parallel (inconsistent) ones",
+  "sim-two":"Expects two solutions from two equations",
+  "inv-reciprocal":"Confuses the inverse function with the reciprocal",
+  "inv-sign-flip":"Changes signs instead of undoing the operations",
+  "comp-order":"Applies the functions in the wrong order",
+  "comp-g-only":"Applies only the inner function",
+  "comp-f-only":"Applies only the outer function",
+  "pyth-added-legs":"Adds the two legs to get the hypotenuse",
+  "pyth-root-not-taken":"Forgets to take the square root at the end",
+  "pyth-subtracted":"Subtracts the squares when finding the hypotenuse",
+  "pyth-added-when-should-subtract":"Adds the squares when finding a leg",
+  "pyth-subtracted-lengths":"Subtracts the lengths instead of the squares",
+  "trig-cos-for-sin":"Uses adjacent over hypotenuse for sine",
+  "trig-tan-for-sin":"Uses opposite over adjacent for sine",
+  "trig-inverted":"Inverts the ratio",
+  "rad-180-confused":"Confuses π radians with 90°",
+  "rad-multiplied":"Multiplies the degrees by π",
+  "rad-full-turn":"Confuses 2π with a quarter turn",
+  "trig-sin-cos-swapped":"Swaps the exact values of sine and cosine",
+  "trig-45-confused":"Uses a 45° value for a 30° or 60° angle",
+  "trig-ratio-of-angles":"Treats sin θ as a ratio of angles",
+  "trig-tan-zero":"Thinks tan 45° = 0",
+  "coord-added-differences":"Adds the coordinate differences instead of using Pythagoras",
+  "coord-root-of-sum":"Takes the root of the sum of the differences (not squared)",
+  "coord-sum-not-halved":"Adds the coordinates but does not halve",
+  "coord-difference":"Subtracts the coordinates instead of averaging",
+  "coord-swapped":"Swaps the midpoint coordinates",
+  "perp-not-negated":"Takes the reciprocal but does not change the sign",
+  "perp-not-reciprocal":"Changes the sign but does not take the reciprocal",
+  "perp-parallel":"Gives the parallel slope",
+  "set-union-for-intersection":"Gives the union when asked for the intersection",
+  "set-symmetric-difference":"Gives the elements in exactly one set",
+  "set-difference":"Gives A minus B",
+  "set-elements-as-subsets":"Counts elements instead of subsets",
+  "set-permutation":"Counts arrangements instead of subsets",
+  "set-empty-forgotten":"Forgets the empty set (or the whole set)",
+  "set-added":"Adds cardinalities instead of multiplying for a Cartesian product",
+  "set-min":"Takes the smaller cardinality",
+  "set-max":"Takes the larger cardinality",
+  "logic-and-or-confused":"Confuses AND with OR",
+  "logic-not-ignored":"Ignores the NOT",
+  "logic-demorgan-and-kept":"Negates the parts but keeps the AND",
+  "logic-not-dropped":"Drops the negation",
+  "logic-not-partial":"Negates only one part",
+  "logic-xor-as-and":"Treats XOR as AND",
+  "logic-xor-as-or":"Treats XOR as inclusive OR",
+  "logic-xor-as-nor":"Treats XOR as NOR",
+  "bin-reversed":"Reads the binary digits in the wrong order",
+  "bin-digits-as-decimal":"Reads the binary digits as a decimal number",
+  "bin-count-ones":"Counts the ones instead of using place value",
+  "bin-place-slip":"Place value slip in conversion",
+  "bin-decimal-add":"Adds binary numbers as if they were decimal",
+  "bin-carry-dropped":"Drops a carry in binary addition",
+  "bin-answered-in-decimal":"Gives the right value in the wrong base",
+  "hex-concatenated":"Writes the digit values side by side",
+  "hex-second-digit-ignored":"Ignores the second hex digit",
+  "hex-decimal-weight":"Uses 10 as the base instead of 16",
+  "seq-off-by-one":"Off by one term in a recurrence",
+  "seq-additive":"Treats a multiplicative recurrence as additive",
+  "seq-difference-as-add":"Writes n + d for a sequence with common difference d",
+  "seq-first-term-coefficient":"Uses the first term as the coefficient of n",
+  "seq-zeroth-term":"Adds the first term instead of the zeroth term",
+  "seq-closed-form-as-recursive":"Confuses a closed formula with a recursive one",
+  "seq-arith-as-recursive":"Thinks a constant difference is what makes a definition recursive",
+  "sigma-not-squared":"Forgets to square the terms",
+  "sigma-squared-sum":"Squares the sum instead of summing the squares",
+  "sigma-last-term-only":"Gives the last term instead of the sum",
+  "sigma-coefficient-ignored":"Ignores the coefficient inside the sum",
+  "sigma-first-term":"Gives the first term instead of the sum",
+  "sigma-times-n":"Multiplies the last term by n",
+  "pi-summed":"Adds instead of multiplies for a product",
+  "pi-last-term-only":"Gives the last factor instead of the product",
+  "algo-even-length":"Thinks binary search needs an even-length list",
+  "algo-target-middle":"Thinks binary search needs the target in the middle",
+  "algo-no-duplicates":"Thinks binary search forbids duplicates",
+  "algo-sorted-in-one-pass":"Expects bubble sort to finish in one pass",
+  "algo-descending":"Sorts in the wrong direction",
+  "algo-one-swap-only":"Performs only the first swap of a pass",
+  "algo-linear-faster":"Thinks linear search beats binary search on a sorted list",
+  "algo-same-speed":"Thinks the two searches take the same time",
+  "fact-summed":"Adds 1 to n instead of multiplying",
+  "fact-squared":"Squares n for n!",
+  "fact-ignored":"Ignores the factorial",
+  "comb-order-counted":"Counts ordered selections when order does not matter",
+  "comb-squared":"Squares n for a selection",
+  "comb-added":"Adds n and r",
+  "count-added":"Adds the choices instead of multiplying",
+  "count-no-repeats":"Disallows repeats when they are allowed",
+  "count-wrong-base":"Uses the number of positions as the number of choices",
+  "prob-outcomes-not-equally-likely":"Treats unequal outcomes as equally likely",
+  "prob-added":"Adds probabilities of independent events instead of multiplying",
+  "prob-three-outcomes":"Counts HH, HT, TT as three equally likely outcomes",
+  "prob-sums-equally-likely":"Treats all dice totals as equally likely",
+  "prob-one-combination":"Counts only one way of making the total",
+  "prob-value-as-count":"Uses the total as the number of ways",
+  "prob-excl-indep-confused":"Confuses mutually exclusive with independent",
+  "prob-both":"Thinks events can be both mutually exclusive and independent here",
+  "prob-neither":"Recognises neither property",
+  "deriv-power-not-multiplied":"Reduces the power but does not multiply by it",
+  "deriv-power-not-reduced":"Multiplies by the power but does not reduce it",
+  "deriv-double-reduced":"Reduces the power twice",
+  "deriv-constant-kept":"Keeps the constant term after differentiating",
+  "deriv-linear-term-dropped":"Loses the derivative of the linear term",
+  "deriv-value-confused":"Confuses the derivative with the function value",
+  "deriv-integral-confused":"Confuses the derivative with the area under the curve",
+  "deriv-intercept-confused":"Confuses the derivative with an intercept",
+  "limit-numerator-zero":"Substitutes and stops at 0",
+  "limit-zero-over-zero-undefined":"Declares 0/0 undefined without simplifying",
+  "limit-x-value":"Gives the x value instead of the limit",
+  "limit-infinite":"Assumes a limit must be infinite",
+  "limit-dropped-constant":"Drops a constant when substituting",
+  "matrix-identity-add-ignored":"Treats adding the identity as adding nothing",
+  "matrix-scalar-added":"Adds 1 to every entry",
+  "matrix-inner-dims":"Gives the inner dimensions as the product's size",
+  "matrix-multiplied-dims":"Multiplies the dimensions",
+  "matrix-not-defined":"Thinks the product is undefined when the inner dimensions match"
+};
+
+const ITEMS = [
+/* ---------------- number (tier 1) ---------------- */
+{id:"N01",skill:"num-ord",plain:"Work out $3 + 4 \\times 2$.",tech:"Evaluate $3 + 4 \\times 2$.",
+ opts:[{t:"$11$",ok:1},{t:"$14$",e:"ord-left-to-right"},{t:"$9$",e:"ord-op-confusion"},{t:"$24$",e:"ord-op-confusion"}]},
+{id:"N02",skill:"num-ord",plain:"Work out $20 - 2^2 \\times 3$.",tech:"Evaluate $20 - 2^2 \\times 3$.",
+ opts:[{t:"$8$",ok:1},{t:"$48$",e:"ord-left-to-right"},{t:"$-16$",e:"ord-power-scope"},{t:"$14$",e:"ord-power-ignored"}]},
+{id:"N13",skill:"num-ord",plain:"Work out $8 \\div 2 \\times 4$.",tech:"Evaluate $8 \\div 2 \\times 4$.",
+ opts:[{t:"$16$",ok:1},{t:"$1$",e:"ord-div-mul-order"},{t:"$32$",e:"ord-op-confusion"},{t:"$4$",e:"ord-op-confusion"}]},
+{id:"N03",skill:"num-neg",plain:"Work out $-3 - 5$.",tech:"Evaluate $-3 - 5$.",
+ opts:[{t:"$-8$",ok:1},{t:"$-2$",e:"neg-magnitudes"},{t:"$2$",e:"neg-magnitudes"},{t:"$8$",e:"neg-sign-dropped"}]},
+{id:"N04",skill:"num-neg",plain:"Work out $(-4) \\times (-6)$.",tech:"Evaluate $(-4)(-6)$.",
+ opts:[{t:"$24$",ok:1},{t:"$-24$",e:"neg-product-sign"},{t:"$-10$",e:"neg-mult-as-add"},{t:"$10$",e:"neg-mult-as-add"}]},
+{id:"N14",skill:"num-neg",plain:"Work out $4 - (-3)$.",tech:"Evaluate $4 - (-3)$.",
+ opts:[{t:"$7$",ok:1},{t:"$1$",e:"neg-double-minus"},{t:"$-7$",e:"neg-sign-flip"},{t:"$-1$",e:"neg-double-minus"}]},
+{id:"N05",skill:"frac-add",plain:"Add $\\frac{1}{2}$ and $\\frac{1}{3}$.",tech:"Evaluate $\\frac{1}{2} + \\frac{1}{3}$.",
+ opts:[{t:"$\\frac{5}{6}$",ok:1},{t:"$\\frac{2}{5}$",e:"frac-add-across"},{t:"$\\frac{2}{6}$",e:"frac-common-den-wrong-num"},{t:"$\\frac{2}{3}$",e:"frac-num-only"}]},
+{id:"N06",skill:"frac-add",plain:"Take $\\frac{1}{6}$ away from $\\frac{3}{4}$.",tech:"Evaluate $\\frac{3}{4} - \\frac{1}{6}$.",
+ opts:[{t:"$\\frac{7}{12}$",ok:1},{t:"$1$",e:"frac-add-across"},{t:"$\\frac{1}{12}$",e:"frac-common-den-wrong-num"},{t:"$\\frac{1}{3}$",e:"frac-num-only"}]},
+{id:"N15",skill:"frac-add",plain:"Add $\\frac{2}{5}$ and $\\frac{1}{5}$.",tech:"Evaluate $\\frac{2}{5} + \\frac{1}{5}$.",
+ opts:[{t:"$\\frac{3}{5}$",ok:1},{t:"$\\frac{3}{10}$",e:"frac-add-across"},{t:"$\\frac{2}{25}$",e:"frac-mul-added"},{t:"$\\frac{3}{25}$",e:"frac-den-multiplied"}]},
+{id:"N07",skill:"frac-mul",plain:"Multiply $\\frac{2}{3}$ by $\\frac{3}{5}$.",tech:"Evaluate $\\frac{2}{3} \\times \\frac{3}{5}$ in lowest terms.",
+ opts:[{t:"$\\frac{2}{5}$",ok:1},{t:"$\\frac{10}{9}$",e:"frac-mul-cross"},{t:"$\\frac{19}{15}$",e:"frac-mul-added"},{t:"$\\frac{6}{5}$",e:"frac-mul-num-only"}]},
+{id:"N08",skill:"frac-mul",plain:"Divide $\\frac{3}{4}$ by $\\frac{1}{2}$.",tech:"Evaluate $\\frac{3}{4} \\div \\frac{1}{2}$.",
+ opts:[{t:"$\\frac{3}{2}$",ok:1},{t:"$\\frac{3}{8}$",e:"frac-div-multiplied"},{t:"$\\frac{8}{3}$",e:"frac-div-wrong-flip"},{t:"$\\frac{2}{3}$",e:"frac-div-inverted-answer"}]},
+{id:"N16",skill:"frac-mul",plain:"What is half of a half?",tech:"Evaluate $\\frac{1}{2} \\times \\frac{1}{2}$.",
+ opts:[{t:"$\\frac{1}{4}$",ok:1},{t:"$1$",e:"frac-mul-added"},{t:"$\\frac{1}{2}$",e:"frac-mul-num-only"},{t:"$\\frac{2}{4}$",e:"frac-mul-cross"}]},
+{id:"N09",skill:"frac-conv",plain:"Which fraction is the same as $0.375$?",tech:"Express $0.375$ as a fraction in lowest terms.",
+ opts:[{t:"$\\frac{3}{8}$",ok:1},{t:"$\\frac{3}{7}$",e:"dec-digits-as-fraction"},{t:"$\\frac{1}{3}$",e:"dec-approximation"},{t:"$\\frac{375}{100}$",e:"dec-place-value"}]},
+{id:"N10",skill:"frac-conv",plain:"Write $\\frac{2}{5}$ as a percentage.",tech:"Convert $\\frac{2}{5}$ to a percentage.",
+ opts:[{t:"$40\\%$",ok:1},{t:"$20\\%$",e:"pct-halved"},{t:"$0.4\\%$",e:"pct-not-scaled"},{t:"$25\\%$",e:"pct-inverted"}]},
+{id:"N17",skill:"frac-conv",plain:"Write $0.05$ as a percentage.",tech:"Convert $0.05$ to a percentage.",
+ opts:[{t:"$5\\%$",ok:1},{t:"$0.5\\%$",e:"pct-decimal-slip"},{t:"$50\\%$",e:"dec-place-value"},{t:"$0.05\\%$",e:"pct-not-scaled"}]},
+{id:"N11",skill:"pct",plain:"Find $30\\%$ of $80$.",tech:"Calculate $30\\%$ of $80$.",
+ opts:[{t:"$24$",ok:1},{t:"$50$",e:"pct-subtracted"},{t:"$2.4$",e:"pct-decimal-slip"},{t:"$2.67$",e:"pct-divided"}]},
+{id:"N12",skill:"pct",plain:"A jacket costs €60 after a 25% discount. What did it cost before the discount?",tech:"A price is reduced by $25\\%$ to €60. Find the original price.",
+ opts:[{t:"€80",ok:1},{t:"€75",e:"pct-reverse-added"},{t:"€45",e:"pct-subtracted"},{t:"€85",e:"pct-as-amount"}]},
+{id:"N18",skill:"pct",plain:"Increase $40$ by $10\\%$.",tech:"Increase $40$ by $10\\%$.",
+ opts:[{t:"$44$",ok:1},{t:"$50$",e:"pct-as-amount"},{t:"$4$",e:"pct-found-not-added"},{t:"$40.1$",e:"pct-decimal"}]},
+{id:"D01",skill:"dec-place",plain:"Which is larger, $0.7$ or $0.65$?",tech:"Compare $0.7$ and $0.65$.",
+ opts:[{t:"$0.7$",ok:1},{t:"$0.65$",e:"dec-longer-is-larger"},{t:"They are equal",e:"dec-equal"}]},
+{id:"D02",skill:"dec-place",plain:"Round $3.456$ to one decimal place.",tech:"Round $3.456$ to 1 d.p.",
+ opts:[{t:"$3.5$",ok:1},{t:"$3.4$",e:"round-truncate"},{t:"$3.46$",e:"round-wrong-place"},{t:"$3$",e:"round-to-integer"}]},
+{id:"D03",skill:"dec-place",plain:"Which fraction is the same as $0.5$?",tech:"Express $0.5$ as a fraction.",
+ opts:[{t:"$\\frac{1}{2}$",ok:1},{t:"$\\frac{1}{5}$",e:"dec-digits-as-fraction"},{t:"$\\frac{5}{100}$",e:"dec-place-value"},{t:"$5$",e:"dec-ignore-point"}]},
+{id:"FE1",skill:"frac-equiv",plain:"Which fraction is equal to $\\frac{3}{4}$?",tech:"Which fraction is equivalent to $\\frac{3}{4}$?",
+ opts:[{t:"$\\frac{6}{8}$",ok:1},{t:"$\\frac{4}{5}$",e:"frac-add-one-to-both"},{t:"$\\frac{6}{4}$",e:"frac-scale-num-only"},{t:"$\\frac{3}{8}$",e:"frac-scale-den-only"}]},
+{id:"FE2",skill:"frac-equiv",plain:"Which is larger, $\\frac{2}{3}$ or $\\frac{3}{5}$?",tech:"Compare $\\frac{2}{3}$ and $\\frac{3}{5}$.",
+ opts:[{t:"$\\frac{2}{3}$",ok:1},{t:"$\\frac{3}{5}$",e:"frac-bigger-numbers-bigger"},{t:"They are equal",e:"frac-gap-rule"}]},
+{id:"FE3",skill:"frac-equiv",plain:"Which is larger, $\\frac{1}{3}$ or $\\frac{1}{4}$?",tech:"Compare $\\frac{1}{3}$ and $\\frac{1}{4}$.",
+ opts:[{t:"$\\frac{1}{3}$",ok:1},{t:"$\\frac{1}{4}$",e:"frac-larger-den-larger"},{t:"They are equal",e:"frac-gap-rule"}]},
+{id:"R01",skill:"ratio",plain:"Share €120 between two people in the ratio $2:3$. What is the smaller share?",tech:"Divide €120 in the ratio $2:3$ and state the smaller share.",
+ opts:[{t:"€48",ok:1},{t:"€40",e:"ratio-divide-by-part"},{t:"€60",e:"ratio-half"},{t:"€24",e:"ratio-parts-only"}]},
+{id:"R02",skill:"ratio",plain:"A recipe for 4 people uses 300 g of flour. How much flour is needed for 6 people?",tech:"300 g serves 4. Scale the quantity for 6 in direct proportion.",
+ opts:[{t:"450 g",ok:1},{t:"600 g",e:"ratio-doubled"},{t:"302 g",e:"ratio-additive"},{t:"200 g",e:"ratio-inverted"}]},
+{id:"ES1",skill:"estimate",plain:"Roughly what is $19.6 \\times 4.9$?",tech:"Estimate $19.6 \\times 4.9$ to the nearest ten.",
+ opts:[{t:"About $100$",ok:1},{t:"About $1000$",e:"est-magnitude"},{t:"About $25$",e:"est-added"},{t:"About $10$",e:"est-magnitude"}]},
+{id:"ES2",skill:"estimate",plain:"How many centimetres are in 1 metre 20 centimetres?",tech:"Convert 1.2 m to centimetres.",
+ opts:[{t:"$120$",ok:1},{t:"$1.2$",e:"unit-wrong-direction"},{t:"$12$",e:"unit-place"},{t:"$1020$",e:"unit-concatenate"}]},
+
+/* ---------------- indices, roots, logs ---------------- */
+{id:"I01",skill:"ind-laws",plain:"Write $x^3 \\times x^4$ as a single power.",tech:"Simplify $x^3 \\cdot x^4$.",
+ opts:[{t:"$x^7$",ok:1},{t:"$x^{12}$",e:"ind-mult-exponents"},{t:"$2x^7$",e:"ind-base-doubled"},{t:"$2x^{12}$",e:"ind-mult-exponents"}]},
+{id:"I02",skill:"ind-laws",plain:"Write $\\frac{y^8}{y^2}$ as a single power.",tech:"Simplify $\\dfrac{y^8}{y^2}$.",
+ opts:[{t:"$y^6$",ok:1},{t:"$y^4$",e:"ind-quotient-divided"},{t:"$y^{10}$",e:"ind-quotient-added"},{t:"$4$",e:"ind-cancelled-base"}]},
+{id:"I03",skill:"ind-laws",plain:"Simplify $(2a^2)^3$.",tech:"Simplify $\\left(2a^2\\right)^3$.",
+ opts:[{t:"$8a^6$",ok:1},{t:"$2a^6$",e:"ind-coeff-not-raised"},{t:"$8a^5$",e:"ind-power-added"},{t:"$6a^6$",e:"ind-coeff-multiplied"}]},
+{id:"I12",skill:"ind-laws",plain:"Write $2^3 \\times 2^4$ as a single power.",tech:"Simplify $2^3 \\cdot 2^4$.",
+ opts:[{t:"$2^7$",ok:1},{t:"$4^7$",e:"ind-base-multiplied"},{t:"$2^{12}$",e:"ind-mult-exponents"},{t:"$4^{12}$",e:"ind-base-multiplied"}]},
+{id:"I04",skill:"ind-neg",plain:"What is $2^{-3}$ as a number?",tech:"Evaluate $2^{-3}$.",
+ opts:[{t:"$\\frac{1}{8}$",ok:1},{t:"$-8$",e:"ind-neg-makes-negative"},{t:"$-6$",e:"ind-neg-multiplied"},{t:"$-\\frac{1}{8}$",e:"ind-neg-sign-kept"}]},
+{id:"I05",skill:"ind-neg",plain:"Write $\\frac{1}{x^2}$ using a single power of $x$.",tech:"Express $\\dfrac{1}{x^2}$ in index form.",
+ opts:[{t:"$x^{-2}$",ok:1},{t:"$-x^2$",e:"ind-neg-outside"},{t:"$x^{1/2}$",e:"ind-reciprocal-as-root"},{t:"$-2x$",e:"ind-neg-multiplied"}]},
+{id:"I06",skill:"ind-frac",plain:"What is $16^{1/2}$?",tech:"Evaluate $16^{\\frac{1}{2}}$.",
+ opts:[{t:"$4$",ok:1},{t:"$8$",e:"ind-frac-divided"},{t:"$2$",e:"ind-frac-wrong-root"},{t:"$\\frac{1}{16}$",e:"ind-frac-as-reciprocal"}]},
+{id:"I07",skill:"ind-frac",plain:"What is $8^{2/3}$?",tech:"Evaluate $8^{\\frac{2}{3}}$.",
+ opts:[{t:"$4$",ok:1},{t:"$\\frac{16}{3}$",e:"ind-frac-multiplied"},{t:"$2$",e:"ind-frac-power-ignored"},{t:"$64$",e:"ind-frac-root-ignored"}]},
+{id:"I08",skill:"ind-zero",plain:"What is $5^0$?",tech:"Evaluate $5^0$.",
+ opts:[{t:"$1$",ok:1},{t:"$0$",e:"ind-zero-is-zero"},{t:"$5$",e:"ind-zero-is-base"},{t:"undefined",e:"ind-zero-undefined"}]},
+{id:"I09",skill:"ind-zero",plain:"Write $3.2 \\times 10^4$ as an ordinary number.",tech:"Express $3.2 \\times 10^4$ in decimal notation.",
+ opts:[{t:"$32\\,000$",ok:1},{t:"$3\\,200$",e:"sci-off-by-one"},{t:"$12.8$",e:"sci-multiplied-exponent"},{t:"$0.00032$",e:"sci-direction"}]},
+{id:"I10",skill:"roots",plain:"Work out $\\sqrt{9 + 16}$.",tech:"Evaluate $\\sqrt{9 + 16}$.",
+ opts:[{t:"$5$",ok:1},{t:"$7$",e:"root-over-sum"},{t:"$12.5$",e:"root-halved"},{t:"$25$",e:"root-ignored"}]},
+{id:"I11",skill:"roots",plain:"What is $\\sqrt{36}$?",tech:"Evaluate $\\sqrt{36}$.",
+ opts:[{t:"$6$",ok:1},{t:"$18$",e:"root-halved"},{t:"$1296$",e:"root-squared"},{t:"$3$",e:"ind-frac-wrong-root"}]},
+{id:"I13",skill:"roots",plain:"Solve $x^2 = 36$.",tech:"Find all real solutions of $x^2 = 36$.",
+ opts:[{t:"$x = 6$ or $x = -6$",ok:1},{t:"$x = 6$ only",e:"root-positive-only"},{t:"$x = 18$",e:"root-halved"},{t:"$x = 1296$",e:"root-squared"}]},
+{id:"I14",skill:"roots",plain:"Can $\\sqrt{x^2 + 9}$ be written more simply?",tech:"Simplify $\\sqrt{x^2 + 9}$ if possible.",
+ opts:[{t:"No, it cannot be simplified",ok:1},{t:"$x + 3$",e:"root-over-sum"},{t:"$x + 9$",e:"root-over-sum"},{t:"$x^2 + 3$",e:"root-over-sum"}]},
+{id:"SP1",skill:"sign-pow",plain:"What is $-3^2$?",tech:"Evaluate $-3^2$.",
+ opts:[{t:"$-9$",ok:1},{t:"$9$",e:"sign-square-includes-minus"},{t:"$-6$",e:"ind-neg-multiplied"},{t:"$6$",e:"ind-neg-multiplied"}]},
+{id:"SP2",skill:"sign-pow",plain:"What is $(-3)^2$?",tech:"Evaluate $(-3)^2$.",
+ opts:[{t:"$9$",ok:1},{t:"$-9$",e:"sign-bracket-ignored"},{t:"$-6$",e:"ind-neg-multiplied"},{t:"$6$",e:"ind-neg-multiplied"}]},
+{id:"SP3",skill:"sign-pow",plain:"What is $(-2)^3$?",tech:"Evaluate $(-2)^3$.",
+ opts:[{t:"$-8$",ok:1},{t:"$8$",e:"sign-odd-power-positive"},{t:"$-6$",e:"ind-neg-multiplied"},{t:"$6$",e:"ind-neg-multiplied"}]},
+{id:"L01",skill:"log-def",plain:"$\\log_2 8$ asks: 2 to what power gives 8? What is the answer?",tech:"Evaluate $\\log_2 8$.",
+ opts:[{t:"$3$",ok:1},{t:"$4$",e:"log-as-quotient"},{t:"$16$",e:"log-as-product"},{t:"$64$",e:"log-as-power"}]},
+{id:"L02",skill:"log-def",plain:"If $\\log_{10} x = 2$, what is $x$?",tech:"Solve $\\log_{10} x = 2$.",
+ opts:[{t:"$100$",ok:1},{t:"$20$",e:"log-multiplied"},{t:"$5$",e:"log-as-quotient"},{t:"$0.01$",e:"log-inverted"}]},
+{id:"L05",skill:"log-def",plain:"What is $\\log_{10} 1$?",tech:"Evaluate $\\log_{10} 1$.",
+ opts:[{t:"$0$",ok:1},{t:"$1$",e:"log-1-is-1"},{t:"undefined",e:"log-1-undefined"},{t:"$10$",e:"log-as-product"}]},
+{id:"L03",skill:"log-laws",plain:"Which single logarithm equals $\\log a + \\log b$?",tech:"Express $\\log a + \\log b$ as a single logarithm.",
+ opts:[{t:"$\\log(ab)$",ok:1},{t:"$\\log(a + b)$",e:"log-sum-inside"},{t:"$\\log a \\times \\log b$",e:"log-product-of-logs"},{t:"$\\log\\left(a^b\\right)$",e:"log-power-outside"}]},
+{id:"L04",skill:"log-laws",plain:"Which expression is the same as $\\log\\left(x^3\\right)$?",tech:"Rewrite $\\log\\left(x^3\\right)$ using the power law.",
+ opts:[{t:"$3\\log x$",ok:1},{t:"$(\\log x)^3$",e:"log-power-outside"},{t:"$\\log 3x$",e:"log-power-inside"},{t:"$\\log 3 \\times \\log x$",e:"log-product-of-logs"}]},
+{id:"L06",skill:"log-laws",plain:"Which single logarithm equals $\\log 20 - \\log 4$?",tech:"Express $\\log 20 - \\log 4$ as a single logarithm.",
+ opts:[{t:"$\\log 5$",ok:1},{t:"$\\log 16$",e:"log-diff-inside"},{t:"$\\dfrac{\\log 20}{\\log 4}$",e:"log-quotient-of-logs"},{t:"$\\log 80$",e:"log-sum-inside"}]},
+{id:"XE1",skill:"exp-eq",plain:"Solve $2^x = 32$.",tech:"Solve $2^x = 32$ for $x$.",
+ opts:[{t:"$x = 5$",ok:1},{t:"$x = 16$",e:"exp-divided"},{t:"$x = 4$",e:"exp-off-by-one"},{t:"$x = 30$",e:"exp-subtracted"}]},
+{id:"XE2",skill:"exp-eq",plain:"What is $\\log_3\\left(\\frac{1}{9}\\right)$?",tech:"Evaluate $\\log_3\\left(\\dfrac{1}{9}\\right)$.",
+ opts:[{t:"$-2$",ok:1},{t:"$2$",e:"log-neg-lost"},{t:"$-3$",e:"log-as-quotient"},{t:"$\\frac{1}{2}$",e:"log-inverted"}]},
+{id:"XE3",skill:"exp-eq",plain:"Solve $10^x = 500$, giving $x$ to two decimal places.",tech:"Solve $10^x = 500$ to 2 d.p.",
+ opts:[{t:"$x = 2.70$",ok:1},{t:"$x = 50$",e:"exp-divided"},{t:"$x = 3$",e:"exp-rounded-badly"},{t:"$x = 2.50$",e:"exp-linear-interpolation"}]},
+
+/* ---------------- algebra ---------------- */
+{id:"AN1",skill:"alg-not",plain:"If $n$ stands for a number, what is $n + n + n$?",tech:"Simplify $n + n + n$.",
+ opts:[{t:"$3n$",ok:1},{t:"$n^3$",e:"not-repeated-add-as-power"},{t:"$3 + n$",e:"not-add-count"}]},
+{id:"AN2",skill:"alg-not",plain:"If $x = 5$, what is $3x$?",tech:"Evaluate $3x$ when $x = 5$.",
+ opts:[{t:"$15$",ok:1},{t:"$35$",e:"not-juxtaposition-digits"},{t:"$8$",e:"not-add-count"},{t:"$125$",e:"not-power"}]},
+{id:"AN3",skill:"alg-not",plain:"Which of these means \"$x$ multiplied by itself\"?",tech:"Which expression denotes $x$ multiplied by itself?",
+ opts:[{t:"$x^2$",ok:1},{t:"$2x$",e:"not-double-vs-square"},{t:"$x + x$",e:"not-double-vs-square"}]},
+{id:"A01",skill:"alg-like",plain:"Simplify $3x + 2y - x + 5y$ by collecting like terms.",tech:"Simplify $3x + 2y - x + 5y$.",
+ opts:[{t:"$2x + 7y$",ok:1},{t:"$9xy$",e:"like-all-combined"},{t:"$4x + 7y$",e:"like-sign-ignored"},{t:"$2x + 3y$",e:"like-wrong-pair"}]},
+{id:"A02",skill:"alg-like",plain:"Simplify $4a^2 + 3a - a^2$.",tech:"Simplify $4a^2 + 3a - a^2$.",
+ opts:[{t:"$3a^2 + 3a$",ok:1},{t:"$6a$",e:"like-powers-merged"},{t:"$4a^2 + 2a$",e:"like-powers-merged"},{t:"$6a^2$",e:"like-all-combined"}]},
+{id:"A16",skill:"alg-like",plain:"Simplify $2x + 3$.",tech:"Simplify $2x + 3$ if possible.",
+ opts:[{t:"It is already as simple as it gets",ok:1},{t:"$5x$",e:"like-all-combined"},{t:"$6x$",e:"like-all-combined"},{t:"$5$",e:"like-all-combined"}]},
+{id:"A03",skill:"alg-sub",plain:"If $x = -2$, what is the value of $x^2 + 3x$?",tech:"Evaluate $x^2 + 3x$ when $x = -2$.",
+ opts:[{t:"$-2$",ok:1},{t:"$-10$",e:"sub-neg-squared-negative"},{t:"$10$",e:"sub-sign-dropped"},{t:"$2$",e:"sub-sign-slip"}]},
+{id:"A04",skill:"alg-sub",plain:"If $a = 3$ and $b = -1$, what is $2a - 4b$?",tech:"Evaluate $2a - 4b$ when $a = 3$ and $b = -1$.",
+ opts:[{t:"$10$",ok:1},{t:"$2$",e:"sub-sign-dropped"},{t:"$-2$",e:"sub-double-negative"},{t:"$6$",e:"sub-term-ignored"}]},
+{id:"A05",skill:"alg-exp",plain:"Multiply out $3(x + 4)$.",tech:"Expand $3(x + 4)$.",
+ opts:[{t:"$3x + 12$",ok:1},{t:"$3x + 4$",e:"exp-partial"},{t:"$7x$",e:"exp-terms-merged"},{t:"$3x + 7$",e:"exp-terms-merged"}]},
+{id:"A06",skill:"alg-exp",plain:"Multiply out $-2(x - 5)$.",tech:"Expand $-2(x - 5)$.",
+ opts:[{t:"$-2x + 10$",ok:1},{t:"$-2x - 10$",e:"exp-neg-not-distributed"},{t:"$-2x - 5$",e:"exp-partial"},{t:"$2x + 10$",e:"exp-sign-flipped"}]},
+{id:"A17",skill:"alg-exp",plain:"Multiply out $x(x + 2)$.",tech:"Expand $x(x + 2)$.",
+ opts:[{t:"$x^2 + 2x$",ok:1},{t:"$2x^2$",e:"exp-terms-merged"},{t:"$x^2 + 2$",e:"exp-partial"},{t:"$3x$",e:"exp-terms-merged"}]},
+{id:"A07",skill:"alg-sq",plain:"Multiply out $(x + 3)^2$.",tech:"Expand $(x + 3)^2$.",
+ opts:[{t:"$x^2 + 6x + 9$",ok:1},{t:"$x^2 + 9$",e:"sq-termwise"},{t:"$x^2 + 3x + 9$",e:"sq-middle-not-doubled"},{t:"$x^2 + 6x + 6$",e:"sq-constant-doubled"}]},
+{id:"A08",skill:"alg-sq",plain:"Multiply out $(2a - b)^2$.",tech:"Expand $(2a - b)^2$.",
+ opts:[{t:"$4a^2 - 4ab + b^2$",ok:1},{t:"$4a^2 - b^2$",e:"sq-termwise"},{t:"$2a^2 - 4ab + b^2$",e:"sq-coeff-not-squared"},{t:"$4a^2 + 4ab + b^2$",e:"sq-sign"}]},
+{id:"A09",skill:"alg-dbl",plain:"Multiply out $(x + 2)(x - 5)$.",tech:"Expand $(x + 2)(x - 5)$.",
+ opts:[{t:"$x^2 - 3x - 10$",ok:1},{t:"$x^2 - 10$",e:"dbl-outer-inner-missed"},{t:"$x^2 + 3x - 10$",e:"dbl-sign"},{t:"$x^2 - 7x - 10$",e:"dbl-middle-sign"}]},
+{id:"A10",skill:"alg-dbl",plain:"Multiply out $(x - 3)(x - 4)$.",tech:"Expand $(x - 3)(x - 4)$.",
+ opts:[{t:"$x^2 - 7x + 12$",ok:1},{t:"$x^2 + 12$",e:"dbl-outer-inner-missed"},{t:"$x^2 - 7x - 12$",e:"dbl-sign"},{t:"$x^2 + 7x + 12$",e:"dbl-middle-sign"}]},
+{id:"A11",skill:"alg-fac",plain:"Factorise $6x^2 + 9x$ fully.",tech:"Factorise $6x^2 + 9x$ completely.",
+ opts:[{t:"$3x(2x + 3)$",ok:1},{t:"$3(2x^2 + 3x)$",e:"fac-partial-hcf"},{t:"$x(6x + 9)$",e:"fac-partial-hcf"},{t:"$15x^3$",e:"fac-merged"}]},
+{id:"A12",skill:"alg-fac",plain:"Factorise $x^2 + 5x + 6$.",tech:"Factorise $x^2 + 5x + 6$.",
+ opts:[{t:"$(x + 2)(x + 3)$",ok:1},{t:"$(x + 1)(x + 6)$",e:"fac-product-only"},{t:"$(x + 5)(x + 6)$",e:"fac-coefficients-copied"},{t:"$(x - 2)(x - 3)$",e:"fac-sign"}]},
+{id:"A18",skill:"alg-fac",plain:"Factorise $x^2 - 16$.",tech:"Factorise $x^2 - 16$.",
+ opts:[{t:"$(x + 4)(x - 4)$",ok:1},{t:"$(x - 4)^2$",e:"fac-sign"},{t:"$(x - 16)(x + 1)$",e:"fac-product-only"},{t:"$x(x - 16)$",e:"fac-partial-hcf"}]},
+{id:"A13",skill:"alg-frac",plain:"Simplify $\\frac{4x + 8}{4}$.",tech:"Simplify $\\dfrac{4x + 8}{4}$.",
+ opts:[{t:"$x + 2$",ok:1},{t:"$x + 8$",e:"afrac-partial-cancel"},{t:"$4x + 2$",e:"afrac-partial-cancel"},{t:"$3x$",e:"afrac-terms-merged"}]},
+{id:"A14",skill:"alg-frac",plain:"Simplify $\\frac{x^2 - 9}{x - 3}$ (where $x \\neq 3$).",tech:"Simplify $\\dfrac{x^2 - 9}{x - 3}$ for $x \\neq 3$.",
+ opts:[{t:"$x + 3$",ok:1},{t:"$x - 3$",e:"afrac-termwise-cancel"},{t:"$x^2 - 3$",e:"afrac-single-term-cancel"},{t:"It cannot be simplified",e:"afrac-not-factorised"}]},
+{id:"A15",skill:"alg-frac",plain:"Add $\\frac{1}{x} + \\frac{1}{y}$ as a single fraction.",tech:"Express $\\dfrac{1}{x} + \\dfrac{1}{y}$ as a single fraction.",
+ opts:[{t:"$\\dfrac{x + y}{xy}$",ok:1},{t:"$\\dfrac{1}{x + y}$",e:"afrac-reciprocal-sum"},{t:"$\\dfrac{2}{xy}$",e:"afrac-double-num"},{t:"$\\dfrac{2}{x + y}$",e:"afrac-reciprocal-sum"}]},
+
+/* ---------------- equations ---------------- */
+{id:"ESG1",skill:"eq-sign",plain:"$3 + 4 = \\square + 2$. What number goes in the box?",tech:"Find the value that makes $3 + 4 = \\square + 2$ true.",
+ opts:[{t:"$5$",ok:1},{t:"$7$",e:"eq-sign-as-answer"},{t:"$9$",e:"eq-sign-add-all"}]},
+{id:"ESG2",skill:"eq-sign",plain:"Which of these is written correctly?",tech:"Which of the following is a correctly written chain of statements?",
+ opts:[{t:"$2 + 3 = 5$, and then $5 \\times 2 = 10$",ok:1},{t:"$2 + 3 = 5 \\times 2 = 10$",e:"eq-sign-chained"},{t:"$2 + 3 \\times 2 = 10$",e:"ord-left-to-right"}]},
+{id:"E01",skill:"eq-lin",plain:"Solve $3x - 7 = 11$.",tech:"Solve for $x$: $3x - 7 = 11$.",
+ opts:[{t:"$x = 6$",ok:1},{t:"$x = 18$",e:"lin-final-division-skipped"},{t:"$x = \\frac{4}{3}$",e:"lin-wrong-inverse"},{t:"$x = 54$",e:"lin-multiplied"}]},
+{id:"E02",skill:"eq-lin",plain:"Solve $5x + 2 = 2x + 14$.",tech:"Solve for $x$: $5x + 2 = 2x + 14$.",
+ opts:[{t:"$x = 4$",ok:1},{t:"$x = \\frac{16}{7}$",e:"lin-x-terms-added"},{t:"$x = \\frac{16}{3}$",e:"lin-constant-sign"},{t:"$x = \\frac{12}{7}$",e:"lin-both-added"}]},
+{id:"E09",skill:"eq-lin",plain:"Solve $2(x + 3) = 14$.",tech:"Solve for $x$: $2(x + 3) = 14$.",
+ opts:[{t:"$x = 4$",ok:1},{t:"$x = 5.5$",e:"exp-partial"},{t:"$x = 11$",e:"lin-bracket-ignored"},{t:"$x = 8$",e:"lin-wrong-inverse"}]},
+{id:"E03",skill:"eq-trans",plain:"Rearrange $y = 3x + 2$ so that $x$ is on its own.",tech:"Make $x$ the subject of $y = 3x + 2$.",
+ opts:[{t:"$x = \\dfrac{y - 2}{3}$",ok:1},{t:"$x = \\dfrac{y}{3} - 2$",e:"trans-order"},{t:"$x = \\dfrac{y + 2}{3}$",e:"trans-sign"},{t:"$x = 3(y - 2)$",e:"trans-wrong-inverse"}]},
+{id:"E04",skill:"eq-trans",plain:"The area of a circle is $A = \\pi r^2$. Rearrange it to give $r$.",tech:"Make $r$ the subject of $A = \\pi r^2$.",
+ opts:[{t:"$r = \\sqrt{\\dfrac{A}{\\pi}}$",ok:1},{t:"$r = \\dfrac{\\sqrt{A}}{\\pi}$",e:"trans-root-partial"},{t:"$r = \\left(\\dfrac{A}{\\pi}\\right)^2$",e:"trans-wrong-inverse"},{t:"$r = \\dfrac{A}{\\pi}$",e:"trans-square-ignored"}]},
+{id:"E10",skill:"eq-trans",plain:"Speed is $v = \\dfrac{d}{t}$. Rearrange it to give $t$.",tech:"Make $t$ the subject of $v = \\dfrac{d}{t}$.",
+ opts:[{t:"$t = \\dfrac{d}{v}$",ok:1},{t:"$t = \\dfrac{v}{d}$",e:"trans-wrong-inverse"},{t:"$t = dv$",e:"trans-wrong-inverse"},{t:"$t = d - v$",e:"trans-wrong-inverse"}]},
+{id:"E05",skill:"eq-ineq",plain:"Solve $-2x > 6$.",tech:"Solve the inequality $-2x > 6$.",
+ opts:[{t:"$x < -3$",ok:1},{t:"$x > -3$",e:"ineq-not-flipped"},{t:"$x < 3$",e:"ineq-sign-dropped"},{t:"$x > 3$",e:"ineq-both"}]},
+{id:"E06",skill:"eq-ineq",plain:"Solve $3x + 1 \\le 10$.",tech:"Solve the inequality $3x + 1 \\le 10$.",
+ opts:[{t:"$x \\le 3$",ok:1},{t:"$x \\ge 3$",e:"ineq-not-flipped"},{t:"$x \\le \\frac{11}{3}$",e:"lin-constant-sign"},{t:"$x \\le 9$",e:"lin-final-division-skipped"}]},
+{id:"E07",skill:"eq-expr",plain:"Which one of these is an equation (something you could solve), rather than an expression?",tech:"Which of the following is an equation rather than an expression?",
+ opts:[{t:"$3x + 2 = 8$",ok:1},{t:"$3x + 2$",e:"expr-eq-confused"},{t:"$3x^2 - 4x$",e:"expr-eq-confused"},{t:"$2(x + 1)$",e:"expr-eq-confused"}]},
+{id:"E08",skill:"eq-expr",plain:"You are asked to \"simplify $2x + 3x$\". What kind of answer does that need?",tech:"What does the instruction \"simplify $2x + 3x$\" call for?",
+ opts:[{t:"A shorter expression, such as $5x$",ok:1},{t:"A value of $x$, such as $x = 0$",e:"expr-eq-confused"},{t:"An equation, such as $5x = 0$",e:"expr-eq-confused"},{t:"Nothing: it cannot be simplified",e:"like-wrong-pair"}]},
+{id:"Q01",skill:"quad-solve",plain:"Solve $x^2 - 5x + 6 = 0$.",tech:"Solve $x^2 - 5x + 6 = 0$.",
+ opts:[{t:"$x = 2$ or $x = 3$",ok:1},{t:"$x = -2$ or $x = -3$",e:"quad-sign-roots"},{t:"$x = 1$ or $x = 6$",e:"fac-product-only"},{t:"$x = 5$ or $x = 6$",e:"fac-coefficients-copied"}]},
+{id:"Q02",skill:"quad-solve",plain:"Solve $2x^2 + 3x - 2 = 0$.",tech:"Solve $2x^2 + 3x - 2 = 0$.",
+ opts:[{t:"$x = \\frac{1}{2}$ or $x = -2$",ok:1},{t:"$x = -\\frac{1}{2}$ or $x = 2$",e:"quad-sign-roots"},{t:"$x = 1$ or $x = -2$",e:"quad-coeff-ignored"},{t:"$x = \\dfrac{-3 \\pm \\sqrt{17}}{4}$",e:"quad-formula-missing-4"}]},
+{id:"Q03",skill:"quad-solve",plain:"Solve $x^2 + 4 = 0$.",tech:"Solve $x^2 + 4 = 0$ over the complex numbers.",
+ opts:[{t:"$x = 2i$ or $x = -2i$",ok:1},{t:"$x = 2$ or $x = -2$",e:"quad-root-of-negative"},{t:"There are no solutions of any kind",e:"quad-no-complex"},{t:"$x = -2$",e:"quad-linear-treatment"}]},
+{id:"CS1",skill:"quad-form",plain:"Write $x^2 + 6x + 5$ in the form $(x + a)^2 + b$.",tech:"Complete the square: $x^2 + 6x + 5$.",
+ opts:[{t:"$(x + 3)^2 - 4$",ok:1},{t:"$(x + 3)^2 + 5$",e:"cs-constant-not-adjusted"},{t:"$(x + 6)^2 - 31$",e:"cs-coefficient-not-halved"},{t:"$(x + 3)^2 + 14$",e:"cs-added-instead"}]},
+{id:"CS2",skill:"quad-form",plain:"What is the turning point (vertex) of $y = (x - 2)^2 + 3$?",tech:"State the vertex of $y = (x - 2)^2 + 3$.",
+ opts:[{t:"$(2, 3)$",ok:1},{t:"$(-2, 3)$",e:"cs-vertex-sign"},{t:"$(2, -3)$",e:"cs-vertex-sign"},{t:"$(3, 2)$",e:"cs-vertex-swapped"}]},
+{id:"SE1",skill:"simult",plain:"Solve the pair of equations $2x + y = 7$ and $x - y = 2$.",tech:"Solve simultaneously: $2x + y = 7$, $x - y = 2$.",
+ opts:[{t:"$x = 3,\\ y = 1$",ok:1},{t:"$x = 1,\\ y = 3$",e:"sim-swapped"},{t:"$x = 3,\\ y = -1$",e:"sim-back-sub-error"},{t:"$x = 3,\\ y = 5$",e:"sim-sub-into-wrong"}]},
+{id:"SE2",skill:"simult",plain:"How many solutions do $x + y = 4$ and $2x + 2y = 8$ have together?",tech:"Determine the number of solutions of the system $x + y = 4$, $2x + 2y = 8$.",
+ opts:[{t:"Infinitely many",ok:1},{t:"Exactly one",e:"sim-no-check"},{t:"None",e:"sim-parallel-confused"},{t:"Exactly two",e:"sim-two"}]},
+
+/* ---------------- graphs and functions ---------------- */
+{id:"G01",skill:"gr-read",fig:{fns:["2*x"],x:[0,5],y:[0,10],ticks:[1,2],label:"A straight line through the origin rising to the point (5, 10)"},
+ plain:"The graph shows $y$ against $x$. What is $y$ when $x = 2$?",tech:"Use the graph to find $y$ when $x = 2$.",
+ opts:[{t:"$4$",ok:1},{t:"$1$",e:"gr-axes-swapped"},{t:"$2$",e:"gr-identity"},{t:"$6$",e:"gr-off-by-one"}]},
+{id:"G02",skill:"gr-read",fig:{fns:["x*x-4"],x:[-4,4],y:[-5,5],ticks:[1,1],label:"A U-shaped curve with its lowest point at (0, −4), crossing the x-axis at −2 and 2"},
+ plain:"The graph shows a curve. For which values of $x$ is $y = 0$?",tech:"Use the graph to find the roots of the function shown, that is, the values of $x$ where $y = 0$.",
+ opts:[{t:"$x = -2$ and $x = 2$",ok:1},{t:"$x = -4$",e:"gr-y-intercept"},{t:"$x = 0$",e:"gr-vertex"},{t:"$x = 2$ only",e:"gr-one-root"}]},
+{id:"G09",skill:"gr-read",fig:{fns:["-x+4"],x:[0,6],y:[-2,6],ticks:[1,1],label:"A straight line falling from (0, 4) to (6, −2)"},
+ plain:"The graph shows $y$ against $x$. Where does the line cross the $x$-axis?",tech:"Use the graph to find the $x$-intercept of the line.",
+ opts:[{t:"$x = 4$",ok:1},{t:"$y = 4$",e:"gr-axes-swapped"},{t:"$x = 0$",e:"gr-y-intercept"},{t:"$x = 3$",e:"gr-off-by-one"}]},
+{id:"G03",skill:"gr-match",plain:"Which graph shows $y = x^2$?",tech:"Identify the graph of $y = x^2$.",
+ opts:[{t:"Graph A",fig:{fns:["x*x"],x:[-3,3],y:[-3,9],ticks:[1,3]},ok:1},
+       {t:"Graph B",fig:{fns:["-x*x"],x:[-3,3],y:[-9,3],ticks:[1,3]},e:"gr-match-sign"},
+       {t:"Graph C",fig:{fns:["2*x"],x:[-3,3],y:[-6,6],ticks:[1,2]},e:"gr-match-degree"},
+       {t:"Graph D",fig:{fns:["x*x*x/2"],x:[-3,3],y:[-9,9],ticks:[1,3]},e:"gr-match-degree"}]},
+{id:"G04",skill:"gr-match",plain:"Which graph shows $y = -x + 2$?",tech:"Identify the graph of $y = -x + 2$.",
+ opts:[{t:"Graph A",fig:{fns:["-x+2"],x:[-4,4],y:[-4,4],ticks:[1,1]},ok:1},
+       {t:"Graph B",fig:{fns:["x+2"],x:[-4,4],y:[-4,4],ticks:[1,1]},e:"gr-match-slope-sign"},
+       {t:"Graph C",fig:{fns:["-x-2"],x:[-4,4],y:[-4,4],ticks:[1,1]},e:"gr-match-intercept-sign"},
+       {t:"Graph D",fig:{fns:["0*x+2"],x:[-4,4],y:[-4,4],ticks:[1,1]},e:"gr-match-constant"}]},
+{id:"G10",skill:"gr-match",plain:"Which graph shows $y = x^3$?",tech:"Identify the graph of $y = x^3$.",
+ opts:[{t:"Graph A",fig:{fns:["x*x*x"],x:[-2,2],y:[-8,8],ticks:[1,4]},ok:1},
+       {t:"Graph B",fig:{fns:["x*x"],x:[-3,3],y:[-3,9],ticks:[1,3]},e:"gr-match-degree"},
+       {t:"Graph C",fig:{fns:["3*x"],x:[-2,2],y:[-8,8],ticks:[1,4]},e:"gr-match-degree"},
+       {t:"Graph D",fig:{fns:["-x*x*x"],x:[-2,2],y:[-8,8],ticks:[1,4]},e:"gr-match-sign"}]},
+{id:"G05",skill:"gr-slope",plain:"For the line $y = 3x - 2$, what is the slope (how steep it is)?",tech:"State the slope of the line $y = 3x - 2$.",
+ opts:[{t:"$3$",ok:1},{t:"$-2$",e:"slope-intercept-confused"},{t:"$3x$",e:"slope-term-not-coefficient"},{t:"$\\frac{1}{3}$",e:"slope-inverted"}]},
+{id:"G06",skill:"gr-slope",plain:"A line passes through the points $(1, 2)$ and $(3, 8)$. What is its slope?",tech:"Find the slope of the line through $(1, 2)$ and $(3, 8)$.",
+ opts:[{t:"$3$",ok:1},{t:"$\\frac{1}{3}$",e:"slope-inverted"},{t:"$6$",e:"slope-run-ignored"},{t:"$2$",e:"slope-differences-wrong"}]},
+{id:"G11",skill:"gr-slope",plain:"Two lines: $y = 4x + 1$ and $y = \\frac{1}{2}x + 1$. Which is steeper?",tech:"Which line has the greater slope: $y = 4x + 1$ or $y = \\tfrac{1}{2}x + 1$?",
+ opts:[{t:"$y = 4x + 1$",ok:1},{t:"$y = \\frac{1}{2}x + 1$",e:"gr-steeper-is-lower"},{t:"They are equally steep",e:"slope-intercept-confused"}]},
+{id:"G07",skill:"gr-fn",plain:"If $f(x) = 2x + 1$, what is $f(3)$?",tech:"Given $f(x) = 2x + 1$, evaluate $f(3)$.",
+ opts:[{t:"$7$",ok:1},{t:"$6$",e:"fn-multiplied-only"},{t:"$9$",e:"fn-notation-misread"},{t:"$3$",e:"fn-x-times-f"}]},
+{id:"G08",skill:"gr-fn",plain:"If $g(x) = x^2 - 1$, what is $g(-3)$?",tech:"Given $g(x) = x^2 - 1$, evaluate $g(-3)$.",
+ opts:[{t:"$8$",ok:1},{t:"$-10$",e:"fn-neg-squared-negative"},{t:"$10$",e:"fn-sign-slip"},{t:"$-7$",e:"fn-square-as-double"}]},
+{id:"FI1",skill:"fn-inv",plain:"If $f(x) = 2x + 3$, which is the inverse function $f^{-1}(x)$?",tech:"Find $f^{-1}(x)$ for $f(x) = 2x + 3$.",
+ opts:[{t:"$\\dfrac{x - 3}{2}$",ok:1},{t:"$\\dfrac{1}{2x + 3}$",e:"inv-reciprocal"},{t:"$2x - 3$",e:"inv-sign-flip"},{t:"$\\dfrac{x}{2} - 3$",e:"trans-order"}]},
+{id:"FI2",skill:"fn-inv",plain:"If $f(x) = x + 1$ and $g(x) = 2x$, what is $f(g(3))$?",tech:"Given $f(x) = x + 1$ and $g(x) = 2x$, evaluate $f(g(3))$.",
+ opts:[{t:"$7$",ok:1},{t:"$8$",e:"comp-order"},{t:"$6$",e:"comp-g-only"},{t:"$4$",e:"comp-f-only"}]},
+
+/* ---------------- geometry and trigonometry ---------------- */
+{id:"PY1",skill:"pyth",plain:"A right-angled triangle has shorter sides of $6$ and $8$. How long is the longest side?",tech:"Find the hypotenuse of a right triangle with legs $6$ and $8$.",
+ opts:[{t:"$10$",ok:1},{t:"$14$",e:"pyth-added-legs"},{t:"$100$",e:"pyth-root-not-taken"},{t:"$\\sqrt{28}$",e:"pyth-subtracted"}]},
+{id:"PY2",skill:"pyth",plain:"A right-angled triangle has longest side $13$ and one shorter side $5$. How long is the other shorter side?",tech:"A right triangle has hypotenuse $13$ and one leg $5$. Find the other leg.",
+ opts:[{t:"$12$",ok:1},{t:"$\\sqrt{194}$",e:"pyth-added-when-should-subtract"},{t:"$8$",e:"pyth-subtracted-lengths"},{t:"$144$",e:"pyth-root-not-taken"}]},
+{id:"PY3",skill:"pyth",plain:"In a right-angled triangle the side opposite angle $\\theta$ is $3$, the side next to it is $4$ and the longest side is $5$. What is $\\sin\\theta$?",tech:"In a right triangle with opposite $3$, adjacent $4$ and hypotenuse $5$, find $\\sin\\theta$.",
+ opts:[{t:"$\\frac{3}{5}$",ok:1},{t:"$\\frac{4}{5}$",e:"trig-cos-for-sin"},{t:"$\\frac{3}{4}$",e:"trig-tan-for-sin"},{t:"$\\frac{5}{3}$",e:"trig-inverted"}]},
+{id:"TU1",skill:"trig-units",plain:"How many radians is $90^\\circ$?",tech:"Convert $90^\\circ$ to radians.",
+ opts:[{t:"$\\frac{\\pi}{2}$",ok:1},{t:"$\\pi$",e:"rad-180-confused"},{t:"$90\\pi$",e:"rad-multiplied"},{t:"$2\\pi$",e:"rad-full-turn"}]},
+{id:"TU2",skill:"trig-units",plain:"What is $\\sin 30^\\circ$ exactly?",tech:"State the exact value of $\\sin 30^\\circ$.",
+ opts:[{t:"$\\frac{1}{2}$",ok:1},{t:"$\\frac{\\sqrt{3}}{2}$",e:"trig-sin-cos-swapped"},{t:"$\\frac{1}{\\sqrt{2}}$",e:"trig-45-confused"},{t:"$\\frac{1}{3}$",e:"trig-ratio-of-angles"}]},
+{id:"TU3",skill:"trig-units",plain:"What is $\\tan 45^\\circ$ exactly?",tech:"State the exact value of $\\tan 45^\\circ$.",
+ opts:[{t:"$1$",ok:1},{t:"$0$",e:"trig-tan-zero"},{t:"$\\sqrt{2}$",e:"trig-45-confused"},{t:"$\\frac{1}{2}$",e:"trig-sin-cos-swapped"}]},
+{id:"CO1",skill:"coord",plain:"How far apart are the points $(1, 2)$ and $(4, 6)$?",tech:"Find the distance between $(1, 2)$ and $(4, 6)$.",
+ opts:[{t:"$5$",ok:1},{t:"$7$",e:"coord-added-differences"},{t:"$25$",e:"pyth-root-not-taken"},{t:"$\\sqrt{7}$",e:"coord-root-of-sum"}]},
+{id:"CO2",skill:"coord",plain:"What is the midpoint of $(2, 3)$ and $(6, 7)$?",tech:"Find the midpoint of $(2, 3)$ and $(6, 7)$.",
+ opts:[{t:"$(4, 5)$",ok:1},{t:"$(8, 10)$",e:"coord-sum-not-halved"},{t:"$(2, 2)$",e:"coord-difference"},{t:"$(5, 4)$",e:"coord-swapped"}]},
+{id:"CO3",skill:"coord",plain:"A line has slope $2$. What is the slope of a line at right angles to it?",tech:"Find the slope of a line perpendicular to a line of slope $2$.",
+ opts:[{t:"$-\\frac{1}{2}$",ok:1},{t:"$\\frac{1}{2}$",e:"perp-not-negated"},{t:"$-2$",e:"perp-not-reciprocal"},{t:"$2$",e:"perp-parallel"}]},
+
+/* ---------------- sets, logic, number systems ---------------- */
+{id:"ST1",skill:"sets",plain:"$A = \\{1, 2, 3\\}$ and $B = \\{2, 3, 4\\}$. Which elements are in both $A$ and $B$?",tech:"Given $A = \\{1, 2, 3\\}$ and $B = \\{2, 3, 4\\}$, find $A \\cap B$.",
+ opts:[{t:"$\\{2, 3\\}$",ok:1},{t:"$\\{1, 2, 3, 4\\}$",e:"set-union-for-intersection"},{t:"$\\{1, 4\\}$",e:"set-symmetric-difference"},{t:"$\\{1\\}$",e:"set-difference"}]},
+{id:"ST2",skill:"sets",plain:"How many subsets does the set $\\{a, b, c\\}$ have, counting the empty set and the set itself?",tech:"Find $|\\mathcal{P}(\\{a, b, c\\})|$.",
+ opts:[{t:"$8$",ok:1},{t:"$3$",e:"set-elements-as-subsets"},{t:"$6$",e:"set-permutation"},{t:"$7$",e:"set-empty-forgotten"}]},
+{id:"ST3",skill:"sets",plain:"Set $A$ has 3 elements and set $B$ has 4. How many ordered pairs $(a, b)$ can be made with $a$ from $A$ and $b$ from $B$?",tech:"If $|A| = 3$ and $|B| = 4$, find $|A \\times B|$.",
+ opts:[{t:"$12$",ok:1},{t:"$7$",e:"set-added"},{t:"$3$",e:"set-min"},{t:"$4$",e:"set-max"}]},
+{id:"LG1",skill:"logic",plain:"When is \"$A$ AND (NOT $A$)\" true?",tech:"Evaluate $A \\land \\lnot A$.",
+ opts:[{t:"Never: it is always false",ok:1},{t:"Always",e:"logic-and-or-confused"},{t:"Whenever $A$ is true",e:"logic-not-ignored"}]},
+{id:"LG2",skill:"logic",plain:"Which is the same as NOT ($A$ AND $B$)?",tech:"Apply De Morgan's law to $\\lnot(A \\land B)$.",
+ opts:[{t:"(NOT $A$) OR (NOT $B$)",ok:1},{t:"(NOT $A$) AND (NOT $B$)",e:"logic-demorgan-and-kept"},{t:"$A$ OR $B$",e:"logic-not-dropped"},{t:"(NOT $A$) AND $B$",e:"logic-not-partial"}]},
+{id:"LG3",skill:"logic",plain:"\"$A$ XOR $B$\" is true when:",tech:"$A \\oplus B$ is true precisely when:",
+ opts:[{t:"exactly one of $A$, $B$ is true",ok:1},{t:"both are true",e:"logic-xor-as-and"},{t:"at least one is true",e:"logic-xor-as-or"},{t:"neither is true",e:"logic-xor-as-nor"}]},
+{id:"BI1",skill:"binary",plain:"What is the binary number $1011$ in ordinary (base 10) numbers?",tech:"Convert $1011_2$ to base 10.",
+ opts:[{t:"$11$",ok:1},{t:"$13$",e:"bin-reversed"},{t:"$1011$",e:"bin-digits-as-decimal"},{t:"$3$",e:"bin-count-ones"}]},
+{id:"BI2",skill:"binary",plain:"Write $13$ in binary.",tech:"Convert $13_{10}$ to binary.",
+ opts:[{t:"$1101$",ok:1},{t:"$1011$",e:"bin-reversed"},{t:"$1110$",e:"bin-place-slip"},{t:"$10011$",e:"bin-place-slip"}]},
+{id:"BI3",skill:"binary",plain:"What is the hexadecimal number $1F$ in base 10?",tech:"Convert $1F_{16}$ to base 10.",
+ opts:[{t:"$31$",ok:1},{t:"$115$",e:"hex-concatenated"},{t:"$16$",e:"hex-second-digit-ignored"},{t:"$25$",e:"hex-decimal-weight"}]},
+{id:"BI4",skill:"binary",plain:"Add the binary numbers $101$ and $11$. Give the answer in binary.",tech:"Evaluate $101_2 + 11_2$ in binary.",
+ opts:[{t:"$1000$",ok:1},{t:"$112$",e:"bin-decimal-add"},{t:"$110$",e:"bin-carry-dropped"},{t:"$8$",e:"bin-answered-in-decimal"}]},
+
+/* ---------------- sequences, notation, algorithms, matrices ---------------- */
+{id:"SQ1",skill:"sequence",plain:"A sequence starts at $a_1 = 3$ and each term is double the one before. What is $a_4$?",tech:"Given $a_1 = 3$ and $a_n = 2a_{n-1}$, find $a_4$.",
+ opts:[{t:"$24$",ok:1},{t:"$12$",e:"seq-off-by-one"},{t:"$9$",e:"seq-additive"},{t:"$48$",e:"seq-off-by-one"}]},
+{id:"SQ2",skill:"sequence",plain:"What is the rule for the $n$th term of $4, 7, 10, 13, \\ldots$?",tech:"Find the $n$th term of the sequence $4, 7, 10, 13, \\ldots$",
+ opts:[{t:"$3n + 1$",ok:1},{t:"$n + 3$",e:"seq-difference-as-add"},{t:"$4n$",e:"seq-first-term-coefficient"},{t:"$3n + 4$",e:"seq-zeroth-term"}]},
+{id:"SQ3",skill:"sequence",plain:"Which of these describes a recursive rule for a sequence?",tech:"Which statement characterises a recursive definition?",
+ opts:[{t:"Each term is worked out from the term(s) before it",ok:1},{t:"Each term is worked out directly from its position $n$",e:"seq-closed-form-as-recursive"},{t:"The terms go up by the same amount each time",e:"seq-arith-as-recursive"}]},
+{id:"SG1",skill:"sigma",plain:"Work out $\\sum_{i=1}^{4} i^2$.",tech:"Evaluate $\\displaystyle\\sum_{i=1}^{4} i^2$.",
+ opts:[{t:"$30$",ok:1},{t:"$10$",e:"sigma-not-squared"},{t:"$100$",e:"sigma-squared-sum"},{t:"$16$",e:"sigma-last-term-only"}]},
+{id:"SG2",skill:"sigma",plain:"Work out $\\sum_{i=1}^{3} 2i$.",tech:"Evaluate $\\displaystyle\\sum_{i=1}^{3} 2i$.",
+ opts:[{t:"$12$",ok:1},{t:"$6$",e:"sigma-coefficient-ignored"},{t:"$2$",e:"sigma-first-term"},{t:"$18$",e:"sigma-times-n"}]},
+{id:"SG3",skill:"sigma",plain:"Work out $\\prod_{i=1}^{4} i$.",tech:"Evaluate $\\displaystyle\\prod_{i=1}^{4} i$.",
+ opts:[{t:"$24$",ok:1},{t:"$10$",e:"pi-summed"},{t:"$4$",e:"pi-last-term-only"},{t:"$16$",e:"sigma-times-n"}]},
+{id:"AL1",skill:"algo",plain:"What must be true of a list before binary search will work on it?",tech:"State the precondition for binary search.",
+ opts:[{t:"The list is sorted",ok:1},{t:"The list has an even number of items",e:"algo-even-length"},{t:"The item you want is in the middle",e:"algo-target-middle"},{t:"The list has no repeated values",e:"algo-no-duplicates"}]},
+{id:"AL2",skill:"algo",plain:"Bubble sort (smallest first) is run on $[5, 1, 4, 2]$. What does the list look like after one full pass?",tech:"Give the state of $[5, 1, 4, 2]$ after one pass of ascending bubble sort.",
+ opts:[{t:"$[1, 4, 2, 5]$",ok:1},{t:"$[1, 2, 4, 5]$",e:"algo-sorted-in-one-pass"},{t:"$[5, 4, 2, 1]$",e:"algo-descending"},{t:"$[1, 5, 4, 2]$",e:"algo-one-swap-only"}]},
+{id:"AL3",skill:"algo",plain:"A sorted list has a million items. Which search finds an item with fewer checks?",tech:"On a sorted list of $10^6$ items, which search has the lower worst-case comparison count?",
+ opts:[{t:"Binary search",ok:1},{t:"Linear search",e:"algo-linear-faster"},{t:"They take the same number of checks",e:"algo-same-speed"}]},
+{id:"MX1",skill:"matrix",plain:"Add the matrices $\\begin{pmatrix}1 & 2\\\\3 & 4\\end{pmatrix} + \\begin{pmatrix}1 & 0\\\\0 & 1\\end{pmatrix}$.",tech:"Evaluate $\\begin{pmatrix}1 & 2\\\\3 & 4\\end{pmatrix} + I$.",
+ opts:[{t:"$\\begin{pmatrix}2 & 2\\\\3 & 5\\end{pmatrix}$",ok:1},{t:"$\\begin{pmatrix}1 & 2\\\\3 & 4\\end{pmatrix}$",e:"matrix-identity-add-ignored"},{t:"$\\begin{pmatrix}2 & 3\\\\4 & 5\\end{pmatrix}$",e:"matrix-scalar-added"}]},
+{id:"MX2",skill:"matrix",plain:"Matrix $A$ has 2 rows and 3 columns. Matrix $B$ has 3 rows and 4 columns. What size is $AB$?",tech:"If $A$ is $2 \\times 3$ and $B$ is $3 \\times 4$, state the dimensions of $AB$.",
+ opts:[{t:"$2 \\times 4$",ok:1},{t:"$3 \\times 3$",e:"matrix-inner-dims"},{t:"$6 \\times 12$",e:"matrix-multiplied-dims"},{t:"$AB$ is not defined",e:"matrix-not-defined"}]},
+
+/* ---------------- counting, probability, statistics ---------------- */
+{id:"SA1",skill:"stats-avg",plain:"What is the mean (average) of $3, 7, 8, 10$?",tech:"Find the mean of $3, 7, 8, 10$.",
+ opts:[{t:"$7$",ok:1},{t:"$7.5$",e:"stats-median-for-mean"},{t:"$28$",e:"stats-sum-not-divided"},{t:"$10$",e:"stats-max-for-mean"}]},
+{id:"SA2",skill:"stats-avg",plain:"What is the median of $2, 9, 4, 7, 20$?",tech:"Find the median of $2, 9, 4, 7, 20$.",
+ opts:[{t:"$7$",ok:1},{t:"$4$",e:"stats-median-unsorted"},{t:"$8.4$",e:"stats-mean-for-median"},{t:"$9$",e:"stats-off-by-one"}]},
+{id:"CN1",skill:"count",plain:"What is $5!$ (5 factorial)?",tech:"Evaluate $5!$.",
+ opts:[{t:"$120$",ok:1},{t:"$15$",e:"fact-summed"},{t:"$25$",e:"fact-squared"},{t:"$5$",e:"fact-ignored"}]},
+{id:"CN2",skill:"count",plain:"How many different pairs can be chosen from 5 people, if the order of the pair does not matter?",tech:"Evaluate $\\binom{5}{2}$.",
+ opts:[{t:"$10$",ok:1},{t:"$20$",e:"comb-order-counted"},{t:"$25$",e:"comb-squared"},{t:"$7$",e:"comb-added"}]},
+{id:"CN3",skill:"count",plain:"A code has 3 digits, each from 0 to 9, and digits may repeat. How many codes are possible?",tech:"Count the 3-digit strings over $\\{0, \\ldots, 9\\}$ with repetition allowed.",
+ opts:[{t:"$1000$",ok:1},{t:"$30$",e:"count-added"},{t:"$720$",e:"count-no-repeats"},{t:"$27$",e:"count-wrong-base"}]},
+{id:"PR1",skill:"prob",plain:"You flip a fair coin twice. What is the probability of two heads?",tech:"Find $P(\\text{HH})$ for two fair coin flips.",
+ opts:[{t:"$\\frac{1}{4}$",ok:1},{t:"$\\frac{1}{2}$",e:"prob-outcomes-not-equally-likely"},{t:"$1$",e:"prob-added"},{t:"$\\frac{1}{3}$",e:"prob-three-outcomes"}]},
+{id:"PR2",skill:"prob",plain:"You roll two fair dice. What is the probability the total is $7$?",tech:"Find the probability that two fair dice sum to $7$.",
+ opts:[{t:"$\\frac{6}{36}$",ok:1},{t:"$\\frac{1}{11}$",e:"prob-sums-equally-likely"},{t:"$\\frac{1}{36}$",e:"prob-one-combination"},{t:"$\\frac{7}{36}$",e:"prob-value-as-count"}]},
+{id:"PR3",skill:"prob",plain:"On one roll of a die, the events \"roll a 2\" and \"roll a 5\" are:",tech:"On a single die roll, the events $\\{2\\}$ and $\\{5\\}$ are:",
+ opts:[{t:"mutually exclusive (they cannot both happen)",ok:1},{t:"independent (one does not affect the other)",e:"prob-excl-indep-confused"},{t:"both mutually exclusive and independent",e:"prob-both"},{t:"neither",e:"prob-neither"}]},
+{id:"SS1",skill:"stats-spread",plain:"For the data $2, 3, 3, 4, 40$ the mean is $10.4$ and the median is $3$. Why are they so different?",tech:"The data $2, 3, 3, 4, 40$ has mean $10.4$ and median $3$. Account for the difference.",
+ opts:[{t:"One very large value pulls the mean up but not the median",ok:1},{t:"The median must have been calculated wrongly",e:"stats-median-distrust"},{t:"The mean is always larger than the median",e:"stats-mean-always-larger"}]},
+{id:"SS2",skill:"stats-spread",plain:"If $5$ is added to every value in a data set, what happens to the mean and the standard deviation?",tech:"Describe the effect on the mean and standard deviation of adding $5$ to every value.",
+ opts:[{t:"The mean goes up by $5$; the standard deviation is unchanged",ok:1},{t:"Both go up by $5$",e:"stats-sd-shifts"},{t:"The mean is unchanged; the standard deviation goes up by $5$",e:"stats-swapped"}]},
+{id:"SS3",skill:"stats-spread",plain:"\"Number of children in a household\" is which type of data?",tech:"Classify the variable \"number of children in a household\".",
+ opts:[{t:"Numerical, discrete",ok:1},{t:"Numerical, continuous",e:"data-discrete-continuous"},{t:"Categorical, ordinal",e:"data-cat-num"},{t:"Categorical, nominal",e:"data-cat-num"}]},
+
+/* ---------------- limits and differentiation ---------------- */
+{id:"DV1",skill:"deriv",plain:"Differentiate $x^3$.",tech:"Find $\\dfrac{d}{dx}\\left(x^3\\right)$.",
+ opts:[{t:"$3x^2$",ok:1},{t:"$x^2$",e:"deriv-power-not-multiplied"},{t:"$3x^3$",e:"deriv-power-not-reduced"},{t:"$3x$",e:"deriv-double-reduced"}]},
+{id:"DV2",skill:"deriv",plain:"Differentiate $x^2 + 3x - 5$.",tech:"Find $\\dfrac{d}{dx}\\left(x^2 + 3x - 5\\right)$.",
+ opts:[{t:"$2x + 3$",ok:1},{t:"$2x + 3 - 5$",e:"deriv-constant-kept"},{t:"$2x$",e:"deriv-linear-term-dropped"},{t:"$x + 3$",e:"deriv-power-not-multiplied"}]},
+{id:"DV3",skill:"deriv",plain:"The derivative of a function at a point tells you:",tech:"Geometrically, $f'(a)$ gives:",
+ opts:[{t:"the slope of the tangent to the curve at that point",ok:1},{t:"the $y$-value of the curve at that point",e:"deriv-value-confused"},{t:"the area under the curve up to that point",e:"deriv-integral-confused"},{t:"where the curve crosses the $x$-axis",e:"deriv-intercept-confused"}]},
+{id:"LM1",skill:"limit",plain:"What does $\\dfrac{x^2 - 1}{x - 1}$ get close to as $x$ gets close to $1$?",tech:"Evaluate $\\displaystyle\\lim_{x \\to 1} \\frac{x^2 - 1}{x - 1}$.",
+ opts:[{t:"$2$",ok:1},{t:"$0$",e:"limit-numerator-zero"},{t:"It has no limit, because $\\frac{0}{0}$ is undefined",e:"limit-zero-over-zero-undefined"},{t:"$1$",e:"limit-x-value"}]},
+{id:"LM2",skill:"limit",plain:"What does $2x + 1$ get close to as $x$ gets close to $3$?",tech:"Evaluate $\\displaystyle\\lim_{x \\to 3} (2x + 1)$.",
+ opts:[{t:"$7$",ok:1},{t:"$3$",e:"limit-x-value"},{t:"Infinity",e:"limit-infinite"},{t:"$6$",e:"limit-dropped-constant"}]}
+];
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+const $ = s => document.querySelector(s);
+const app = typeof document !== "undefined" ? document.getElementById("app") : null;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const skillById = Object.fromEntries(SKILLS.map(s => [s.id, s]));
+const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
+const pctStr = p => p === null || p === undefined ? "–" : Math.round(p * 100) + "%";
+
+function tex(str){
+  const parts = String(str).split(/(\$[^$]+\$)/g);
+  return parts.map(p => {
+    if(p.startsWith("$") && p.endsWith("$") && p.length > 2){
+      const src = p.slice(1, -1);
+      if(typeof katex !== "undefined"){ try { return katex.renderToString("\\displaystyle " + src, {throwOnError:false}); } catch(e){} }
+      return "<code>" + esc(src) + "</code>";
+    }
+    return esc(p);
+  }).join("");
+}
+function plainText(str){ return String(str).replace(/\$/g,"").replace(/\\(frac|dfrac|tfrac)\{([^}]*)\}\{([^}]*)\}/g,"$2/$3").replace(/\\(times|cdot)/g,"×").replace(/\\(le|leq)/g,"≤").replace(/\\(ge|geq)/g,"≥").replace(/\\neq/g,"≠").replace(/\\sqrt\{([^}]*)\}/g,"√($1)").replace(/\\left|\\right|\\displaystyle/g,"").replace(/\\,/g," ").replace(/\\%/g,"%").replace(/\\pi/g,"π").replace(/\\(log|sin|cos|tan|lim|sum|prod|binom|text|circ|ldots|land|lnot|oplus|cap|cup|square|theta)/g,"$1").replace(/\\begin\{pmatrix\}/g,"[").replace(/\\end\{pmatrix\}/g,"]").replace(/\\\\/g,";").replace(/[{}]/g,""); }
+
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function shuffle(arr, rng){ const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function b64uEncode(bytes){ let s = ""; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function b64uDecode(str){ str = str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length % 4) str += "="; const s = atob(str); return Uint8Array.from(s, c => c.charCodeAt(0)); }
+
+function plotSVG(fig, small){
+  const w = small ? 200 : 280, h = small ? 160 : 220, pad = 22;
+  const [x0, x1] = fig.x, [y0, y1] = fig.y, [dx, dy] = fig.ticks || [1, 1];
+  const sx = x => pad + (x - x0) / (x1 - x0) * (w - 2 * pad);
+  const sy = y => h - pad - (y - y0) / (y1 - y0) * (h - 2 * pad);
+  let s = `<svg class="plot" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(fig.label || "graph")}">`;
+  s += `<rect x="${pad}" y="${pad}" width="${w - 2 * pad}" height="${h - 2 * pad}" fill="var(--field)" stroke="none"/>`;
+  for(let x = Math.ceil(x0); x <= x1; x += dx){ s += `<line x1="${sx(x)}" y1="${pad}" x2="${sx(x)}" y2="${h - pad}" stroke="var(--rule)" stroke-width="1"/>`; if(!small || x % (2 * dx) === 0) s += `<text x="${sx(x)}" y="${h - pad + 14}" font-size="10" text-anchor="middle" fill="var(--ink-soft)">${x}</text>`; }
+  for(let y = Math.ceil(y0); y <= y1; y += dy){ s += `<line x1="${pad}" y1="${sy(y)}" x2="${w - pad}" y2="${sy(y)}" stroke="var(--rule)" stroke-width="1"/>`; if(!small || y % (2 * dy) === 0) s += `<text x="${pad - 4}" y="${sy(y) + 3.5}" font-size="10" text-anchor="end" fill="var(--ink-soft)">${y}</text>`; }
+  if(x0 <= 0 && x1 >= 0) s += `<line x1="${sx(0)}" y1="${pad}" x2="${sx(0)}" y2="${h - pad}" stroke="var(--ink-soft)" stroke-width="1.5"/>`;
+  if(y0 <= 0 && y1 >= 0) s += `<line x1="${pad}" y1="${sy(0)}" x2="${w - pad}" y2="${sy(0)}" stroke="var(--ink-soft)" stroke-width="1.5"/>`;
+  s += `<text x="${w - pad + 4}" y="${(y0 <= 0 && y1 >= 0) ? sy(0) + 4 : h - pad}" font-size="11" fill="var(--ink-soft)" font-style="italic">x</text>`;
+  s += `<text x="${(x0 <= 0 && x1 >= 0) ? sx(0) + 4 : pad}" y="${pad - 6}" font-size="11" fill="var(--ink-soft)" font-style="italic">y</text>`;
+  for(const f of fig.fns){
+    const fn = new Function("x", "return " + f);
+    let d = "", pen = false;
+    for(let i = 0; i <= 160; i++){
+      const x = x0 + (x1 - x0) * i / 160; const y = fn(x);
+      if(!isFinite(y) || y < y0 - 0.5 || y > y1 + 0.5){ pen = false; continue; }
+      d += (pen ? " L" : " M") + sx(x).toFixed(1) + " " + sy(Math.max(y0, Math.min(y1, y))).toFixed(1); pen = true;
+    }
+    s += `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  }
+  return s + "</svg>";
+}
+
+/* ==========================================================================
+   CONFIGURATION AND THE SHARE CODE (format 2)
+   ========================================================================== */
+const ORDERS = ["Mixed together", "Easiest first", "Hardest first", "Grouped by topic"];
+const DEFAULT_CFG = {v:2, lang:0, ident:1, idk:true, conf:false, showScore:true, showItems:true, showAnswers:false, allowBack:true, order:0, drop:false, perSkill:2, viewLock:0, k:5, timer:0, maxQ:0, skills:SKILLS.map(s => s.id), seed:1, label:"", submitUrl:"", submitNote:""};
+
+function encodeCfg(c){
+  const b = [2, c.lang | c.ident << 2 | (c.idk ? 16 : 0) | (c.conf ? 32 : 0) | (c.showScore ? 64 : 0) | (c.showItems ? 128 : 0),
+    c.perSkill | c.viewLock << 2 | (c.k & 15) << 4,
+    (c.showAnswers ? 1 : 0) | (c.allowBack ? 2 : 0) | (c.order & 3) << 2 | (c.drop ? 16 : 0),
+    c.timer & 255, c.maxQ & 255];
+  const nb = Math.ceil(SKILLS.length / 8); b.push(nb);
+  const mask = new Array(nb).fill(0);
+  c.skills.forEach(id => { const i = SKILLS.findIndex(s => s.id === id); if(i >= 0) mask[i >> 3] |= 1 << (i & 7); });
+  b.push(...mask, c.seed & 255, c.seed >>> 8 & 255);
+  const tail = [c.label || "", c.submitUrl || "", c.submitNote || ""].join("\u001f").replace(/\u001f+$/, "");
+  return b64uEncode(Uint8Array.from([...b, ...new TextEncoder().encode(tail)]));
+}
+function decodeCfg(code){
+  const u = b64uDecode(code); if(u.length < 10 || u[0] !== 2) throw new Error("bad code");
+  const c = {v:2};
+  c.lang = u[1] & 3; c.ident = u[1] >> 2 & 3; c.idk = !!(u[1] & 16); c.conf = !!(u[1] & 32); c.showScore = !!(u[1] & 64); c.showItems = !!(u[1] & 128);
+  c.perSkill = u[2] & 3 || 1; c.viewLock = u[2] >> 2 & 3; c.k = u[2] >> 4 & 15 || 5;
+  c.showAnswers = !!(u[3] & 1); c.allowBack = !!(u[3] & 2); c.order = u[3] >> 2 & 3; c.drop = !!(u[3] & 16);
+  c.timer = u[4]; c.maxQ = u[5];
+  const nb = u[6]; c.skills = SKILLS.filter((s, i) => (i >> 3) < nb && (u[7 + (i >> 3)] & (1 << (i & 7)))).map(s => s.id);
+  const p = 7 + nb; c.seed = u[p] | u[p + 1] << 8;
+  const tail = new TextDecoder().decode(u.slice(p + 2)).split("\u001f");
+  c.label = tail[0] || ""; c.submitUrl = tail[1] || ""; c.submitNote = tail[2] || "";
+  return c;
+}
+function baseUrl(){ return location.href.split("#")[0]; }
+
+function assemble(cfg){
+  const rng = mulberry32(cfg.seed * 7919 + 17);
+  const chosen = shuffle(SKILLS.filter(s => cfg.skills.includes(s.id)), rng);
+  const pools = chosen.map(s => shuffle(ITEMS.filter(it => it.skill === s.id), rng).slice(0, cfg.perSkill));
+  let items = [];
+  for(let r = 0; r < cfg.perSkill; r++) pools.forEach(p => { if(p[r]) items.push(p[r]); });
+  if(cfg.maxQ && items.length > cfg.maxQ) items = items.slice(0, cfg.maxQ);
+  items = shuffle(items, rng);
+  const tier = it => skillById[it.skill].tier, ti = it => TOPICS.findIndex(t => t.id === skillById[it.skill].topic);
+  if(cfg.order === 1) items.sort((a, b) => tier(a) - tier(b));
+  if(cfg.order === 2) items.sort((a, b) => tier(b) - tier(a));
+  if(cfg.order === 3) items.sort((a, b) => ti(a) - ti(b) || tier(a) - tier(b));
+  return items.map(it => {
+    const variant = cfg.lang === 2 ? (rng() < 0.5 ? "plain" : "tech") : (cfg.lang === 1 ? "tech" : "plain");
+    const opts = shuffle(it.opts.map((o, i) => ({...o, src:i})), rng);
+    if(cfg.idk) opts.push({t:"I don't know", idk:1});
+    return {item:it, tier:tier(it), variant, opts};
+  });
+}
+
+/* ==========================================================================
+   RESULT BUILDER (pure: used by the sitting and by the sample class)
+   ========================================================================== */
+function buildResult(st){
+  const {plan, skipped, cfg, answers} = st;
+  const skills = {}, tiers = {};
+  const rec = (p, n, a, isSkipped) => {
+    const it = p.item, sk = skillById[it.skill];
+    if(!skills[sk.id]) skills[sk.id] = {name:sk.name, topic:sk.topic, tier:sk.tier, total:0, correct:0, idk:0, unanswered:0, skipped:0, errors:[]};
+    if(!tiers[sk.tier]) tiers[sk.tier] = {total:0, correct:0, idk:0, unanswered:0, skipped:0};
+    const S = skills[sk.id], T = tiers[sk.tier];
+    const r = {n, id:it.id, skill:sk.id, topic:sk.topic, tier:sk.tier, variant:p.variant, answered:!!a && !isSkipped, skipped:!!isSkipped, choice:null, correct:null, error:null, confidence:a ? a.conf || null : null, seconds:a ? a.seconds : null};
+    if(isSkipped){ S.skipped++; T.skipped++; return r; }
+    S.total++; T.total++;
+    if(!a){ S.unanswered++; T.unanswered++; return r; }
+    if(a.choice === "idk"){ r.choice = "I don't know"; r.correct = false; S.idk++; T.idk++; return r; }
+    const o = p.opts[a.choice]; r.choice = plainText(o.t); r.position = a.choice; r.correct = !!o.ok; r.error = o.e || null;
+    if(o.ok){ S.correct++; T.correct++; } else if(o.e) S.errors.push(o.e);
+    return r;
+  };
+  const items = plan.map((p, i) => rec(p, i + 1, answers[p.item.id], false)).concat((skipped || []).map((p, i) => rec(p, plan.length + i + 1, null, true)));
+  const answered = items.filter(i => i.answered).length, correct = items.filter(i => i.correct).length, total = plan.length;
+  return {
+    schema:"dewmath-result/2", bankVersion:BANK_VERSION, generatedAt:new Date(st.finishedAt || Date.now()).toISOString(),
+    config:{code:st.code, label:cfg.label, language:["plain", "technical", "mixed"][cfg.lang], identityMode:["anonymous", "pseudonym", "code", "name"][cfg.ident], timerMinutes:cfg.timer, order:ORDERS[cfg.order], dropOffered:cfg.drop, perSkill:cfg.perSkill, maxQuestions:cfg.maxQ, skills:cfg.skills},
+    student:{identity:st.ident || null}, viewMode:["", "one-at-a-time", "all-at-once", "paged"][st.vm],
+    elapsedSeconds:st.elapsed, timedOut:!!st.timedOut,
+    items, summary:{total, answered, correct, idk:items.filter(i => i.choice === "I don't know").length, skipped:(skipped || []).length, skills, tiers},
+    dictionary:{skills:Object.fromEntries(Object.keys(skills).map(k => [k, skillById[k].name])), topics:Object.fromEntries(TOPICS.map(t => [t.id, t.name])), tiers:TIERS, errors:Object.fromEntries([...new Set(items.map(i => i.error).filter(Boolean))].map(e => [e, ERRORS[e] || e]))}
+  };
+}
+
+/* ==========================================================================
+   SAMPLE CLASS: twelve simulated students with distinct profiles
+   ========================================================================== */
+const PERSONAS = [
+  {name:"Aoife",  p:{1:.97, 2:.92, 3:.85}, idk:.02, conf:"calibrated", speed:.8},
+  {name:"Brian",  p:{1:.95, 2:.85, 3:.45}, idk:.15, conf:"calibrated", speed:1},
+  {name:"Ciara",  p:{1:.9,  2:.75, 3:.3},  idk:.2,  conf:"calibrated", speed:1},
+  {name:"Dara",   p:{1:.8,  2:.6,  3:.3},  idk:.1,  conf:"calibrated", speed:1.1, topic:{num:.4}},
+  {name:"Emma",   p:{1:.75, 2:.55, 3:.3},  idk:0,   conf:"over",       speed:.7},
+  {name:"Fionn",  p:{1:.85, 2:.65, 3:.3},  idk:.45, conf:"under",      speed:1.3},
+  {name:"Grace",  p:{1:.85, 2:.65, 3:.35}, idk:.1,  conf:"calibrated", speed:1, topic:{alg:.35}},
+  {name:"Hassan", p:{1:.55, 2:.35, 3:.15}, idk:.25, conf:"calibrated", speed:1.4},
+  {name:"Iris",   p:{1:.9,  2:.75, 3:.4},  idk:.1,  conf:"calibrated", speed:1, topic:{gra:.35}},
+  {name:"Jack",   p:{1:.7,  2:.5,  3:.3},  idk:0,   conf:"guess",      speed:.4},
+  {name:"Kasia",  p:{1:.9,  2:.75, 3:.45}, idk:.1,  conf:"calibrated", speed:1.1, techPenalty:.35},
+  {name:"Liam",   p:{1:.8,  2:.6,  3:.3},  idk:.1,  conf:"calibrated", speed:1.6, stopAt:.7}
+];
+function simulateClass(){
+  const cfg = {...DEFAULT_CFG, lang:2, conf:true, ident:3, timer:90, seed:4242, label:"Sample class (simulated)"};
+  const code = encodeCfg(cfg), plan = assemble(cfg), start = Date.parse("2026-09-14T10:00:00Z");
+  return PERSONAS.map((P, k) => {
+    const rng = mulberry32(1000 + k * 97), answers = {}; let elapsed = 0, done = 0;
+    const limit = P.stopAt ? Math.floor(plan.length * P.stopAt) : plan.length;
+    for(const p of plan){
+      if(done >= limit) break; done++;
+      const sk = skillById[p.item.skill];
+      let pc = P.p[sk.tier]; if(P.topic && P.topic[sk.topic] !== undefined) pc = Math.min(pc, P.topic[sk.topic]);
+      if(P.techPenalty && p.variant === "tech") pc -= P.techPenalty;
+      const right = rng() < pc;
+      const wrong = p.opts.map((o, i) => i).filter(i => !p.opts[i].ok && !p.opts[i].idk);
+      let choice;
+      if(right) choice = p.opts.findIndex(o => o.ok);
+      else if(rng() < P.idk) choice = "idk";
+      else choice = wrong[Math.floor(rng() * wrong.length)];
+      let conf;
+      const r = rng();
+      if(P.conf === "over") conf = r < .85 ? "Sure" : "Fairly sure";
+      else if(P.conf === "under") conf = r < .15 ? "Sure" : r < .6 ? "Fairly sure" : "Guessing";
+      else if(P.conf === "guess") conf = r < .3 ? "Sure" : r < .5 ? "Fairly sure" : "Guessing";
+      else conf = right ? (r < .7 ? "Sure" : r < .95 ? "Fairly sure" : "Guessing") : (r < .2 ? "Sure" : r < .55 ? "Fairly sure" : "Guessing");
+      const seconds = Math.max(6, Math.round((12 + sk.tier * 8 + rng() * 22) * P.speed));
+      elapsed += seconds;
+      answers[p.item.id] = {choice, conf, seconds};
+    }
+    return buildResult({plan, skipped:[], cfg, answers, code, ident:P.name, vm:1, elapsed:P.stopAt ? cfg.timer * 60 : elapsed, timedOut:!!P.stopAt, finishedAt:start + k * 60000 + elapsed * 1000});
+  });
+}
+
+/* ==========================================================================
+   ROUTING
+   ========================================================================== */
+function route(){
+  const h = location.hash;
+  if(h.startsWith("#c=")) return renderIntro(h.slice(3));
+  if(h === "#analyse") return renderAnalysis();
+  renderBuilder();
+}
+
+/* ==========================================================================
+   TEACHER: BUILDER
+   ========================================================================== */
+let cfg = {...DEFAULT_CFG, seed:Math.floor(Math.random() * 65536)};
+const TIMER_PRESETS = [0, 15, 20, 30, 40, 45, 60, 90];
+
+function renderBuilder(){
+  app.className = "";
+  const topics = TOPICS.map(t => {
+    const sk = SKILLS.filter(s => s.topic === t.id); if(!sk.length) return "";
+    return `<div class="topic-block">
+      <label class="check"><input type="checkbox" data-topic="${t.id}" ${sk.every(s => cfg.skills.includes(s.id)) ? "checked" : ""}><strong>${esc(t.name)}</strong></label>
+      <div class="skills">${sk.map(s => `<label class="check"><input type="checkbox" data-skill="${s.id}" ${cfg.skills.includes(s.id) ? "checked" : ""}><span>${esc(s.name)} <small class="tier t${s.tier}">${TIERS[s.tier]}</small> <small>${ITEMS.filter(i => i.skill === s.id).length} items${s.mod === "M" ? ", Maths for IT only" : ""}</small></span></label>`).join("")}</div>
+    </div>`;
+  }).join("");
+  app.innerHTML = `
+  <h1>Maths readiness diagnostic</h1>
+  <p class="lead">Choose what the diagnostic asks and how it behaves, then share the link with your class. Nothing is stored on a server: every setting is packed into the link itself.</p>
+  <p><a href="#analyse">Go to the class analysis page</a></p>
+
+  <h2>What to ask</h2>
+  <p>Every skill sits at one of three levels. Foundation skills are what a student is assumed to arrive with; core skills are the body of the Level 5 modules; advanced skills pick out students with a strong background.</p>
+  <div class="row" style="margin-bottom:.5rem">
+    <button class="quiet" data-tier="1">Foundation only</button>
+    <button class="quiet" data-tier="12">Foundation and core</button>
+    <button class="quiet" data-tier="3">Advanced only</button>
+    <button class="quiet" data-tier="123">Everything</button>
+    <button class="quiet" data-tier="">Clear</button>
+  </div>
+  <div class="row" style="margin-bottom:1rem">
+    <small>By module:</small>
+    <button class="quiet small" data-mod="M">Maths for IT (5N18396)</button>
+    <button class="quiet small" data-mod="C">Computational Methods (5N0554)</button>
+  </div>
+  ${topics}
+  <div class="grid2">
+    <label class="check"><span>Items per skill
+      <select id="perSkill">${[1,2,3].map(n => `<option value="${n}" ${cfg.perSkill === n ? "selected" : ""}>${n}</option>`).join("")}</select></span></label>
+    <label class="check"><span>Maximum number of questions <input type="number" id="maxQ" min="0" max="255" value="${cfg.maxQ}" style="width:5.5rem"> <small>0 means no cap. The cap keeps one item per skill before adding seconds.</small></span></label>
+  </div>
+  <p class="notice" id="count"></p>
+
+  <h2>How it reads</h2>
+  <label class="check"><span>Language of the questions
+    <select id="lang">
+      <option value="0" ${cfg.lang === 0 ? "selected" : ""}>Everyday language</option>
+      <option value="1" ${cfg.lang === 1 ? "selected" : ""}>Mathematical language</option>
+      <option value="2" ${cfg.lang === 2 ? "selected" : ""}>Mixed at random (records which each student saw)</option>
+    </select></span></label>
+  <label class="check"><input type="checkbox" id="idk" ${cfg.idk ? "checked" : ""}>Offer "I don't know" on every question <small>(separates a guess from a gap)</small></label>
+  <label class="check"><input type="checkbox" id="conf" ${cfg.conf ? "checked" : ""}>Ask how sure the student is after each answer <small>(lets the analysis find confident errors)</small></label>
+
+  <h2>How it runs</h2>
+  <label class="check"><span>Order of the questions
+    <select id="order">${ORDERS.map((o, i) => `<option value="${i}" ${cfg.order === i ? "selected" : ""}>${o}</option>`).join("")}</select></span></label>
+  <label class="check"><input type="checkbox" id="drop" ${cfg.drop ? "checked" : ""}><span>When the order is hardest first, offer to skip the rest of a level after three misses in four at that level <small>(only in one-at-a-time or paged layouts; skipped questions are recorded as skipped, not wrong)</small></span></label>
+  <label class="check"><span>Layout
+    <select id="viewLock">
+      <option value="0" ${cfg.viewLock === 0 ? "selected" : ""}>Student chooses</option>
+      <option value="1" ${cfg.viewLock === 1 ? "selected" : ""}>One question at a time</option>
+      <option value="2" ${cfg.viewLock === 2 ? "selected" : ""}>All questions on one page</option>
+      <option value="3" ${cfg.viewLock === 3 ? "selected" : ""}>A few questions per page</option>
+    </select> with <input type="number" id="k" min="2" max="15" value="${cfg.k}" style="width:4.5rem"> per page when paged</span></label>
+  <label class="check"><input type="checkbox" id="allowBack" ${cfg.allowBack ? "checked" : ""}>Let students go back to earlier questions</label>
+  <fieldset><legend>Time limit</legend>
+    <div class="row">
+      <select id="timerPreset">${TIMER_PRESETS.map(m => `<option value="${m}" ${cfg.timer === m ? "selected" : ""}>${m ? m + " minutes" : "No limit"}</option>`).join("")}<option value="custom" ${TIMER_PRESETS.includes(cfg.timer) ? "" : "selected"}>Other</option></select>
+      <span>or type minutes: <input type="number" id="timer" min="0" max="255" value="${cfg.timer}" style="width:5.5rem"></span>
+    </div>
+    <small>When time runs out, whatever has been answered is recorded and the rest is marked not attempted.</small>
+  </fieldset>
+
+  <h2>What the student sees at the end</h2>
+  <label class="check"><input type="checkbox" id="showScore" ${cfg.showScore ? "checked" : ""}>Their score</label>
+  <label class="check"><input type="checkbox" id="showItems" ${cfg.showItems ? "checked" : ""}>Which questions they got right and wrong</label>
+  <label class="check"><input type="checkbox" id="showAnswers" ${cfg.showAnswers ? "checked" : ""}>The correct answers</label>
+
+  <h2>Who took it</h2>
+  <label class="check"><span>Ask the student for
+    <select id="ident">
+      <option value="0" ${cfg.ident === 0 ? "selected" : ""}>Nothing (fully anonymous)</option>
+      <option value="1" ${cfg.ident === 1 ? "selected" : ""}>A pseudonym they choose</option>
+      <option value="2" ${cfg.ident === 2 ? "selected" : ""}>A code you gave them</option>
+      <option value="3" ${cfg.ident === 3 ? "selected" : ""}>Their name</option>
+    </select></span></label>
+
+  <h2>Where students send their file</h2>
+  <p>At the end, each student downloads a small results file. Tell them where it goes. A OneDrive "Request files" link, a Microsoft Form with a file-upload question, or an email address all work; the finish page shows the link as a button.</p>
+  <label class="check"><span>Link or email address <input type="url" id="submitUrl" value="${esc(cfg.submitUrl)}" placeholder="https://forms.office.com/… or mailto:you@college.ie"></span></label>
+  <label class="check"><span>A short note to go with it <input type="text" id="submitNote" value="${esc(cfg.submitNote)}" placeholder="Upload it before Friday's class" maxlength="120"></span></label>
+
+  <h2>Share it</h2>
+  <label class="check"><span>A short label the student sees, such as the class and date <input type="text" id="label" value="${esc(cfg.label)}" placeholder="Maths for IT, September" maxlength="40"></span></label>
+  <div class="row"><button class="quiet" id="reseed">Draw a different set of questions</button><small>Everyone who opens the same link sees the same questions in the same order.</small></div>
+  <p style="margin-top:1rem">Send this link to your students:</p>
+  <div class="urlbox code" id="url"></div>
+  <div class="row"><button id="copy">Copy link</button><a class="btn quiet" id="preview" href="#" target="_blank">Try it as a student</a></div>
+  <p class="muted" style="margin-top:1rem">Students download a results file when they finish. Collect those files however suits you and open them together on the <a href="#analyse">analysis page</a>.</p>
+  <hr>
+  <p class="muted">Bank version ${BANK_VERSION}. ${ITEMS.length} items across ${SKILLS.length} skills: ${[1,2,3].map(t => SKILLS.filter(s => s.tier === t).length + " " + TIERS[t].toLowerCase()).join(", ")}.</p>`;
+
+  const sync = () => {
+    cfg.skills = [...app.querySelectorAll("[data-skill]")].filter(i => i.checked).map(i => i.dataset.skill);
+    app.querySelectorAll("[data-topic]").forEach(t => { t.checked = SKILLS.filter(s => s.topic === t.dataset.topic).every(s => cfg.skills.includes(s.id)); });
+    cfg.perSkill = +$("#perSkill").value; cfg.maxQ = Math.max(0, Math.min(255, +$("#maxQ").value || 0)); cfg.lang = +$("#lang").value; cfg.idk = $("#idk").checked; cfg.conf = $("#conf").checked;
+    cfg.order = +$("#order").value; cfg.drop = $("#drop").checked; cfg.viewLock = +$("#viewLock").value; cfg.k = Math.max(2, Math.min(15, +$("#k").value || 5)); cfg.allowBack = $("#allowBack").checked;
+    cfg.timer = Math.max(0, Math.min(255, +$("#timer").value || 0)); cfg.showScore = $("#showScore").checked; cfg.showItems = $("#showItems").checked; cfg.showAnswers = $("#showAnswers").checked;
+    cfg.ident = +$("#ident").value; cfg.label = $("#label").value.trim();
+    cfg.submitUrl = $("#submitUrl").value.trim().replace(/^(\S+@\S+\.\S+)$/, "mailto:$1"); cfg.submitNote = $("#submitNote").value.trim();
+    $("#drop").disabled = cfg.order !== 2;
+    const plan = assemble(cfg), byTier = [1,2,3].map(t => plan.filter(p => p.tier === t).length);
+    $("#count").innerHTML = plan.length ? `<strong>${plan.length} questions</strong> (${byTier.map((n, i) => n + " " + TIERS[i + 1].toLowerCase()).join(", ")}), roughly ${Math.ceil(plan.length * 1.25)} minutes at a steady pace.` : "No skills selected yet.";
+    const url = baseUrl() + "#c=" + encodeCfg(cfg);
+    $("#url").textContent = url; $("#preview").href = url;
+  };
+  app.querySelectorAll("[data-topic]").forEach(t => t.addEventListener("change", () => { app.querySelectorAll("[data-skill]").forEach(s => { if(skillById[s.dataset.skill].topic === t.dataset.topic) s.checked = t.checked; }); sync(); }));
+  app.querySelectorAll("[data-tier]").forEach(b => b.addEventListener("click", () => { const ts = b.dataset.tier; app.querySelectorAll("[data-skill]").forEach(s => { s.checked = ts.includes(String(skillById[s.dataset.skill].tier)); }); sync(); }));
+  app.querySelectorAll("[data-mod]").forEach(b => b.addEventListener("click", () => { app.querySelectorAll("[data-skill]").forEach(s => { s.checked = skillById[s.dataset.skill].mod.includes(b.dataset.mod); }); sync(); }));
+  $("#timerPreset").addEventListener("change", e => { if(e.target.value !== "custom"){ $("#timer").value = e.target.value; } sync(); });
+  $("#timer").addEventListener("input", () => { const v = +$("#timer").value || 0; $("#timerPreset").value = TIMER_PRESETS.includes(v) ? String(v) : "custom"; });
+  app.querySelectorAll("input, select").forEach(el => el.addEventListener("input", sync));
+  $("#reseed").addEventListener("click", () => { cfg.seed = Math.floor(Math.random() * 65536); sync(); });
+  $("#copy").addEventListener("click", () => { navigator.clipboard.writeText($("#url").textContent).then(() => { $("#copy").textContent = "Copied"; setTimeout(() => $("#copy").textContent = "Copy link", 1500); }); });
+  sync();
+}
+
+/* ==========================================================================
+   STUDENT: INTRO
+   ========================================================================== */
+let run = null;
+
+function renderIntro(code){
+  app.className = "";
+  let c; try { c = decodeCfg(code); } catch(e){ app.innerHTML = `<h1>This link is not complete</h1><p>The part of the address after the # sign has been cut or changed. Ask for the link again, and paste the whole of it.</p>`; return; }
+  const plan = assemble(c);
+  if(!plan.length){ app.innerHTML = `<h1>Nothing to ask</h1><p>This link has no skills selected. Ask your teacher for a new one.</p>`; return; }
+  const saved = localStorage.getItem("dewmath2:" + code), last = localStorage.getItem("dewmath2:last:" + code);
+  const identLabel = ["", "Choose a nickname to put on your results. It does not need to be your real name.", "Enter the code your teacher gave you.", "Enter your name."][c.ident];
+  const layoutChoice = c.viewLock === 0 ? `<h2>How would you like the questions laid out?</h2>
+    <label class="check"><input type="radio" name="vm" value="1" checked>One question at a time</label>
+    <label class="check"><input type="radio" name="vm" value="2">All the questions on one page</label>
+    <label class="check"><input type="radio" name="vm" value="3">A few at a time (${c.k} per page)</label>` : "";
+  app.innerHTML = `
+  <h1>${esc(c.label || "Maths readiness check")}</h1>
+  <p class="lead">This is not a test with a pass mark. It is a way of finding out which parts of maths you are comfortable with, so that teaching can start from where you are.</p>
+  <p>There are ${plan.length} questions. Each has one correct answer${c.idk ? ", and every question also has an \"I don't know\" option, which is a perfectly good answer to give" : ""}. ${c.order === 2 ? "The questions start with the hardest material and get easier, so do not be put off by the first few. " : ""}${c.timer ? `You have ${c.timer} minutes; if the time runs out, the questions you have answered are still recorded.` : "There is no time limit."} Have some rough paper beside you. Your answers are saved on this device as you go, so if the page closes you can come back to this link and carry on.</p>
+  ${c.ident ? `<h2>${c.ident === 3 ? "Your name" : c.ident === 2 ? "Your code" : "A nickname"}</h2><p>${identLabel}</p><input type="text" id="ident" maxlength="60" autocomplete="off">` : ""}
+  ${layoutChoice}
+  ${saved ? `<div class="notice">You started this before on this device. <button class="quiet" id="resume">Carry on where you left off</button></div>` : ""}
+  ${last ? `<div class="notice">You finished this earlier on this device. <button class="quiet" id="again">Download that results file again</button></div>` : ""}
+  <p style="margin-top:2rem"><button id="start">Start</button></p>`;
+  const begin = (resume) => {
+    const ident = c.ident ? ($("#ident").value.trim()) : "";
+    if(c.ident && !ident){ $("#ident").focus(); $("#ident").style.borderColor = "var(--bad)"; return; }
+    const vm = c.viewLock || +(app.querySelector("[name=vm]:checked") || {value:1}).value;
+    startRun(code, c, plan, ident, vm, resume ? JSON.parse(saved) : null);
+  };
+  $("#start").addEventListener("click", () => begin(false));
+  if(saved) $("#resume").addEventListener("click", () => begin(true));
+  if(last) $("#again").addEventListener("click", () => { const r = JSON.parse(last); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 1)], {type:"application/json"})); a.download = r._filename || "dewmath-result.json"; a.click(); });
+}
+
+/* ==========================================================================
+   STUDENT: THE SITTING
+   ========================================================================== */
+function startRun(code, c, plan, ident, vm, saved){
+  const pageSize = vm === 1 ? 1 : vm === 2 ? plan.length : c.k;
+  run = {code, c, plan:plan.slice(), skipped:[], ident, vm, pageSize, page:0, answers:{}, started:Date.now(), lastEvent:Date.now(), timedOut:false, finished:false, offered:{}, offer:null};
+  if(saved){
+    run.answers = saved.answers || {}; run.started = saved.started || run.started; run.page = saved.page || 0; run.offered = saved.offered || {};
+    if(saved.skippedIds){ run.skipped = run.plan.filter(p => saved.skippedIds.includes(p.item.id)); run.plan = run.plan.filter(p => !saved.skippedIds.includes(p.item.id)); }
+  }
+  if(c.timer){ run.deadline = run.started + c.timer * 60000; run.tick = setInterval(tickTimer, 1000); }
+  renderPage();
+}
+function persist(){
+  if(!run || run.finished) return;
+  try { localStorage.setItem("dewmath2:" + run.code, JSON.stringify({answers:run.answers, started:run.started, page:run.page, offered:run.offered, skippedIds:run.skipped.map(p => p.item.id)})); }
+  catch(e){ return; }
+  const el = $("#saved"); if(el){ el.textContent = "Saved"; clearTimeout(run.savedT); run.savedT = setTimeout(() => { if($("#saved")) $("#saved").textContent = "Saved"; }, 1500); }
+}
+function tickTimer(){
+  const el = $("#timer"); if(!run || run.finished) return;
+  const left = Math.max(0, run.deadline - Date.now());
+  if(el){ const m = Math.floor(left / 60000), s = Math.floor(left % 60000 / 1000); el.textContent = `${m}:${String(s).padStart(2, "0")} left`; el.classList.toggle("low", left < 120000); }
+  if(left <= 0){ run.timedOut = true; finishRun(); }
+}
+/* The drop-a-level check, after each answer in hardest-first mode. */
+function checkDrop(tier){
+  const {c, plan, answers} = run;
+  if(!c.drop || c.order !== 2 || run.vm === 2 || run.offered[tier]) return;
+  const done = plan.filter(p => p.tier === tier && answers[p.item.id]);
+  if(done.length < 4) return;
+  const last4 = done.slice(-4), misses = last4.filter(p => { const a = answers[p.item.id]; return a.choice === "idk" || !p.opts[a.choice].ok; }).length;
+  const remaining = plan.filter(p => p.tier === tier && !answers[p.item.id]).length;
+  const lowerExists = plan.some(p => p.tier < tier && !answers[p.item.id]);
+  if(misses >= 3 && remaining > 0 && lowerExists){ run.offered[tier] = true; run.offer = {tier, remaining}; persist(); showOffer(); }
+}
+function offerHTML(){ return `<div class="notice" id="offer"><p><strong>These questions are pitched at a high level, and the last few have not gone in.</strong> That is expected: the harder material comes first here. You can skip the remaining ${run.offer.remaining} question${run.offer.remaining > 1 ? "s" : ""} at this level and move on to the next. Skipped questions are recorded as skipped, not as wrong.</p><div class="row"><button id="doDrop">Skip to the next level</button><button class="quiet" id="noDrop">Keep going</button></div></div>`; }
+function showOffer(){
+  if($("#offer")) $("#offer").remove();
+  app.querySelector(".topbar").insertAdjacentHTML("afterend", offerHTML());
+  $("#doDrop").addEventListener("click", () => dropTier(run.offer.tier));
+  $("#noDrop").addEventListener("click", () => { run.offer = null; $("#offer").remove(); });
+  $("#offer").scrollIntoView({block:"nearest"});
+}
+function dropTier(tier){
+  const rest = run.plan.filter(p => p.tier === tier && !run.answers[p.item.id]);
+  run.skipped.push(...rest); run.plan = run.plan.filter(p => !rest.includes(p));
+  const first = run.plan.findIndex(p => !run.answers[p.item.id]);
+  run.page = first < 0 ? Math.max(0, Math.ceil(run.plan.length / run.pageSize) - 1) : Math.floor(first / run.pageSize);
+  run.offer = null; persist(); renderPage(); window.scrollTo(0, 0);
+}
+
+function renderPage(){
+  app.className = "";
+  const {plan, pageSize, c} = run;
+  const pages = Math.max(1, Math.ceil(plan.length / pageSize));
+  run.page = Math.min(run.page, pages - 1);
+  const page = run.page, slice = plan.slice(page * pageSize, (page + 1) * pageSize);
+  const answered = plan.filter(p => run.answers[p.item.id]).length;
+  const items = slice.map(p => {
+    const it = p.item, a = run.answers[it.id] || {}, idx = plan.indexOf(p) + 1;
+    const figOpts = p.opts.some(o => o.fig);
+    return `<section class="item" data-id="${it.id}" data-tier="${p.tier}">
+      <div class="num">Question ${idx} of ${plan.length}</div>
+      <p class="stem">${tex(p.variant === "tech" ? it.tech : it.plain)}</p>
+      ${it.fig ? plotSVG(it.fig) : ""}
+      <div class="opts ${figOpts ? "figs" : ""}" role="radiogroup">
+        ${p.opts.map((o, i) => { const v = o.idk ? "idk" : i, chk = String(a.choice) === String(v) ? "checked" : "";
+          return `<label class="opt ${o.fig ? "fig" : ""} ${o.idk ? "idk" : ""}">${o.fig ? plotSVG(o.fig, true) + `<span class="caption"><input type="radio" name="q-${it.id}" value="${v}" ${chk}> Graph ${"ABCDEF"[i]}</span>` : `<input type="radio" name="q-${it.id}" value="${v}" ${chk}><span>${tex(o.t)}</span>`}</label>`; }).join("")}
+      </div>
+      ${c.conf ? `<div class="conf">How sure are you? ${["Sure", "Fairly sure", "Guessing"].map(l => `<button type="button" data-conf="${l}" class="${a.conf === l ? "on" : ""}">${l}</button>`).join("")}</div>` : ""}
+    </section>`;
+  }).join("");
+  app.innerHTML = `
+  <div class="topbar"><div><strong>${esc(c.label || "Maths readiness check")}</strong> <span class="saved" id="saved">${answered ? "Saved" : "Answers save automatically"}</span><div class="progress" aria-hidden="true"><div style="width:${answered / plan.length * 100}%"></div></div></div>
+    <div class="timer" id="timer"></div></div>
+  ${items}
+  <div class="nav">
+    <div>${page > 0 && (c.allowBack || pageSize === plan.length) ? `<button class="quiet" id="prev">Back</button>` : ""}</div>
+    <div>${page < pages - 1 ? `<button id="next">Next</button>` : `<button id="finish">Finish</button>`}</div>
+  </div>`;
+  if(c.timer) tickTimer();
+  app.querySelectorAll("input[type=radio]").forEach(r => r.addEventListener("change", e => {
+    const id = e.target.name.slice(2), now = Date.now();
+    const prev = run.answers[id] || {};
+    run.answers[id] = {choice:e.target.value === "idk" ? "idk" : +e.target.value, conf:prev.conf, seconds:prev.seconds ?? Math.round((now - run.lastEvent) / 1000)};
+    run.lastEvent = now; persist();
+    const bar = app.querySelector(".progress div"); if(bar) bar.style.width = (plan.filter(p => run.answers[p.item.id]).length / plan.length * 100) + "%";
+    checkDrop(+e.target.closest(".item").dataset.tier);
+  }));
+  app.querySelectorAll("[data-conf]").forEach(b => b.addEventListener("click", () => {
+    const id = b.closest(".item").dataset.id; run.answers[id] = {...(run.answers[id] || {}), conf:b.dataset.conf};
+    b.parentElement.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); persist();
+  }));
+  if(run.offer) showOffer();
+  if($("#prev")) $("#prev").addEventListener("click", () => { run.page--; run.offer = null; persist(); renderPage(); window.scrollTo(0, 0); });
+  if($("#next")) $("#next").addEventListener("click", () => { run.page++; run.offer = null; persist(); renderPage(); window.scrollTo(0, 0); });
+  if($("#finish")) $("#finish").addEventListener("click", () => {
+    const left = plan.length - plan.filter(p => run.answers[p.item.id]).length;
+    if(left && !confirm(`You have ${left} unanswered question${left > 1 ? "s" : ""}. Finish anyway? Unanswered questions are recorded as not attempted.`)) return;
+    finishRun();
+  });
+}
+
+function finishRun(){
+  if(run.finished) return; run.finished = true; clearInterval(run.tick);
+  localStorage.removeItem("dewmath2:" + run.code);
+  const c = run.c;
+  const r = buildResult({plan:run.plan, skipped:run.skipped, cfg:c, answers:run.answers, code:run.code, ident:run.ident, vm:run.vm, elapsed:Math.round((Date.now() - run.started) / 1000), timedOut:run.timedOut});
+  const safe = (r.student.identity || "anonymous").replace(/[^\w\-]+/g, "_").slice(0, 30);
+  const fname = `dewmath-${safe}-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")}.json`;
+  const href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 1)], {type:"application/json"}));
+  try { localStorage.setItem("dewmath2:last:" + run.code, JSON.stringify({...r, _filename:fname})); } catch(e){}
+  const isMail = /^mailto:/i.test(c.submitUrl || "");
+  const send = c.submitUrl
+    ? `<li><span>${isMail ? `Email the file as an attachment. <a class="btn quiet" href="${esc(c.submitUrl)}?subject=${encodeURIComponent("Maths diagnostic: " + (r.student.identity || "results"))}">Open a new email</a>` : `Upload the file where your teacher asked. <a class="btn quiet" href="${esc(c.submitUrl)}" target="_blank" rel="noopener">Open the upload page</a>`}${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`
+    : `<li><span>Send it to your teacher in the way they asked: by email, through a form, or into a shared folder.${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`;
+  const list = c.showItems ? `<h2>Question by question</h2><ul class="result-list">${r.items.filter(i => !i.skipped).map((i, k) => {
+    const p = run.plan[k]; const mark = !i.answered ? ["skip", "–", "Not attempted"] : i.choice === "I don't know" ? ["skip", "?", "I don't know"] : i.correct ? ["ok", "✓", "Correct"] : ["no", "✗", "Not this time"];
+    const ans = c.showAnswers && !i.correct ? `<small>Correct answer: ${p.opts.find(o => o.ok).fig ? "Graph " + "ABCDEF"[p.opts.findIndex(o => o.ok)] : tex(p.opts.find(o => o.ok).t)}</small>` : "";
+    return `<li><span class="mark ${mark[0]}">${mark[1]}</span><span>${tex(p.variant === "tech" ? p.item.tech : p.item.plain)}<br><small>${esc(skillById[i.skill].name)}</small></span><span>${mark[2]}<br>${ans}</span></li>`; }).join("")}</ul>` : "";
+  app.innerHTML = `
+  <h1>Finished</h1>
+  ${run.timedOut ? `<p class="notice">The time ran out, so this is what you had answered by then.</p>` : ""}
+  <p class="lead">Thank you. Two more steps and you are done.</p>
+  <ol class="steps">
+    <li><span>Download your results file. <a class="btn" id="dl" href="${href}" download="${fname}">Download my results file</a><br><small>It is called <span class="code">${esc(fname)}</span> and will be in your Downloads folder. It records your answers and nothing else, and it does not leave this device until you send it.</small></span></li>
+    ${send}
+  </ol>
+  <p class="muted">If you lose the file, open this same link again on this device and you can download it again.</p>
+  ${c.showScore ? `<h2>Your score</h2><p class="lead">${r.summary.correct} out of ${r.summary.total}${r.summary.answered < r.summary.total ? ` (${r.summary.total - r.summary.answered} not attempted)` : ""}${r.summary.skipped ? `, with ${r.summary.skipped} skipped` : ""}</p><p>A low score on some topics is the useful outcome here: it tells your teacher where to start.</p>` : ""}
+  ${list}`;
+  window.scrollTo(0, 0);
+}
+
+/* ==========================================================================
+   TEACHER: CLASS ANALYSIS
+   ========================================================================== */
+function renderAnalysis(){
+  app.className = "wide";
+  app.innerHTML = `
+  <h1>Class analysis</h1>
+  <p class="lead">Open the results files your students downloaded. Everything is worked out in this page; nothing is uploaded anywhere.</p>
+  <p><a href="${baseUrl()}">Back to the builder</a></p>
+  <div class="row"><input type="file" id="files" multiple accept=".json,application/json"><button class="quiet" id="sample">Load a sample class of 12</button><button class="quiet" id="clear">Clear</button></div>
+  <p><small>Select all the files at once, or add more in a second selection. The sample class is simulated from twelve invented profiles so you can see every chart with data in it.</small></p>
+  <div id="out"></div>`;
+  let results = [];
+  $("#files").addEventListener("change", async e => {
+    for(const f of e.target.files){
+      try { const r = JSON.parse(await f.text()); if(!/^dewmath-result\/[12]$/.test(r.schema)) throw 0; r._file = f.name; results.push(r); }
+      catch(err){ $("#out").insertAdjacentHTML("afterbegin", `<p class="notice bad">${esc(f.name)} is not a results file from this diagnostic, so it was skipped.</p>`); }
+    }
+    e.target.value = ""; renderReport(results);
+  });
+  $("#sample").addEventListener("click", () => { results = simulateClass().map(r => ({...r, _file:"simulated"})); renderReport(results); });
+  $("#clear").addEventListener("click", () => { results = []; $("#out").innerHTML = ""; });
+}
+
+/* Small SVG chart helpers */
+function hbars(rows, opts){
+  const o = {max:1, fmt:v => Math.round(v * 100) + "%", w:640, rowH:22, labelW:230, ...opts};
+  const h = rows.length * o.rowH + 6, bw = o.w - o.labelW - 60;
+  let s = `<svg viewBox="0 0 ${o.w} ${h}" class="chart" role="img" aria-label="${esc(o.label || "bar chart")}">`;
+  rows.forEach((r, i) => {
+    const y = i * o.rowH + 3, len = Math.max(0, Math.min(1, r.value / o.max)) * bw;
+    s += `<text x="${o.labelW - 8}" y="${y + 15}" font-size="12" text-anchor="end" fill="var(--ink)">${esc(r.label)}</text>`;
+    s += `<rect x="${o.labelW}" y="${y + 3}" width="${bw}" height="${o.rowH - 8}" fill="var(--rule)" opacity=".5"/>`;
+    s += `<rect x="${o.labelW}" y="${y + 3}" width="${len.toFixed(1)}" height="${o.rowH - 8}" fill="${r.color || "var(--accent)"}"/>`;
+    const txt = esc(o.fmt(r.value)) + (r.note ? " " + esc(r.note) : "");
+    if(len > bw * 0.7) s += `<text x="${o.labelW + len - 6}" y="${y + 15}" font-size="12" text-anchor="end" fill="#fff">${txt}</text>`;
+    else s += `<text x="${o.labelW + len + 6}" y="${y + 15}" font-size="12" fill="var(--ink-soft)">${txt}</text>`;
+  });
+  return s + "</svg>";
+}
+function vbars(rows, opts){
+  const o = {max:null, w:640, h:200, fmt:v => v, label:"chart", ...opts};
+  const max = o.max || Math.max(1, ...rows.map(r => r.value)), n = rows.length, pad = 30, bw = (o.w - 2 * pad) / n;
+  let s = `<svg viewBox="0 0 ${o.w} ${o.h}" class="chart" role="img" aria-label="${esc(o.label)}">`;
+  s += `<line x1="${pad}" y1="${o.h - 30}" x2="${o.w - pad}" y2="${o.h - 30}" stroke="var(--ink-soft)"/>`;
+  rows.forEach((r, i) => {
+    const bh = (r.value / max) * (o.h - 60), x = pad + i * bw + bw * 0.15, y = o.h - 30 - bh;
+    s += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${bh.toFixed(1)}" fill="${r.color || "var(--accent)"}"/>`;
+    s += `<text x="${(x + bw * 0.35).toFixed(1)}" y="${(y - 4).toFixed(1)}" font-size="11" text-anchor="middle" fill="var(--ink-soft)">${esc(o.fmt(r.value))}</text>`;
+    s += `<text x="${(x + bw * 0.35).toFixed(1)}" y="${o.h - 12}" font-size="11" text-anchor="middle" fill="var(--ink)">${esc(r.label)}</text>`;
+  });
+  return s + "</svg>";
+}
+const TOPIC_COLORS = {num:"#2A6F8F", ind:"#3B7A57", alg:"#8A6D1F", eqn:"#7A4E8F", gra:"#B4553A", geo:"#4E8F8A", dis:"#5C6B8F", seq:"#8F5C6B", prb:"#6B8F5C", cal:"#8F7A5C"};
+const BANDS = {strong:"Strong background", ready:"Ready for the module", core:"Core gaps", foundation:"Foundation support"};
+const BAND_COLORS = {strong:"var(--good)", ready:"var(--accent)", core:"var(--warn)", foundation:"var(--bad)"};
+
+/* Percentages count attempted items only, so a student who ran out of time is not marked down for what they never saw. */
+function attempted(S){ return S ? S.total - (S.unanswered || 0) : 0; }
+function tierPct(r, t){ const T = (r.summary.tiers || {})[t]; return T && attempted(T) ? T.correct / attempted(T) : null; }
+function bandOf(r){
+  const p1 = tierPct(r, 1), p2 = tierPct(r, 2), p3 = tierPct(r, 3);
+  if(p1 !== null && p1 < 0.7) return "foundation";
+  if(p3 !== null && p3 >= 0.65 && (p2 === null || p2 >= 0.75)) return "strong";
+  if(p2 === null || p2 >= 0.5) return "ready";
+  return "core";
+}
+/* Older (format 1) files have no tier summary; rebuild one from the bank. */
+function upgrade(r){
+  if(r.summary.tiers) return r;
+  const tiers = {};
+  r.items.forEach(i => { const t = (skillById[i.skill] || {}).tier || 2; i.tier = t; tiers[t] = tiers[t] || {total:0, correct:0, idk:0, unanswered:0, skipped:0}; tiers[t].total++; if(i.correct) tiers[t].correct++; if(i.choice === "I don't know") tiers[t].idk++; if(!i.answered) tiers[t].unanswered++; });
+  r.summary.tiers = tiers; r.summary.idk = r.items.filter(i => i.choice === "I don't know").length; r.summary.skipped = 0;
+  Object.values(r.summary.skills).forEach(S => { S.tier = S.tier || 2; S.skipped = 0; });
+  return r;
+}
+
+function renderReport(results){
+  if(!results.length) return;
+  results = results.map(upgrade);
+  const names = results.map((r, i) => r.student.identity || `Student ${i + 1}`);
+  const skillIds = [...new Set(results.flatMap(r => Object.keys(r.summary.skills)))].sort((a, b) => SKILLS.findIndex(s => s.id === a) - SKILLS.findIndex(s => s.id === b));
+  const skillName = id => (skillById[id] || {}).name || results.find(r => r.dictionary.skills[id])?.dictionary.skills[id] || id;
+  const skillTier = id => (skillById[id] || {}).tier || results.find(r => r.summary.skills[id])?.summary.skills[id].tier || 2;
+  const skillTopic = id => (skillById[id] || {}).topic || results.find(r => r.summary.skills[id])?.summary.skills[id].topic || "num";
+  const errName = e => ERRORS[e] || results.find(r => r.dictionary.errors[e])?.dictionary.errors[e] || e;
+  const pctOf = S => S && attempted(S) ? S.correct / attempted(S) : null;
+  const flagged = S => S && attempted(S) && S.correct / attempted(S) < 0.5;
+  const watch = S => S && attempted(S) && S.correct / attempted(S) === 0.5;
+  const meanOf = id => { const Ss = results.map(r => r.summary.skills[id]).filter(S => S && attempted(S)); return Ss.length ? Ss.reduce((a, S) => a + pctOf(S), 0) / Ss.length : null; };
+  const cell = p => p === null ? `<td class="c muted">–</td>` : `<td class="c" style="background:${p < .5 ? "var(--bad-wash)" : p === .5 ? "var(--warn-wash)" : p < 1 ? "var(--wash)" : "var(--good-wash)"}">${Math.round(p * 100)}</td>`;
+  const bands = results.map(bandOf);
+  const scores = results.map(r => r.summary.total ? r.summary.correct / r.summary.total : 0);
+  const anyConf = results.some(r => r.items.some(i => i.confidence));
+  const anyMixed = results.some(r => r.config.language === "mixed");
+
+  /* overview */
+  const meanScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const bins = [0,0,0,0,0]; scores.forEach(s => bins[Math.min(4, Math.floor(s * 5))]++);
+  const hist = vbars(["0–19%","20–39%","40–59%","60–79%","80–100%"].map((l, i) => ({label:l, value:bins[i]})), {h:170, label:"Score distribution", fmt:v => v ? v : ""});
+  const bandCounts = Object.keys(BANDS).map(b => ({label:BANDS[b], value:bands.filter(x => x === b).length, color:BAND_COLORS[b]}));
+
+  /* priorities */
+  const flagCounts = skillIds.map(id => ({id, n:results.filter(r => flagged(r.summary.skills[id])).length, tier:skillTier(id)})).filter(x => x.n > 0);
+  const priorities = flagCounts.filter(x => x.tier < 3).sort((a, b) => a.tier - b.tier || b.n - a.n || meanOf(a.id) - meanOf(b.id)).slice(0, 6);
+  const stretch = flagCounts.filter(x => x.tier === 3).sort((a, b) => b.n - a.n || meanOf(a.id) - meanOf(b.id)).slice(0, 4);
+
+  /* by tier and by topic */
+  const tierRows = [1,2,3].map(t => { const ps = results.map(r => tierPct(r, t)).filter(p => p !== null); return {label:`${TIERS[t]} (${ps.length} students)`, value:ps.length ? ps.reduce((a, b) => a + b, 0) / ps.length : 0}; });
+  const topicRows = TOPICS.map(t => { const ids = skillIds.filter(id => skillTopic(id) === t.id); if(!ids.length) return null; const ms = ids.map(meanOf).filter(m => m !== null); return {label:t.name, value:ms.reduce((a, b) => a + b, 0) / ms.length, color:TOPIC_COLORS[t.id]}; }).filter(Boolean).sort((a, b) => a.value - b.value);
+
+  /* by skill */
+  const skillRows = skillIds.map(id => {
+    const Ss = results.map(r => r.summary.skills[id]).filter(S => S && attempted(S));
+    const errs = {}; Ss.forEach(S => S.errors.forEach(e => errs[e] = (errs[e] || 0) + 1));
+    const top = Object.entries(errs).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e, n]) => `<span class="tag">${esc(errName(e))} (${n})</span>`).join(" ");
+    return `<tr><td>${esc(skillName(id))}<br><small class="tier t${skillTier(id)}">${TIERS[skillTier(id)]}</small> <small>${esc((topicById[skillTopic(id)] || {}).name || "")}</small></td><td class="c">${Ss.length}</td>${cell(meanOf(id))}<td class="c">${Ss.filter(flagged).length}${Ss.filter(watch).length ? ` <small>(+${Ss.filter(watch).length})</small>` : ""}</td><td class="c">${Ss.reduce((a, S) => a + S.idk, 0)}</td><td>${top || "<span class='muted'>none recorded</span>"}</td></tr>`;
+  }).join("");
+  const skillChart = hbars(skillIds.map(id => ({label:skillName(id), value:meanOf(id) || 0, color:TOPIC_COLORS[skillTopic(id)]})).sort((a, b) => a.value - b.value), {rowH:20, label:"Mean percent correct by skill, lowest first"});
+
+  /* errors */
+  const errAll = {}; results.forEach(r => r.items.forEach(i => { if(i.error) errAll[i.error] = (errAll[i.error] || 0) + 1; }));
+  const errRows = Object.entries(errAll).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([e, n]) => ({label:errName(e).length > 60 ? errName(e).slice(0, 58) + "…" : errName(e), value:n}));
+  const errChart = errRows.length ? hbars(errRows, {max:Math.max(...errRows.map(r => r.value)), fmt:v => v + (v === 1 ? " student-item" : " student-items"), labelW:380, w:700, rowH:20, label:"Most frequent tagged errors"}) : "<p class='muted'>No tagged errors yet.</p>";
+
+  /* confidence */
+  let confBlock = "";
+  if(anyConf){
+    const M = {}; ["Sure", "Fairly sure", "Guessing"].forEach(c => M[c] = {right:0, wrong:0, idk:0});
+    results.forEach(r => r.items.forEach(i => { if(!i.confidence || !i.answered) return; const m = M[i.confidence] || (M[i.confidence] = {right:0, wrong:0, idk:0}); if(i.choice === "I don't know") m.idk++; else if(i.correct) m.right++; else m.wrong++; }));
+    const cw = results.map((r, i) => ({name:names[i], n:r.items.filter(it => it.confidence === "Sure" && it.answered && it.correct === false && it.choice !== "I don't know").length})).sort((a, b) => b.n - a.n);
+    confBlock = `<h2>Confidence against correctness</h2>
+    <p class="muted">A confident wrong answer is a held misconception rather than a gap, and it is the first thing to teach against. Answers marked "Sure" that were wrong are counted below.</p>
+    <div class="grid2"><div class="scroll"><table><thead><tr><th>Student said</th><th>Right</th><th>Wrong</th><th>Don't know</th><th>Accuracy</th></tr></thead><tbody>
+    ${Object.entries(M).map(([c, m]) => `<tr><td>${esc(c)}</td><td class="c">${m.right}</td><td class="c">${m.wrong}</td><td class="c">${m.idk}</td>${cell(m.right + m.wrong ? m.right / (m.right + m.wrong) : null)}</tr>`).join("")}</tbody></table></div>
+    <div>${hbars(cw.slice(0, 12).map(x => ({label:x.name, value:x.n, color:"var(--bad)"})), {max:Math.max(1, ...cw.map(x => x.n)), fmt:v => v + " confident wrong", labelW:120, w:520, rowH:20, label:"Confident wrong answers by student"})}</div></div>`;
+  }
+
+  /* language */
+  let langBlock = "";
+  if(anyMixed){
+    const per = results.map((r, i) => { const P = r.items.filter(it => it.answered && it.variant === "plain"), T = r.items.filter(it => it.answered && it.variant === "tech"); return {name:names[i], plain:P.length ? P.filter(x => x.correct).length / P.length : null, tech:T.length ? T.filter(x => x.correct).length / T.length : null}; });
+    const gap = per.filter(x => x.plain !== null && x.tech !== null).map(x => ({...x, gap:x.plain - x.tech})).sort((a, b) => b.gap - a.gap);
+    langBlock = `<h2>Everyday against mathematical wording</h2>
+    <p class="muted">Where a student does much better on the everyday wording of the same kind of question, the gap is vocabulary rather than mathematics. The two halves of each student's sitting are different questions, so treat gaps under 15 points as noise.</p>
+    <div class="scroll"><table><thead><tr><th>Student</th><th>Everyday wording</th><th>Mathematical wording</th><th>Gap</th></tr></thead><tbody>
+    ${gap.map(x => `<tr><td>${esc(x.name)}</td>${cell(x.plain)}${cell(x.tech)}<td class="c" style="${x.gap >= .15 ? "color:var(--bad);font-weight:700" : ""}">${Math.round(x.gap * 100) > 0 ? "+" : ""}${Math.round(x.gap * 100)}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+
+  /* time */
+  const timeRows = [1,2,3].map(t => { const ss = results.flatMap(r => r.items.filter(i => i.tier === t && i.seconds)).map(i => i.seconds); return ss.length ? {label:TIERS[t], value:ss.reduce((a, b) => a + b, 0) / ss.length} : null; }).filter(Boolean);
+
+  /* by student */
+  const studentRows = results.map((r, i) => {
+    const fl = [1,2,3].map(t => skillIds.filter(id => skillTier(id) === t && flagged(r.summary.skills[id])).length);
+    return `<tr><td>${esc(names[i])}</td><td><span class="band" style="color:${BAND_COLORS[bands[i]]}">${BANDS[bands[i]]}</span></td><td class="c">${r.summary.correct}/${r.summary.total}</td>${cell(tierPct(r, 1))}${cell(tierPct(r, 2))}${cell(tierPct(r, 3))}<td class="c">${r.summary.idk || 0}</td><td class="c">${Math.round(r.elapsedSeconds / 60)} min${r.timedOut ? " (timed out)" : ""}</td><td class="c">${fl[0]}</td><td class="c">${fl[1]}</td><td class="c">${fl[2]}</td></tr>`;
+  }).join("");
+
+  const cards = results.map((r, i) => {
+    const fl = [1,2,3].map(t => skillIds.filter(id => skillTier(id) === t && flagged(r.summary.skills[id])));
+    const errs = {}; r.items.forEach(it => { if(it.error) errs[it.error] = (errs[it.error] || 0) + 1; });
+    const topErr = Object.entries(errs).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const cw = r.items.filter(it => it.confidence === "Sure" && it.answered && it.correct === false && it.choice !== "I don't know");
+    const wt = skillIds.filter(id => skillTier(id) < 3 && watch(r.summary.skills[id]));
+    const lst = a => a.map(skillName).join(", ");
+    const start = fl[0].length ? `Start with the foundation gaps: ${lst(fl[0])}.${fl[1].length ? ` Core gaps to follow: ${lst(fl[1])}.` : ""}` : fl[1].length ? `Foundations are secure. Start with: ${lst(fl[1])}.` : fl[2].length ? `Core is secure. Stretch material is where the gaps are: ${lst(fl[2])}.` : "No skill was flagged. This student can be given extension work from the start.";
+    const adv = fl[0].length || fl[1].length ? (fl[2].length ? ` Advanced skills flagged: ${fl[2].length} of ${skillIds.filter(id => skillTier(id) === 3).length}.` : "") : "";
+    return `<details class="card"><summary><strong>${esc(names[i])}</strong> <span class="band" style="color:${BAND_COLORS[bands[i]]}">${BANDS[bands[i]]}</span> <small>${r.summary.correct}/${r.summary.total}${r.summary.skipped ? `, ${r.summary.skipped} skipped` : ""}${r.timedOut ? ", timed out" : ""}</small></summary>
+      <p>${esc(start + adv)}</p>
+      ${wt.length ? `<p class="muted">Worth checking (half right): ${esc(wt.map(skillName).join(", "))}.</p>` : ""}
+      ${hbars([1,2,3].map(t => ({label:TIERS[t], value:tierPct(r, t) ?? 0, note:tierPct(r, t) === null ? "(not asked)" : ""})), {labelW:110, w:420, rowH:20, label:"Percent correct by level"})}
+      ${topErr.length ? `<p><strong>Most repeated errors</strong><br>${topErr.map(([e, n]) => `<span class="tag">${esc(errName(e))} (${n})</span>`).join(" ")}</p>` : ""}
+      ${cw.length ? `<p><strong>Confident wrong answers</strong> (${cw.length}): ${cw.map(it => esc(skillName(it.skill))).join(", ")}</p>` : ""}
+      ${r.summary.idk ? `<p>Said "I don't know" ${r.summary.idk} time${r.summary.idk > 1 ? "s" : ""}.</p>` : ""}
+    </details>`;
+  }).join("");
+
+  const heat = `<div class="scroll"><table class="heat"><thead><tr><th></th>${skillIds.map(id => `<th class="rot">${esc(skillName(id))}</th>`).join("")}</tr></thead><tbody>${results.map((r, i) => `<tr><td>${esc(names[i])}</td>${skillIds.map(id => cell(pctOf(r.summary.skills[id]))).join("")}</tr>`).join("")}</tbody></table></div>`;
+
+  $("#out").innerHTML = `
+  <h2>${results.length} result${results.length > 1 ? "s" : ""}: mean score ${Math.round(meanScore * 100)}%</h2>
+  ${priorities.length ? `<div class="notice good"><strong>Where to start:</strong> ${priorities.map(p => `${esc(skillName(p.id))} (${p.n} of ${results.length})`).join("; ")}.</div>` : `<div class="notice good">No foundation or core skill is flagged for any student.</div>`}
+  ${stretch.length ? `<p class="muted"><strong>Advanced material most often missed</strong> (expected at this stage): ${stretch.map(p => `${esc(skillName(p.id))} (${p.n})`).join("; ")}.</p>` : ""}
+  <div class="grid2">
+    <div><h3>Score distribution</h3>${hist}</div>
+    <div><h3>Readiness bands</h3>${hbars(bandCounts, {max:results.length, fmt:v => v + " student" + (v === 1 ? "" : "s"), labelW:190, w:520, label:"Students per band"})}</div>
+  </div>
+  <details><summary>How the diagnostic criteria are worked out</summary>
+    <p>A skill is <strong>flagged</strong> for a student when they got fewer than half of its attempted items right (both wrong, with two items), with "I don't know" counted as a miss and unattempted items (time ran out) left out. Exactly half right is shown in amber as <strong>worth checking</strong> and counted in brackets. With two or three items per skill a flag is a prompt to look closer, not a verdict.</p>
+    <p><strong>Readiness bands</strong> use the percent correct at each level. <em>Foundation support</em>: below 70% on foundation items. Otherwise <em>Strong background</em>: at least 65% on advanced items and at least 75% on core. Otherwise <em>Ready for the module</em>: at least 50% on core. Otherwise <em>Core gaps</em>. A level that was not asked is ignored.</p>
+    <p><strong>Where to start</strong> lists foundation and core skills only, foundation first, then by how many students are flagged, then by the class mean; advanced material is reported separately because gaps there are expected before the module. A <strong>confident wrong</strong> answer is one marked "Sure" that was wrong and was not "I don't know".</p>
+  </details>
+
+  <div class="grid2">
+    <div><h3>By level</h3>${hbars(tierRows, {labelW:200, w:520, label:"Mean percent correct by level"})}</div>
+    <div><h3>By topic, weakest first</h3>${hbars(topicRows, {labelW:230, w:520, label:"Mean percent correct by topic"})}</div>
+  </div>
+
+  <h2>By skill</h2>
+  ${skillChart}
+  <div class="scroll"><table><thead><tr><th>Skill</th><th>Students</th><th>Mean %</th><th>Flagged</th><th>Don't know</th><th>Most common errors</th></tr></thead><tbody>${skillRows}</tbody></table></div>
+
+  <h2>Most frequent errors across the class</h2>
+  <p class="muted">Each count is one student giving that tagged wrong answer once. The same student can appear more than once for the same tag.</p>
+  ${errChart}
+
+  ${confBlock}
+  ${langBlock}
+
+  <h2>Time spent</h2>
+  <div class="grid2"><div>${hbars(timeRows, {max:Math.max(1, ...timeRows.map(r => r.value)), fmt:v => Math.round(v) + " s per question", labelW:110, w:420, label:"Mean seconds per question by level"})}</div>
+  <div>${hbars(results.map((r, i) => ({label:names[i], value:r.elapsedSeconds / 60, color:r.timedOut ? "var(--bad)" : "var(--accent)"})).sort((a, b) => b.value - a.value), {max:Math.max(1, ...results.map(r => r.elapsedSeconds / 60)), fmt:v => Math.round(v) + " min", labelW:120, w:420, rowH:18, label:"Total time by student"})}</div></div>
+
+  <h2>By student</h2>
+  <div class="scroll"><table><thead><tr><th>Student</th><th>Band</th><th>Score</th><th>Foundation %</th><th>Core %</th><th>Advanced %</th><th>Don't know</th><th>Time</th><th>Foundation flags</th><th>Core flags</th><th>Advanced flags</th></tr></thead><tbody>${studentRows}</tbody></table></div>
+
+  <h2>Individual report cards</h2>
+  ${cards}
+
+  <h2>Percent correct, student by skill</h2>
+  ${heat}
+  <p><button class="quiet" id="csv">Download this grid as CSV</button> <button class="quiet" id="csv2">Download the student summary as CSV</button></p>`;
+  $("#csv").addEventListener("click", () => {
+    const rows = [["student", "band", ...skillIds.map(skillName)], ...results.map((r, i) => [names[i], BANDS[bands[i]], ...skillIds.map(id => { const p = pctOf(r.summary.skills[id]); return p === null ? "" : Math.round(p * 100); })])];
+    downloadCSV(rows, "dewmath-class-skills.csv");
+  });
+  $("#csv2").addEventListener("click", () => {
+    const rows = [["student", "band", "correct", "total", "foundation %", "core %", "advanced %", "dont know", "skipped", "minutes", "timed out", "flagged skills"],
+      ...results.map((r, i) => [names[i], BANDS[bands[i]], r.summary.correct, r.summary.total, ...[1,2,3].map(t => { const p = tierPct(r, t); return p === null ? "" : Math.round(p * 100); }), r.summary.idk || 0, r.summary.skipped || 0, Math.round(r.elapsedSeconds / 60), r.timedOut ? "yes" : "no", skillIds.filter(id => flagged(r.summary.skills[id])).map(skillName).join("; ")])];
+    downloadCSV(rows, "dewmath-class-students.csv");
+  });
+}
+function downloadCSV(rows, name){
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"})); a.download = name; a.click();
+}
+
+if(typeof window !== "undefined" && app){ window.addEventListener("hashchange", route); route(); }
+</script>
+</body>
+</html>

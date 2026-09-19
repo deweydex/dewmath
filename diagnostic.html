@@ -104,6 +104,13 @@ button.quiet.active{background:var(--accent);color:var(--accent-ink)}
 .tabs{display:flex;gap:.25rem;flex-wrap:wrap;border-bottom:2px solid var(--rule);margin:1rem 0 1.5rem;position:sticky;top:0;background:var(--paper);z-index:3;padding-top:.4rem}
 .tabs button{background:transparent;color:var(--ink-soft);border:0;border-bottom:3px solid transparent;border-radius:0;padding:.5rem .8rem;margin-bottom:-2px;font-family:var(--font-sans);font-size:.95rem}
 .tabs button.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.tabs.wizard{background:var(--wash);border:1px solid var(--rule);border-radius:.6rem;padding:.5rem;gap:.35rem;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.tabs.wizard button{font-size:1.02rem;padding:.65rem 1.1rem;border-radius:.45rem;border-bottom:0;margin-bottom:0;font-weight:600;color:var(--ink);display:flex;align-items:center}
+.tabs.wizard button .num{display:inline-flex;align-items:center;justify-content:center;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--field);border:1.5px solid var(--rule);font-size:.82rem;margin-right:.5rem;color:var(--ink-soft);flex:none}
+.tabs.wizard button.active{background:var(--accent);color:var(--accent-ink)}
+.tabs.wizard button.active .num{background:var(--accent-ink);color:var(--accent);border-color:transparent}
+.tabs.wizard button.done:not(.active) .num{background:var(--good-wash);border-color:var(--good);color:var(--good)}
+@media (max-width:600px){.tabs.wizard{flex-direction:column;align-items:stretch} .tabs.wizard button{justify-content:flex-start}}
 .pane[hidden]{display:none}
 .thr{display:grid;grid-template-columns:repeat(auto-fit,minmax(20rem,1fr));gap:.5rem 2rem}
 .thr label{display:grid;grid-template-columns:1fr 5.5rem;gap:.75rem;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--rule)}
@@ -1049,9 +1056,9 @@ function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t
 function shuffle(arr, rng){ const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function flashCopied(btn, label){
   if(!btn) return;
-  const prev = btn.textContent, prevLabel = label || "Copy link";
+  const restore = label || btn.textContent;
   btn.textContent = "✓ Copied"; btn.classList.add("copied"); btn.disabled = true;
-  setTimeout(() => { btn.textContent = prev; btn.classList.remove("copied"); btn.disabled = false; }, 1600);
+  setTimeout(() => { btn.textContent = restore; btn.classList.remove("copied"); btn.disabled = false; }, 1600);
 }
 function b64uEncode(bytes){ let s = ""; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
 function b64uDecode(str){ str = str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length % 4) str += "="; const s = atob(str); return Uint8Array.from(s, c => c.charCodeAt(0)); }
@@ -1315,6 +1322,7 @@ const TIMER_PRESETS = [0, 15, 20, 30, 40, 45, 60, 90];
 function exampleFor(skillId){ const it = ITEMS.find(i => i.skill === skillId); return it ? plainText(it.plain).replace(/\s+/g, " ") : ""; }
 
 let builderTab = "questions";
+let builderVisited = new Set(["questions"]);
 const BUILDER_TABS = [["questions", "Questions"], ["delivery", "Delivery"], ["results", "Results & submission"], ["share", "Share"]];
 
 function renderBuilder(){
@@ -1327,7 +1335,7 @@ function renderBuilder(){
         <div class="skills">${sk.map(s => `<label class="check skill"><input type="checkbox" data-skill="${s.id}" ${cfg.skills.includes(s.id) ? "checked" : ""}><span>${esc(s.name)} <small>${ITEMS.filter(i => i.skill === s.id).length} items${s.mod === "M" ? ", Maths for IT only" : ""}</small><span class="ex">Example: ${esc(exampleFor(s.id))}</span></span></label>`).join("")}</div>
       </div>`;
     }).join("");
-    return `<details class="level" open><summary>${TIERS[t]} <small id="lvl-${t}"></small></summary>
+    return `<details class="level"><summary>${TIERS[t]} <small id="lvl-${t}"></small></summary>
       <p class="desc">${esc(TIER_DESC[t])}</p>
       <div class="row" style="margin-bottom:.5rem"><button class="quiet small" data-lvl="${t}" data-on="1">Select all ${TIERS[t].toLowerCase()}</button><button class="quiet small" data-lvl="${t}" data-on="0">Clear ${TIERS[t].toLowerCase()}</button></div>
       ${topicsHtml}</details>`;
@@ -1424,16 +1432,26 @@ function renderBuilder(){
   <h1>Maths readiness diagnostic</h1>
   <p class="lead">Choose what the diagnostic asks and how it behaves, then share the link with your class. Every setting is packed into the link itself, so there is nothing to save and no account to make.</p>
   <p><a href="#analyse">Go to the class analysis page</a></p>
-  <nav class="tabs" aria-label="Builder sections">${BUILDER_TABS.map(([k, l]) => `<button data-tab="${k}" class="${k === builderTab ? "active" : ""}">${l}</button>`).join("")}</nav>
+  <nav class="tabs wizard" aria-label="Builder sections, in order">${BUILDER_TABS.map(([k, l], i) => `<button data-tab="${k}" class="${k === builderTab ? "active" : ""} ${builderVisited.has(k) ? "done" : ""}"><span class="num">${builderVisited.has(k) && k !== builderTab ? "✓" : i + 1}</span>${l}</button>`).join("")}</nav>
   ${BUILDER_TABS.map(([k]) => `<section class="pane" data-pane="${k}" ${k === builderTab ? "" : "hidden"}>${panes[k]}</section>`).join("")}
-  <div class="stickybar"><span id="countShort"></span><span class="row"><button class="quiet small" id="copy2">Copy link</button></span></div>`;
+  <div class="stickybar"><span id="countShort"></span><span class="row"><button class="quiet small" id="stickyAction"></button></span></div>`;
 
-  app.querySelectorAll("nav.tabs [data-tab]").forEach(b => b.addEventListener("click", () => {
-    builderTab = b.dataset.tab;
-    app.querySelectorAll("nav.tabs [data-tab]").forEach(x => x.classList.toggle("active", x === b));
-    app.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== builderTab);
+  const tabIndex = key => BUILDER_TABS.findIndex(([k]) => k === key);
+  const renderTabButton = (k, l, i) => `<span class="num">${builderVisited.has(k) && k !== builderTab ? "✓" : i + 1}</span>${l}`;
+  const updateStickyAction = () => {
+    const nxt = BUILDER_TABS[tabIndex(builderTab) + 1];
+    const btn = $("#stickyAction");
+    if(nxt){ btn.textContent = `Next: ${nxt[1]} →`; btn.title = ""; }
+    else { btn.textContent = "Copy link"; btn.title = "You have reached the last tab."; }
+  };
+  const goToTab = key => {
+    builderTab = key; builderVisited.add(key);
+    app.querySelectorAll("nav.tabs [data-tab]").forEach((x, i) => { x.classList.toggle("active", x.dataset.tab === key); x.classList.toggle("done", builderVisited.has(x.dataset.tab)); x.innerHTML = renderTabButton(x.dataset.tab, BUILDER_TABS[i][1], i); });
+    app.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== key);
+    updateStickyAction();
     window.scrollTo(0, 0);
-  }));
+  };
+  app.querySelectorAll("nav.tabs [data-tab]").forEach(b => b.addEventListener("click", () => goToTab(b.dataset.tab)));
 
   const skillBoxes = [...app.querySelectorAll("[data-skill]")];
   const sync = () => {
@@ -1463,8 +1481,13 @@ function renderBuilder(){
   app.querySelectorAll("input, select").forEach(el => el.addEventListener("input", sync));
   $("#reseed").addEventListener("click", () => { cfg.seed = Math.floor(Math.random() * 65536); sync(); });
   $("#url").addEventListener("click", () => { const r = document.createRange(); r.selectNodeContents($("#url")); getSelection().removeAllRanges(); getSelection().addRange(r); });
-  const copy = btn => () => navigator.clipboard.writeText($("#url").textContent).then(() => flashCopied(btn)).catch(() => { btn.textContent = "Could not copy — select and copy the box above"; setTimeout(() => btn.textContent = "Copy link", 2500); });
-  $("#copy").addEventListener("click", copy($("#copy"))); $("#copy2").addEventListener("click", copy($("#copy2")));
+  const copy = (btn, label) => () => navigator.clipboard.writeText($("#url").textContent).then(() => flashCopied(btn, label)).catch(() => { btn.textContent = "Could not copy — select and copy the box above"; setTimeout(() => btn.textContent = label || "Copy link", 2500); });
+  $("#copy").addEventListener("click", copy($("#copy")));
+  $("#stickyAction").addEventListener("click", () => {
+    const nxt = BUILDER_TABS[tabIndex(builderTab) + 1];
+    if(nxt) goToTab(nxt[0]); else copy($("#stickyAction"), "Copy link")();
+  });
+  updateStickyAction();
   sync();
 }
 
@@ -1479,7 +1502,8 @@ function renderIntro(code){
   const plan = assemble(c);
   if(!plan.length){ app.innerHTML = `<h1>Nothing to ask</h1><p>This link has no skills selected. Ask your teacher for a new one.</p>`; return; }
   const saved = localStorage.getItem("dewmath2:" + code), last = localStorage.getItem("dewmath2:last:" + code);
-  const identLabel = ["", "Choose a nickname to put on your results. It does not need to be your real name.", "Enter the code your teacher gave you.", "Enter your name."][c.ident];
+  const identLabel = ["", "It does not need to be your real name.", "", ""][c.ident];
+  const identEncourage = ["", "Pick a nickname you will remember and use it honestly, since your teacher reads the results against it. ", "Enter the code carefully, since it is what connects this sitting to you. ", "Enter your name clearly, since your teacher will look at these results with you. "][c.ident];
   const layoutChoice = c.viewLock === 0 ? `<h2>How would you like the questions laid out?</h2>
     <label class="check"><input type="radio" name="vm" value="1" checked>One question at a time</label>
     <label class="check"><input type="radio" name="vm" value="2">All the questions on one page</label>
@@ -1488,7 +1512,8 @@ function renderIntro(code){
   <h1>${esc(c.label || "Maths readiness check")}</h1>
   <p class="lead">This is a way of finding out which parts of maths you are comfortable with, so that teaching can start from where you are. There is no pass mark.</p>
   <p>There are ${plan.length} questions. Each has one correct answer${c.idk ? `, and every question also lets you say "I don't know"${c.idk2 ? `, "I don't understand some of the words" or "I don't understand what the question is asking me to do". All three are good answers to give` : ", which is a good answer to give"}` : ""}. ${c.order === 2 ? "The questions start with the hardest material and get easier, so do not be put off by the first few. " : ""}${c.timer ? `You have ${c.timer} minutes; if the time runs out, the questions you have answered are still recorded.` : "There is no time limit."} Have some rough paper beside you. Your answers are saved on this device as you go, so if the page closes you can come back to this link and carry on.</p>
-  ${c.ident ? `<h2>${c.ident === 3 ? "Your name" : c.ident === 2 ? "Your code" : "A nickname"}</h2><p>${identLabel}</p><input type="text" id="ident" maxlength="60" autocomplete="off">` : ""}
+  <div class="notice">${identEncourage}Press <strong>Display</strong> at the top of the page if a different colour scheme, a larger text size, or a dyslexia-friendly font would be more comfortable to read. That choice stays for the rest of the sitting.</div>
+  ${c.ident ? `<h2>${c.ident === 3 ? "Your name" : c.ident === 2 ? "Your code" : "A nickname"}</h2>${identLabel ? `<p>${identLabel}</p>` : ""}<input type="text" id="ident" maxlength="60" autocomplete="off">` : ""}
   ${layoutChoice}
   ${saved ? `<div class="notice">You started this before on this device. <button class="quiet" id="resume">Carry on where you left off</button></div>` : ""}
   ${last ? `<div class="notice">You finished this earlier on this device. <button class="quiet" id="again">Download that results file again</button></div>` : ""}

@@ -30,6 +30,10 @@ If the submission link is a Microsoft Form (or anything else that supports pre-f
 
 On the analysis page, the file picker also accepts the CSV that Microsoft Forms or Google Forms exports for that question, one row per response. It looks for the results code in the last column of each row and falls back to checking every other column if that one is not it, so a form with extra questions still works. A column literally named `Id`, which both Forms exports include, is used to avoid double-counting a response if the same, later, export is uploaded again. XLSX is deliberately not supported: reading it would need a real parsing library, which this project avoids for the sake of staying one dependency-free file, and CSV carries exactly the same data.
 
+## The builder's wizard tabs
+
+The builder's four tabs (Questions, Delivery, Results & Submission, Share) are numbered and styled deliberately larger than the analysis page's tabs, since this is the page a teacher is most likely to skim past on the way to the link. The sticky bar at the bottom shows "Next: <tab name>" on every tab except the last, and only offers "Copy link" once the Share tab is reached, so building a link means passing through every section at least once rather than grabbing the link from wherever it happens to be visible. Clicking a tab header directly still works, since this is a nudge, not a lock.
+
 ## Error citations
 
 Every tagged error the analysis page shows (in the Skills tab, on a student's report card, and on the class-wide Errors tab) is followed by a real example pulled from the item bank itself: the question it was seen on and the wrong answer that was chosen. This is generated at render time from `ITEMS`, not written by hand, so it stays accurate as the bank grows and needs no separate upkeep.

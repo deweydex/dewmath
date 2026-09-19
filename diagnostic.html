@@ -81,6 +81,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
 .row.between{justify-content:space-between}
 input[type=text],input[type=url],input[type=number],select,textarea{font:inherit;font-size:1rem;padding:.5rem .65rem;border:1.5px solid var(--rule);border-radius:.4rem;background:var(--field);color:var(--ink);max-width:100%}
+input[type=text],input[type=url]{text-overflow:ellipsis}
+button.copied{background:var(--good)!important;border-color:var(--good)!important;color:#fff!important}
+button.quiet.copied{color:var(--good)!important;background:transparent!important}
 input[type=text],input[type=url],textarea{width:100%}
 label.check{display:flex;gap:.6rem;align-items:flex-start;padding:.35rem 0;cursor:pointer}
 label.check input[type=checkbox],label.check input[type=radio]{margin-top:.25rem;width:1.3rem;height:1.3rem;flex:none;accent-color:var(--accent)}
@@ -171,6 +174,11 @@ th{font-weight:700}
 .heat th.rot{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:400;white-space:nowrap;padding:.3rem;font-family:var(--font-sans);font-size:.85rem}
 td.c{text-align:center}
 .tag{display:inline-block;padding:.1rem .45rem;border-radius:.3rem;background:var(--wash);font-size:.9em;margin:.1rem .2rem .1rem 0}
+.errlist{list-style:none;padding:0;margin:.5rem 0}
+.errlist li{padding:.5rem 0;border-bottom:1px solid var(--rule)}
+.errlist li:last-child{border-bottom:0}
+.errlist .n{font-family:var(--font-sans);font-size:.85rem;color:var(--ink-soft);font-weight:400}
+.errlist small{color:var(--ink-soft)}
 details{margin:.5rem 0}
 summary{cursor:pointer}
 /* ---- display settings ---- */
@@ -320,7 +328,7 @@ const ERRORS = {
   "frac-common-den-wrong-num":"Finds a common denominator but does not scale the numerators",
   "frac-num-only":"Combines numerators and leaves the denominator unchanged, without a common denominator",
   "frac-den-multiplied":"Multiplies denominators but adds the original numerators",
-  "frac-mul-cross":"Cross-multiplies when it should multiply straight across",
+  "frac-mul-cross":"Cross-multiplies the fractions instead of multiplying straight across",
   "frac-mul-added":"Adds the fractions instead of multiplying",
   "frac-mul-num-only":"Multiplies the numerators but does not multiply the denominators",
   "frac-div-multiplied":"Multiplies instead of dividing (no reciprocal)",
@@ -346,11 +354,11 @@ const ERRORS = {
   "pct-inverted":"Inverts the fraction before converting",
   "pct-subtracted":"Subtracts the percentage as a number instead of finding a fraction of the amount",
   "pct-decimal-slip":"Correct method but the decimal point is misplaced",
-  "pct-divided":"Divides by the percentage instead of multiplying by it as a fraction",
+  "pct-divided":"Divides by the percentage instead of multiplying by the equivalent fraction",
   "pct-reverse-multiplied":"Reverses a discount by multiplying the sale price by (1 + rate) instead of dividing by (1 − rate)",
   "pct-reverse-added":"Adds the discount percentage of the sale price back on",
   "pct-as-amount":"Treats the percentage as a number of euro",
-  "pct-found-not-added":"Finds the percentage but forgets to add it to the original",
+  "pct-found-not-added":"Finds the percentage increase but does not add the increase to the original amount",
   "pct-decimal":"Adds the decimal form of the percentage instead of the amount",
   "ratio-divide-by-part":"Divides the total by one part of the ratio instead of the sum of parts",
   "ratio-half":"Shares equally regardless of the ratio",
@@ -377,13 +385,13 @@ const ERRORS = {
   "ind-mult-exponents":"Multiplies exponents when multiplying powers of the same base",
   "ind-base-doubled":"Adds the exponents correctly but also doubles the coefficient",
   "ind-base-multiplied":"Multiplies the bases as well as adding the exponents",
-  "ind-quotient-divided":"Divides exponents instead of subtracting them",
+  "ind-quotient-divided":"Divides exponents instead of subtracting exponents",
   "ind-quotient-added":"Adds exponents when dividing",
   "ind-cancelled-base":"Cancels the base and keeps a number",
   "ind-coeff-not-raised":"Raises the variable to the power but not the coefficient",
   "ind-power-added":"Adds exponents instead of multiplying under a power of a power",
   "ind-power-raised":"Raises the exponent to the power instead of multiplying",
-  "ind-coeff-multiplied":"Multiplies the coefficient by the power instead of raising it",
+  "ind-coeff-multiplied":"Multiplies the coefficient by the power instead of raising the coefficient to the power",
   "ind-neg-makes-negative":"Reads a negative exponent as a negative answer",
   "ind-neg-multiplied":"Multiplies base by exponent",
   "ind-neg-sign-kept":"Finds the reciprocal but also makes the answer negative",
@@ -414,7 +422,7 @@ const ERRORS = {
   "log-inverted":"Uses a negative exponent or reciprocal by mistake",
   "log-sum-inside":"Thinks log a + log b = log(a + b)",
   "log-product-of-logs":"Thinks log(ab) = log a × log b",
-  "log-power-outside":"Puts the power on the log instead of bringing it down",
+  "log-power-outside":"Puts the power on the log instead of bringing the power down as a multiplier",
   "log-power-inside":"Moves the exponent inside as a multiplier of x",
   "log-1-is-1":"Thinks log 1 = 1",
   "log-1-undefined":"Thinks log 1 is undefined",
@@ -440,13 +448,13 @@ const ERRORS = {
   "exp-neg-not-distributed":"Distributes a negative to the first term only",
   "exp-sign-flipped":"Flips both signs incorrectly",
   "sq-termwise":"Squares each term separately: (a+b)² = a² + b²",
-  "sq-middle-not-doubled":"Finds the cross term but does not double it",
-  "sq-constant-doubled":"Doubles the constant instead of squaring it",
-  "sq-coeff-not-squared":"Squares the variable but not its coefficient",
+  "sq-middle-not-doubled":"Finds the cross term but does not double the cross term",
+  "sq-constant-doubled":"Doubles the constant instead of squaring the constant",
+  "sq-coeff-not-squared":"Squares the variable but leaves the coefficient unsquared",
   "sq-sign":"Gets the sign of the middle term wrong",
   "dbl-outer-inner-missed":"Multiplies first and last terms only",
   "dbl-sign":"Sign error in the middle term",
-  "dbl-middle-sign":"Subtracts where it should add when combining the middle terms",
+  "dbl-middle-sign":"Combines the middle terms with subtraction instead of addition",
   "fac-partial-hcf":"Takes out a factor that is not the highest common factor",
   "fac-merged":"Multiplies the terms together instead of factorising",
   "fac-product-only":"Chooses factors whose product is right but whose sum is wrong",
@@ -481,7 +489,7 @@ const ERRORS = {
   "gr-y-intercept":"Reads the y-intercept when asked for x-intercepts",
   "gr-vertex":"Reads the turning point instead of the roots",
   "gr-one-root":"Finds one root and misses the other",
-  "gr-match-sign":"Confuses a graph with its reflection",
+  "gr-match-sign":"Confuses a graph with a reflected version of the same graph",
   "gr-match-degree":"Confuses linear, quadratic and cubic shapes",
   "gr-match-slope-sign":"Reads a negative slope as positive",
   "gr-match-intercept-sign":"Gets the sign of the intercept wrong",
@@ -504,7 +512,7 @@ const ERRORS = {
   "stats-median-unsorted":"Takes the middle of the unsorted list",
   "stats-mean-for-median":"Gives the mean when asked for the median",
   "stats-off-by-one":"Picks a neighbour of the middle value",
-  "stats-mean-with-outlier":"Prefers the mean even when an outlier distorts it",
+  "stats-mean-with-outlier":"Prefers the mean even when an outlier distorts the mean",
   "stats-range-as-average":"Confuses the range with an average",
   "stats-median-distrust":"Assumes a mean–median gap means a calculation error",
   "stats-mean-always-larger":"Believes the mean is always larger than the median",
@@ -517,7 +525,7 @@ const ERRORS = {
   "quad-formula-missing-4":"Uses b² − ac instead of b² − 4ac",
   "quad-no-complex":"Believes a negative discriminant means no solution at all",
   "quad-root-of-negative":"Takes √(−4) as ±2",
-  "quad-linear-treatment":"Treats the quadratic as if it were linear",
+  "quad-linear-treatment":"Solves a quadratic equation using the method for a linear equation",
   "cs-constant-not-adjusted":"Keeps the original constant after completing the square",
   "cs-coefficient-not-halved":"Does not halve the coefficient of x",
   "cs-added-instead":"Adds the square of half the coefficient instead of subtracting",
@@ -578,7 +586,7 @@ const ERRORS = {
   "bin-digits-as-decimal":"Reads the binary digits as a decimal number",
   "bin-count-ones":"Counts the ones instead of using place value",
   "bin-place-slip":"Place value slip in conversion",
-  "bin-decimal-add":"Adds binary numbers as if they were decimal",
+  "bin-decimal-add":"Adds binary digits using decimal addition rules",
   "bin-carry-dropped":"Drops a carry in binary addition",
   "bin-answered-in-decimal":"Gives the right value in the wrong base",
   "hex-concatenated":"Writes the digit values side by side",
@@ -614,7 +622,7 @@ const ERRORS = {
   "comb-squared":"Squares n for a selection",
   "comb-added":"Adds n and r",
   "count-added":"Adds the choices instead of multiplying",
-  "count-no-repeats":"Disallows repeats when they are allowed",
+  "count-no-repeats":"Disallows repeated choices in a count that allows repeats",
   "count-wrong-base":"Uses the number of positions as the number of choices",
   "prob-outcomes-not-equally-likely":"Treats unequal outcomes as equally likely",
   "prob-added":"Adds probabilities of independent events instead of multiplying",
@@ -625,8 +633,8 @@ const ERRORS = {
   "prob-excl-indep-confused":"Confuses mutually exclusive with independent",
   "prob-both":"Thinks events can be both mutually exclusive and independent here",
   "prob-neither":"Recognises neither property",
-  "deriv-power-not-multiplied":"Reduces the power but does not multiply by it",
-  "deriv-power-not-reduced":"Multiplies by the power but does not reduce it",
+  "deriv-power-not-multiplied":"Reduces the power but does not multiply by the original power",
+  "deriv-power-not-reduced":"Multiplies by the power but does not reduce the power by one",
   "deriv-double-reduced":"Reduces the power twice",
   "deriv-constant-kept":"Keeps the constant term after differentiating",
   "deriv-linear-term-dropped":"Loses the derivative of the linear term",
@@ -1000,6 +1008,27 @@ const $ = s => document.querySelector(s);
 const app = typeof document !== "undefined" ? document.getElementById("app") : null;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const skillById = Object.fromEntries(SKILLS.map(s => [s.id, s]));
+/* One real example per error tag, drawn from the bank itself rather than written by hand,
+   so the citation is always accurate and needs no upkeep as items are added. */
+let ERROR_EXAMPLE = null;
+function errExample(tag){
+  if(!ERROR_EXAMPLE){
+    ERROR_EXAMPLE = {};
+    ITEMS.forEach(it => it.opts.forEach(o => { if(o.e && !ERROR_EXAMPLE[o.e]) ERROR_EXAMPLE[o.e] = {skill:skillById[it.skill].name, stem:plainText(it.plain), wrong:plainText(o.t)}; }));
+  }
+  return ERROR_EXAMPLE[tag] || null;
+}
+/* A full, citable line for one error tag: the description the caller already resolved (each
+   render context keeps its own fallback for older files' dictionaries, hence it is passed in
+   rather than looked up here), then which skill and question it was seen in and what was
+   chosen. The skill name is left out when the surrounding table or card already states it
+   (skipSkill), since repeating it would be redundant, not wrong. */
+function errCite(tag, description, skipSkill){
+  const ex = errExample(tag);
+  if(!ex) return esc(description);
+  const where = skipSkill ? `"${esc(ex.stem)}" answered "${esc(ex.wrong)}"` : `${esc(ex.skill)} — "${esc(ex.stem)}" answered "${esc(ex.wrong)}"`;
+  return `${esc(description)}<br><small>${where}</small>`;
+}
 const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
 const pctStr = p => p === null || p === undefined ? "–" : Math.round(p * 100) + "%";
 
@@ -1018,8 +1047,91 @@ function plainText(str){ return String(str).replace(/\$/g,"").replace(/\\(frac|d
 
 function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function shuffle(arr, rng){ const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function flashCopied(btn, label){
+  if(!btn) return;
+  const prev = btn.textContent, prevLabel = label || "Copy link";
+  btn.textContent = "✓ Copied"; btn.classList.add("copied"); btn.disabled = true;
+  setTimeout(() => { btn.textContent = prev; btn.classList.remove("copied"); btn.disabled = false; }, 1600);
+}
 function b64uEncode(bytes){ let s = ""; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
 function b64uDecode(str){ str = str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length % 4) str += "="; const s = atob(str); return Uint8Array.from(s, c => c.charCodeAt(0)); }
+
+/* ==========================================================================
+   COMPACT TEXT RESULTS
+   Some submission routes will not take a file: a Google Form paragraph
+   field, a Moodle text box, an email typed by hand. This packs one
+   student's answers into a short string built the same way as the share
+   link, so it can be pasted instead of uploaded. Confidence is kept exactly;
+   time is kept to the nearest 10 seconds, which is enough for the "seconds
+   per question" averages on the analysis page and is stated as approximate
+   wherever it is shown.
+   Per item: 4 bits for what happened (unanswered, skipped, don't know,
+   don't understand the words, don't understand the task, or which option,
+   0 to 3), 2 bits for confidence, 5 bits for the time bucket. 11 bits total,
+   so even the full 157-item bank comes to under 350 characters.
+   ========================================================================== */
+const PASTE_UNANSWERED = 0, PASTE_SKIPPED = 1, PASTE_KIND = {idk:2, words:3, task:4};
+const PASTE_KIND_REV = {2:"idk", 3:"words", 4:"task"};
+const timeBucketEncode = sec => sec == null ? 0 : Math.max(0, Math.min(31, Math.round(sec / 10)));
+const timeBucketDecode = b => b * 10;
+const CONF_CODE = {"Sure":1, "Fairly sure":2, "Guessing":3}, CONF_NAME = {1:"Sure", 2:"Fairly sure", 3:"Guessing"};
+
+class BitWriter{
+  constructor(){ this.bytes = []; this.cur = 0; this.n = 0; }
+  push(value, bits){ for(let i = bits - 1; i >= 0; i--){ this.cur = (this.cur << 1) | ((value >> i) & 1); this.n++; if(this.n === 8){ this.bytes.push(this.cur); this.cur = 0; this.n = 0; } } }
+  finish(){ if(this.n > 0){ this.cur <<= (8 - this.n); this.bytes.push(this.cur); this.cur = 0; this.n = 0; } return Uint8Array.from(this.bytes); }
+}
+class BitReader{
+  constructor(bytes){ this.bytes = bytes; this.pos = 0; }
+  read(bits){ let v = 0; for(let i = 0; i < bits; i++){ const byteIdx = this.pos >> 3, bitIdx = 7 - (this.pos & 7); v = (v << 1) | ((this.bytes[byteIdx] >> bitIdx) & 1); this.pos++; } return v; }
+}
+
+/* run.fullPlan is the sitting's original order, before any hardest-first drop removed items from run.plan. */
+function encodePasteResult(run){
+  const skippedIds = new Set(run.skipped.map(p => p.item.id)), bw = new BitWriter();
+  run.fullPlan.forEach(p => {
+    const id = p.item.id;
+    if(skippedIds.has(id)){ bw.push(PASTE_SKIPPED, 4); bw.push(0, 2); bw.push(0, 5); return; }
+    const a = run.answers[id];
+    if(!a){ bw.push(PASTE_UNANSWERED, 4); bw.push(0, 2); bw.push(0, 5); return; }
+    bw.push(typeof a.choice === "string" ? PASTE_KIND[a.choice] : 5 + a.choice, 4);
+    bw.push(CONF_CODE[a.conf] || 0, 2);
+    bw.push(timeBucketEncode(a.seconds), 5);
+  });
+  const bits = bw.finish();
+  const head = new Uint8Array(6);
+  head[0] = 1; head[1] = run.timedOut ? 1 : 0;
+  const el = Math.max(0, Math.min(65535, Math.round(run.elapsedNow())));
+  head[2] = el & 255; head[3] = el >>> 8 & 255;
+  head[4] = run.fullPlan.length & 255; head[5] = run.fullPlan.length >>> 8 & 255;
+  const identBytes = new TextEncoder().encode(run.ident || "");
+  const payload = new Uint8Array(head.length + bits.length + identBytes.length);
+  payload.set(head, 0); payload.set(bits, head.length); payload.set(identBytes, head.length + bits.length);
+  return run.code + "." + b64uEncode(payload);
+}
+/* The inverse of encodePasteResult: rebuilds an answers map identical in shape to a live sitting's, then hands it to buildResult so every chart and rule works the same whether the data came from a file or a pasted code. */
+function decodePasteResult(text){
+  const s = text.trim(), dot = s.indexOf(".");
+  if(dot < 1) throw new Error("That does not look like a dewmath results code.");
+  const configCode = s.slice(0, dot);
+  let cfg, plan, payload;
+  try { cfg = decodeCfg(configCode); plan = assemble(cfg); payload = b64uDecode(s.slice(dot + 1)); }
+  catch(e){ throw new Error("The settings part of that code could not be read."); }
+  if(!payload.length || payload[0] !== 1) throw new Error("That code is not in a format this page understands.");
+  const timedOut = !!payload[1], elapsed = payload[2] | payload[3] << 8, n = payload[4] | payload[5] << 8;
+  if(n !== plan.length) throw new Error("That code's settings do not match the number of questions it lists.");
+  const br = new BitReader(payload.slice(6)), answers = {}, skipped = [];
+  plan.forEach(p => {
+    const state = br.read(4), conf = br.read(2), tb = br.read(5);
+    if(state === PASTE_SKIPPED){ skipped.push(p); return; }
+    if(state === PASTE_UNANSWERED) return;
+    answers[p.item.id] = {choice: state in PASTE_KIND_REV ? PASTE_KIND_REV[state] : state - 5, conf:CONF_NAME[conf], seconds:timeBucketDecode(tb)};
+  });
+  const identBytes = payload.slice(6 + Math.ceil(11 * n / 8));
+  const ident = new TextDecoder().decode(identBytes);
+  const keptPlan = plan.filter(p => !skipped.includes(p));
+  return buildResult({plan:keptPlan, skipped, cfg, answers, code:configCode, ident, vm:0, elapsed, timedOut, finishedAt:Date.now()});
+}
 
 function plotSVG(fig, small){
   const w = small ? 200 : 280, h = small ? 160 : 220, pad = 22;
@@ -1051,7 +1163,7 @@ function plotSVG(fig, small){
    CONFIGURATION AND THE SHARE CODE (format 2)
    ========================================================================== */
 const ORDERS = ["Mixed together", "Easiest first", "Hardest first", "Grouped by topic"];
-const DEFAULT_CFG = {v:2, lang:0, ident:1, idk:true, conf:false, showScore:true, showItems:true, showAnswers:false, allowBack:true, order:0, drop:false, perSkill:2, viewLock:0, k:5, timer:0, maxQ:0, skills:SKILLS.map(s => s.id), seed:1, label:"", submitUrl:"", submitNote:"", idk2:true};
+const DEFAULT_CFG = {v:2, lang:0, ident:3, idk:true, conf:true, showScore:true, showItems:true, showAnswers:true, allowBack:true, order:1, drop:false, perSkill:2, viewLock:0, k:5, timer:0, maxQ:0, skills:SKILLS.map(s => s.id), seed:1, label:"", submitUrl:"", submitNote:"", idk2:true};
 
 function encodeCfg(c){
   const b = [2, c.lang | c.ident << 2 | (c.idk ? 16 : 0) | (c.conf ? 32 : 0) | (c.showScore ? 64 : 0) | (c.showItems ? 128 : 0),
@@ -1202,6 +1314,9 @@ const TIMER_PRESETS = [0, 15, 20, 30, 40, 45, 60, 90];
 
 function exampleFor(skillId){ const it = ITEMS.find(i => i.skill === skillId); return it ? plainText(it.plain).replace(/\s+/g, " ") : ""; }
 
+let builderTab = "questions";
+const BUILDER_TABS = [["questions", "Questions"], ["delivery", "Delivery"], ["results", "Results & submission"], ["share", "Share"]];
+
 function renderBuilder(){
   app.className = "";
   const levels = [1,2,3].map(t => {
@@ -1218,13 +1333,8 @@ function renderBuilder(){
       ${topicsHtml}</details>`;
   }).join("");
 
-  app.innerHTML = `
-  <h1>Maths readiness diagnostic</h1>
-  <p class="lead">Choose what the diagnostic asks and how it behaves, then share the link with your class. Every setting is packed into the link itself, so there is nothing to save and no account to make.</p>
-  <p><a href="#analyse">Go to the class analysis page</a></p>
-
-  <h2>1. What to ask</h2>
-  <p>Skills are grouped by level and then by topic. Each skill shows one of its questions as an example, so you can see what it asks before you include it. Tick a topic to take all of its skills, or tick skills one at a time.</p>
+  const questionsPane = `
+  <p class="lead">Skills are grouped by level and then by topic. Each skill shows one of its questions as an example, so you can see what it asks before you include it. Tick a topic to take all of its skills, or tick skills one at a time.</p>
   <div class="row" style="margin-bottom:1rem">
     <small>Quick picks:</small>
     <button class="quiet small" data-pick="1">Foundation only</button>
@@ -1242,9 +1352,10 @@ function renderBuilder(){
       <br><small>Two items per skill is the minimum for telling a slip from a gap.</small></span></label>
     <label class="check"><span>Maximum number of questions <input type="number" id="maxQ" min="0" max="255" value="${cfg.maxQ}" style="width:5.5rem"> <br><small>0 means no cap. With a cap, every selected skill gets one item before any skill gets a second.</small></span></label>
   </div>
-  <p class="notice" id="count"></p>
+  <p class="notice" id="count"></p>`;
 
-  <h2>2. How it reads</h2>
+  const deliveryPane = `
+  <h3>How it reads</h3>
   <label class="check"><span>Language of the questions
     <select id="lang">
       <option value="0" ${cfg.lang === 0 ? "selected" : ""}>Everyday language</option>
@@ -1253,11 +1364,12 @@ function renderBuilder(){
     </select></span></label>
   <label class="check"><input type="checkbox" id="idk" ${cfg.idk ? "checked" : ""}><span>Offer "I don't know" on every question <br><small>This separates a guess from a gap.</small></span></label>
   <label class="check"><input type="checkbox" id="idk2" ${cfg.idk2 ? "checked" : ""}><span>Also offer "I don't understand some of the words" and "I don't understand what the question is asking me to do" <br><small>These two separate a vocabulary problem and a reading problem from a maths problem. The analysis page counts each one.</small></span></label>
-  <label class="check"><input type="checkbox" id="conf" ${cfg.conf ? "checked" : ""}><span>Ask how sure the student is after each answer <br><small>This lets the analysis page find confident wrong answers, which usually mean a firmly held misconception.</small></span></label>
+  <label class="check"><input type="checkbox" id="conf" ${cfg.conf ? "checked" : ""}><span>Ask how sure the student is after each answer <br><small>This lets the analysis page find confident wrong answers, which usually mean a firmly held misconception. On by default.</small></span></label>
 
-  <h2>3. How it runs</h2>
+  <h3>How it runs</h3>
   <label class="check"><span>Order of the questions
-    <select id="order">${ORDERS.map((o, i) => `<option value="${i}" ${cfg.order === i ? "selected" : ""}>${o}</option>`).join("")}</select></span></label>
+    <select id="order">${ORDERS.map((o, i) => `<option value="${i}" ${cfg.order === i ? "selected" : ""}>${o}</option>`).join("")}</select>
+    <br><small>Easiest first by default, so students meet what they can do before what they cannot.</small></span></label>
   <label class="check"><input type="checkbox" id="drop" ${cfg.drop ? "checked" : ""}><span>When the order is hardest first, offer to skip the rest of a level after three misses in four at that level <br><small>This works in the one-at-a-time and paged layouts. Skipped questions are recorded as skipped and count as neither right nor wrong.</small></span></label>
   <label class="check"><span>Layout
     <select id="viewLock">
@@ -1273,44 +1385,61 @@ function renderBuilder(){
       <span>or type minutes: <input type="number" id="timer" min="0" max="255" value="${cfg.timer}" style="width:5.5rem"></span>
     </div>
     <small>When time runs out, whatever has been answered is recorded and the rest is marked as unattempted. The analysis page treats unattempted questions as missing data and leaves them out of every percentage.</small>
-  </fieldset>
+  </fieldset>`;
 
-  <h2>4. What the student sees at the end</h2>
+  const resultsPane = `
+  <h3>What the student sees at the end</h3>
   <label class="check"><input type="checkbox" id="showScore" ${cfg.showScore ? "checked" : ""}>Their score</label>
   <label class="check"><input type="checkbox" id="showItems" ${cfg.showItems ? "checked" : ""}>Which questions they got right and wrong</label>
-  <label class="check"><input type="checkbox" id="showAnswers" ${cfg.showAnswers ? "checked" : ""}>The correct answers</label>
+  <label class="check"><input type="checkbox" id="showAnswers" ${cfg.showAnswers ? "checked" : ""}><span>The correct answers <small>On by default.</small></span></label>
 
-  <h2>5. Who took it</h2>
+  <h3>Who took it</h3>
   <label class="check"><span>Ask the student for
     <select id="ident">
       <option value="0" ${cfg.ident === 0 ? "selected" : ""}>Nothing (fully anonymous)</option>
       <option value="1" ${cfg.ident === 1 ? "selected" : ""}>A pseudonym they choose</option>
       <option value="2" ${cfg.ident === 2 ? "selected" : ""}>A code you gave them</option>
       <option value="3" ${cfg.ident === 3 ? "selected" : ""}>Their name</option>
-    </select></span></label>
+    </select>
+    <br><small>Their name is the default. If the form or inbox this goes to also collects an email address, that arrives alongside the results without dewmath needing to ask for it separately.</small></span></label>
 
-  <h2>6. Where students send their file</h2>
-  <p>At the end, each student downloads a small results file. Tell them where it goes. A OneDrive "Request files" link, a Microsoft Form with a file-upload question, or an email address all work; the finish page shows the link as a button.</p>
-  <label class="check"><span>Link or email address <input type="url" id="submitUrl" value="${esc(cfg.submitUrl)}" placeholder="https://forms.office.com/… or you@college.ie"></span></label>
-  <label class="check"><span>A short note to go with it <input type="text" id="submitNote" value="${esc(cfg.submitNote)}" placeholder="Upload it before Friday's class" maxlength="120"></span></label>
+  <h3>Where students send their results</h3>
+  <p>At the end, each student can either download a small results file, or copy a short piece of text that carries the same answers. Tell them which one to use in the note below, since that depends on where the results are going. A file suits an email attachment or a folder that accepts uploads; the text suits a form field, a Google Form paragraph question, a Moodle text box, or a cell in a shared spreadsheet, anywhere that will not take an upload. If the results are landing in a Microsoft Form or Google Form, the analysis page can read the CSV that either one exports directly, so there is nothing to extract by hand: export the responses, drop the CSV into the analysis page, and every code in it is read at once.</p>
+  <label class="check"><span>Link or email address <input type="url" id="submitUrl" value="${esc(cfg.submitUrl)}" placeholder="https://forms.office.com/r/…"><br><small>If the link is a form with a pre-filled results field, put <code>{{CODE}}</code> where the code should go and dewmath fills it in for the student automatically. An email address does this too: the text goes straight into the body, ready to send.</small></span></label>
+  <label class="check"><span>A short note to go with it <input type="text" id="submitNote" value="${esc(cfg.submitNote)}" placeholder="Submit before Friday's class" maxlength="120"></span></label>`;
 
-  <h2>7. Share it</h2>
+  const sharePane = `
   <label class="check"><span>A short label the student sees, such as the class and date <input type="text" id="label" value="${esc(cfg.label)}" placeholder="Maths for IT, September" maxlength="40"></span></label>
   <div class="row"><button class="quiet" id="reseed">Draw a different set of questions</button><small>Everyone who opens the same link sees the same questions in the same order.</small></div>
-  <p style="margin-top:1rem">Send this link to your students:</p>
-  <div class="urlbox code" id="url"></div>
+  <p style="margin-top:1rem">Send this link to your students. The box below holds the whole link as plain text, so you can also select it by hand and copy it that way.</p>
+  <div class="urlbox code" id="url" tabindex="0"></div>
   <div class="row"><button id="copy">Copy link</button><a class="btn quiet" id="preview" href="#" target="_blank">Try it as a student</a></div>
   <p class="muted" style="margin-top:1rem">Collect the results files however suits you and open them together on the <a href="#analyse">analysis page</a>.</p>
   <hr>
-  <p class="muted">Bank version ${BANK_VERSION}. ${ITEMS.length} items across ${SKILLS.length} skills: ${[1,2,3].map(t => SKILLS.filter(s => s.tier === t).length + " " + TIERS[t].toLowerCase()).join(", ")}.</p>
+  <p class="muted">Bank version ${BANK_VERSION}. ${ITEMS.length} items across ${SKILLS.length} skills: ${[1,2,3].map(t => SKILLS.filter(s => s.tier === t).length + " " + TIERS[t].toLowerCase()).join(", ")}.</p>`;
+
+  const panes = {questions:questionsPane, delivery:deliveryPane, results:resultsPane, share:sharePane};
+
+  app.innerHTML = `
+  <h1>Maths readiness diagnostic</h1>
+  <p class="lead">Choose what the diagnostic asks and how it behaves, then share the link with your class. Every setting is packed into the link itself, so there is nothing to save and no account to make.</p>
+  <p><a href="#analyse">Go to the class analysis page</a></p>
+  <nav class="tabs" aria-label="Builder sections">${BUILDER_TABS.map(([k, l]) => `<button data-tab="${k}" class="${k === builderTab ? "active" : ""}">${l}</button>`).join("")}</nav>
+  ${BUILDER_TABS.map(([k]) => `<section class="pane" data-pane="${k}" ${k === builderTab ? "" : "hidden"}>${panes[k]}</section>`).join("")}
   <div class="stickybar"><span id="countShort"></span><span class="row"><button class="quiet small" id="copy2">Copy link</button></span></div>`;
 
+  app.querySelectorAll("nav.tabs [data-tab]").forEach(b => b.addEventListener("click", () => {
+    builderTab = b.dataset.tab;
+    app.querySelectorAll("nav.tabs [data-tab]").forEach(x => x.classList.toggle("active", x === b));
+    app.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== builderTab);
+    window.scrollTo(0, 0);
+  }));
+
   const skillBoxes = [...app.querySelectorAll("[data-skill]")];
-  const setSel = fn => { skillBoxes.forEach(b => b.checked = !!fn(skillById[b.dataset.skill])); sync(); };
   const sync = () => {
     cfg.skills = skillBoxes.filter(i => i.checked).map(i => i.dataset.skill);
     app.querySelectorAll("[data-topic]").forEach(t => { t.checked = SKILLS.filter(s => s.topic === t.dataset.topic && s.tier === +t.dataset.tier).every(s => cfg.skills.includes(s.id)); });
-    [1,2,3].forEach(t => { const all = SKILLS.filter(s => s.tier === t), on = all.filter(s => cfg.skills.includes(s.id)); $("#lvl-" + t).textContent = `${on.length} of ${all.length} skills selected`; });
+    [1,2,3].forEach(t => { const all = SKILLS.filter(s => s.tier === t), on = all.filter(s => cfg.skills.includes(s.id)); const el = $("#lvl-" + t); if(el) el.textContent = `${on.length} of ${all.length} skills selected`; });
     const sel = new Set(cfg.skills), same = list => list.length === sel.size && list.every(s => sel.has(s.id));
     app.querySelectorAll("[data-pick]").forEach(b => { const k = b.dataset.pick; const list = k === "" ? [] : /^[123]+$/.test(k) ? SKILLS.filter(s => k.includes(String(s.tier))) : SKILLS.filter(s => s.mod.includes(k)); b.classList.toggle("active", same(list)); });
     cfg.perSkill = +$("#perSkill").value; cfg.maxQ = Math.max(0, Math.min(255, +$("#maxQ").value || 0)); cfg.lang = +$("#lang").value; cfg.idk = $("#idk").checked; cfg.idk2 = $("#idk2").checked; cfg.conf = $("#conf").checked;
@@ -1327,13 +1456,14 @@ function renderBuilder(){
     $("#url").textContent = url; $("#preview").href = url;
   };
   app.querySelectorAll("[data-topic]").forEach(t => t.addEventListener("change", () => { skillBoxes.forEach(b => { const s = skillById[b.dataset.skill]; if(s.topic === t.dataset.topic && s.tier === +t.dataset.tier) b.checked = t.checked; }); sync(); }));
-  app.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.pick; setSel(k === "" ? () => false : /^[123]+$/.test(k) ? s => k.includes(String(s.tier)) : s => s.mod.includes(k)); }));
+  app.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.pick; const fn = k === "" ? () => false : /^[123]+$/.test(k) ? s => k.includes(String(s.tier)) : s => s.mod.includes(k); skillBoxes.forEach(x => x.checked = fn(skillById[x.dataset.skill])); sync(); }));
   app.querySelectorAll("[data-lvl]").forEach(b => b.addEventListener("click", () => { const t = +b.dataset.lvl, on = b.dataset.on === "1"; skillBoxes.forEach(x => { if(skillById[x.dataset.skill].tier === t) x.checked = on; }); sync(); }));
   $("#timerPreset").addEventListener("change", e => { if(e.target.value !== "custom") $("#timer").value = e.target.value; sync(); });
   $("#timer").addEventListener("input", () => { const v = +$("#timer").value || 0; $("#timerPreset").value = TIMER_PRESETS.includes(v) ? String(v) : "custom"; });
   app.querySelectorAll("input, select").forEach(el => el.addEventListener("input", sync));
   $("#reseed").addEventListener("click", () => { cfg.seed = Math.floor(Math.random() * 65536); sync(); });
-  const copy = btn => () => navigator.clipboard.writeText($("#url").textContent).then(() => { const t = btn.textContent; btn.textContent = "Copied"; setTimeout(() => btn.textContent = t, 1500); });
+  $("#url").addEventListener("click", () => { const r = document.createRange(); r.selectNodeContents($("#url")); getSelection().removeAllRanges(); getSelection().addRange(r); });
+  const copy = btn => () => navigator.clipboard.writeText($("#url").textContent).then(() => flashCopied(btn)).catch(() => { btn.textContent = "Could not copy — select and copy the box above"; setTimeout(() => btn.textContent = "Copy link", 2500); });
   $("#copy").addEventListener("click", copy($("#copy"))); $("#copy2").addEventListener("click", copy($("#copy2")));
   sync();
 }
@@ -1371,7 +1501,7 @@ function renderIntro(code){
   };
   $("#start").addEventListener("click", () => begin(false));
   if(saved) $("#resume").addEventListener("click", () => begin(true));
-  if(last) $("#again").addEventListener("click", () => { const r = JSON.parse(last); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 1)], {type:"application/json"})); a.download = r._filename || "dewmath-result.json"; a.click(); });
+  if(last) $("#again").addEventListener("click", () => { const r = JSON.parse(last); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 1)], {type:"application/json"})); a.download = r._filename || "dewmath-result.json"; a.click(); if(r._pasteCode){ navigator.clipboard.writeText(r._pasteCode).catch(() => {}); } });
 }
 
 /* ==========================================================================
@@ -1379,7 +1509,8 @@ function renderIntro(code){
    ========================================================================== */
 function startRun(code, c, plan, ident, vm, saved){
   const pageSize = vm === 1 ? 1 : vm === 2 ? plan.length : c.k;
-  run = {code, c, plan:plan.slice(), skipped:[], ident, vm, pageSize, page:0, answers:{}, started:Date.now(), lastEvent:Date.now(), timedOut:false, finished:false, offered:{}, offer:null};
+  run = {code, c, fullPlan:plan.slice(), plan:plan.slice(), skipped:[], ident, vm, pageSize, page:0, answers:{}, started:Date.now(), lastEvent:Date.now(), timedOut:false, finished:false, offered:{}, offer:null};
+  run.elapsedNow = () => run.finished ? run.elapsedFinal : Math.round((Date.now() - run.started) / 1000);
   if(saved){
     run.answers = saved.answers || {}; run.started = saved.started || run.started; run.page = saved.page || 0; run.offered = saved.offered || {};
     if(saved.skippedIds){ run.skipped = run.plan.filter(p => saved.skippedIds.includes(p.item.id)); run.plan = run.plan.filter(p => !saved.skippedIds.includes(p.item.id)); }
@@ -1492,15 +1623,23 @@ function finishRun(){
   if(run.finished) return; run.finished = true; clearInterval(run.tick);
   localStorage.removeItem("dewmath2:" + run.code);
   const c = run.c;
-  const r = buildResult({plan:run.plan, skipped:run.skipped, cfg:c, answers:run.answers, code:run.code, ident:run.ident, vm:run.vm, elapsed:Math.round((Date.now() - run.started) / 1000), timedOut:run.timedOut});
+  run.elapsedFinal = Math.round((Date.now() - run.started) / 1000);
+  const r = buildResult({plan:run.plan, skipped:run.skipped, cfg:c, answers:run.answers, code:run.code, ident:run.ident, vm:run.vm, elapsed:run.elapsedFinal, timedOut:run.timedOut});
+  const pasteCode = encodePasteResult(run);
   const safe = (r.student.identity || "anonymous").replace(/[^\w\-]+/g, "_").slice(0, 30);
   const fname = `dewmath-${safe}-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")}.json`;
   const href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 1)], {type:"application/json"}));
-  try { localStorage.setItem("dewmath2:last:" + run.code, JSON.stringify({...r, _filename:fname})); } catch(e){}
+  try { localStorage.setItem("dewmath2:last:" + run.code, JSON.stringify({...r, _filename:fname, _pasteCode:pasteCode})); } catch(e){}
   const isMail = /^mailto:/i.test(c.submitUrl || "");
+  const prefilled = /\{\{code\}\}/i.test(c.submitUrl || "");
+  const formUrl = prefilled ? c.submitUrl.replace(/\{\{code\}\}/gi, encodeURIComponent(pasteCode)) : c.submitUrl;
   const send = c.submitUrl
-    ? `<li><span>${isMail ? `Email the file as an attachment. <a class="btn quiet" href="${esc(c.submitUrl)}?subject=${encodeURIComponent("Maths diagnostic: " + (r.student.identity || "results"))}">Open a new email</a>` : `Upload the file where your teacher asked. <a class="btn quiet" href="${esc(c.submitUrl)}" target="_blank" rel="noopener">Open the upload page</a>`}${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`
-    : `<li><span>Send it to your teacher in the way they asked: by email, through a form, or into a shared folder.${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`;
+    ? `<li><span>${
+        isMail ? `Send an email with your results already in it. <a class="btn quiet" href="${esc(c.submitUrl)}?subject=${encodeURIComponent("Maths diagnostic: " + (r.student.identity || "results"))}&body=${encodeURIComponent(pasteCode)}">Open a new email</a><br><small>The text is already in the body. Check it is there, then press send.</small>`
+        : prefilled ? `Go to where your teacher asked. The results code is already filled in. <a class="btn quiet" href="${esc(formUrl)}" target="_blank" rel="noopener">Open that page</a>${c.submitNote ? "" : "<br><small>Check the box shows your results, then submit the form.</small>"}`
+        : `Go to where your teacher asked, and either upload the file or paste the text. <a class="btn quiet" href="${esc(c.submitUrl)}" target="_blank" rel="noopener">Open that page</a>`
+      }${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`
+    : `<li><span>Send it to your teacher in the way they asked, either the file or the text below.${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`;
   const list = c.showItems ? `<h2>Question by question</h2><ul class="result-list">${r.items.filter(i => !i.skipped).map((i, k) => {
     const p = run.plan[k]; const mark = !i.answered ? ["skip", "–", "Not attempted"] : i.noAnswer ? ["skip", "?", i.choice] : i.correct ? ["ok", "✓", "Correct"] : ["no", "✗", "Wrong this time"];
     const ans = c.showAnswers && !i.correct ? `<small>Correct answer: ${p.opts.find(o => o.ok).fig ? "Graph " + "ABCDEF"[p.opts.findIndex(o => o.ok)] : tex(p.opts.find(o => o.ok).t)}</small>` : "";
@@ -1510,13 +1649,32 @@ function finishRun(){
   ${run.timedOut ? `<p class="notice">The time ran out, so this is what you had answered by then.</p>` : ""}
   <p class="lead">Thank you. Two more steps and you are done.</p>
   <ol class="steps">
-    <li><span>Download your results file. <a class="btn" id="dl" href="${href}" download="${fname}">Download my results file</a><br><small>It is called <span class="code">${esc(fname)}</span> and will be in your Downloads folder. It records only your answers. It stays on this device until you send it.</small></span></li>
+    <li><span>Choose one: download a file, or copy a short piece of text. Either one carries the same answers.
+      <div class="row" style="margin-top:.5rem"><a class="btn" id="dl" href="${href}" download="${fname}">Download my results file</a><button class="quiet" id="showPaste">Show the text version instead</button></div>
+      <div id="pasteBlock" hidden style="margin-top:.75rem">
+        <textarea id="pasteCode" readonly rows="3" style="font-family:ui-monospace,monospace;font-size:.85rem" onclick="this.select()">${esc(pasteCode)}</textarea>
+        <div class="row" style="margin-top:.4rem"><button class="quiet small" id="copyPaste">Copy this text</button><small>Paste it into the box, form field or email your teacher asked for.</small></div>
+      </div>
+      <br><small>The file is called <span class="code">${esc(fname)}</span> and will be in your Downloads folder. Either version records only your answers, and stays on this device until you send it.</small></span></li>
     ${send}
   </ol>
-  <p class="muted">If you lose the file, open this same link again on this device and you can download it again.</p>
+  <p class="muted">If you lose these, open this same link again on this device and you can get them again.</p>
   ${c.showScore ? `<h2>Your score</h2><p class="lead">${r.summary.correct} out of ${r.summary.total}${r.summary.answered < r.summary.total ? ` (${r.summary.total - r.summary.answered} not attempted)` : ""}${r.summary.skipped ? `, with ${r.summary.skipped} skipped` : ""}</p><p>A low score on some topics is a useful outcome here. It tells your teacher where to start.</p>` : ""}
   ${list}`;
   window.scrollTo(0, 0);
+  $("#showPaste").addEventListener("click", () => {
+    const b = $("#pasteBlock"); b.hidden = !b.hidden; $("#showPaste").textContent = b.hidden ? "Show the text version instead" : "Hide the text version";
+    if(!b.hidden){
+      /* Grow the box until every line is visible rather than guess a row count from the
+         character total, since the true chars-per-line depends on the font actually
+         rendered, which varies by device. 20 rows is a generous ceiling no real code
+         should ever reach. */
+      const ta = $("#pasteCode"); ta.rows = 3;
+      let guard = 0;
+      while(ta.scrollHeight > ta.clientHeight + 2 && ta.rows < 20 && guard++ < 20) ta.rows++;
+    }
+  });
+  $("#copyPaste").addEventListener("click", () => { navigator.clipboard.writeText(pasteCode).then(() => flashCopied($("#copyPaste"))).catch(() => { $("#copyPaste").textContent = "Could not copy — tap the box above and select all"; setTimeout(() => $("#copyPaste").textContent = "Copy this text", 2500); }); });
 }
 
 /* ==========================================================================
@@ -1528,19 +1686,58 @@ function renderAnalysis(){
   <h1>Class analysis</h1>
   <p class="lead">Open the results files your students downloaded. Everything is worked out in this page and nothing is uploaded anywhere.</p>
   <p><a href="${baseUrl()}">Back to the builder</a></p>
-  <div class="row"><input type="file" id="files" multiple accept=".json,application/json"><button class="quiet" id="sample">Load a sample class of 12</button><button class="quiet" id="clear">Clear</button></div>
-  <p><small>Select all the files at once, or add more in a second selection. The sample class is simulated from twelve invented profiles so you can see every chart with data in it.</small></p>
+  <div class="row"><input type="file" id="files" multiple accept=".json,application/json,.csv,text/csv"><button class="quiet" id="sample">Load a sample class of 12</button><button class="quiet" id="clear">Clear</button></div>
+  <p><small>Select a results file from each student, or the CSV that Microsoft Forms (or Google Forms) exports, with one row per response. Select several files at once, or add more in a second selection. Re-uploading a CSV you have downloaded before will not double-count a student it already read. The sample class is simulated from twelve invented profiles so you can see every chart with data in it.</small></p>
+  <details style="margin:1rem 0"><summary>Or paste text results, one per line</summary>
+    <p class="muted">If a student sent the short text version instead of a file, paste it here. One code per line, in any order, from any number of students.</p>
+    <textarea id="pasteIn" rows="4" placeholder="Paste one or more results codes, one per line"></textarea>
+    <div class="row" style="margin-top:.5rem"><button class="quiet" id="addPaste">Add these results</button><span id="pasteMsg" class="muted"></span></div>
+  </details>
   <div id="out"></div>`;
-  let results = [];
+  let results = [], seenCsvIds = new Set();
   $("#files").addEventListener("change", async e => {
+    const notices = [];
     for(const f of e.target.files){
+      if(/\.csv$/i.test(f.name) || f.type === "text/csv"){ notices.push(addFromCSV(await f.text(), f.name)); continue; }
       try { const r = JSON.parse(await f.text()); if(!/^dewmath-result\/[12]$/.test(r.schema)) throw 0; r._file = f.name; results.push(r); }
-      catch(err){ $("#out").insertAdjacentHTML("afterbegin", `<p class="notice bad">${esc(f.name)} was skipped because it is not a results file from this diagnostic.</p>`); }
+      catch(err){ notices.push(`<p class="notice bad">${esc(f.name)} was skipped because it is not a results file from this diagnostic.</p>`); }
     }
-    e.target.value = ""; renderReport(results);
+    e.target.value = "";
+    renderReport(results);
+    if(notices.length) $("#out").insertAdjacentHTML("afterbegin", notices.join(""));
   });
+  /* Returns a notice paragraph rather than writing to the page directly, since renderReport
+     redraws #out from scratch right after this runs and would erase anything written here first. */
+  function addFromCSV(text, filename){
+    const rows = parseCSV(text); if(!rows.length) return "";
+    const header = rows[0].map(h => h.trim().toLowerCase());
+    const idCol = header.indexOf("id");
+    let added = 0, skippedDup = 0; const bad = [];
+    rows.slice(1).forEach((row, i) => {
+      if(!row.some(c => c.trim())) return;
+      const rid = idCol >= 0 ? row[idCol] : null;
+      const key = rid !== null ? filename + ":" + rid : null;
+      if(key && seenCsvIds.has(key)){ skippedDup++; return; }
+      const candidates = [row[row.length - 1], ...row.slice(0, -1)];
+      let decoded = null;
+      for(const c of candidates){ if(!c || !c.includes(".")) continue; try { decoded = decodePasteResult(c); break; } catch(e){} }
+      if(decoded){ decoded._file = filename + " row " + (i + 2); results.push(decoded); added++; if(key) seenCsvIds.add(key); }
+      else bad.push(i + 2);
+    });
+    let msg = `<p class="notice ${added ? "good" : "bad"}">${esc(filename)}: ${added} result${added === 1 ? "" : "s"} added`;
+    if(skippedDup) msg += `, ${skippedDup} already read`;
+    if(bad.length) msg += `, row${bad.length > 1 ? "s" : ""} ${bad.join(", ")} did not contain a results code`;
+    return msg + ".</p>";
+  }
   $("#sample").addEventListener("click", () => { results = simulateClass().map(r => ({...r, _file:"simulated"})); renderReport(results); });
   $("#clear").addEventListener("click", () => { results = []; $("#out").innerHTML = ""; });
+  $("#addPaste").addEventListener("click", () => {
+    const lines = $("#pasteIn").value.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    let ok = 0; const errs = [];
+    lines.forEach((line, i) => { try { const r = decodePasteResult(line); r._file = "pasted line " + (i + 1); results.push(r); ok++; } catch(e){ errs.push(`Line ${i + 1}: ${e.message}`); } });
+    $("#pasteMsg").innerHTML = (ok ? `${ok} result${ok > 1 ? "s" : ""} added. ` : "") + errs.join(" ");
+    if(ok){ $("#pasteIn").value = ""; renderReport(results); }
+  });
 }
 
 function hbars(rows, opts){
@@ -1705,7 +1902,7 @@ function renderReport(results){
       ${wt.length ? `<p class="muted">Worth checking (between ${TH.flag}% and ${TH.watch}%): ${esc(wt.map(skillName).join(", "))}.</p>` : ""}
       ${langNote}
       ${hbars([1,2,3].map(t => { const p = tierPct(r, t, TH); const T = (r.summary.tiers || {})[t]; return {label:TIERS[t], value:p ?? 0, note:p === null ? (T ? `(${attempted(T)} attempted, too few)` : "(not asked)") : `(${attempted(T)} attempted)`}; }), {labelW:110, w:460, rowH:20, label:"Percent correct by level"})}
-      ${topErr.length ? `<p><strong>Most repeated errors</strong><br>${topErr.map(([e, n]) => `<span class="tag">${esc(errName(e))} (${n})</span>`).join(" ")}</p>` : ""}
+      ${topErr.length ? `<p><strong>Most repeated errors</strong></p><ul class="errlist">${topErr.map(([e, n]) => `<li>${errCite(e, errName(e), false)} <span class="n">(${n} time${n > 1 ? "s" : ""})</span></li>`).join("")}</ul>` : ""}
       ${cw.length ? `<p><strong>Confident wrong answers</strong> (${cw.length}): ${cw.map(it => esc(skillName(it.skill))).join(", ")}</p>` : ""}
       ${r.summary.idk ? `<p>Gave a "don't know" answer ${r.summary.idk} time${r.summary.idk > 1 ? "s" : ""}${r.summary.words || r.summary.task ? ` (${r.summary.words || 0} about words, ${r.summary.task || 0} about what was being asked)` : ""}.</p>` : ""}
     </details>`;
@@ -1721,8 +1918,8 @@ function renderReport(results){
   const skillRows = skillIds.map(id => {
     const Ss = results.map(r => r.summary.skills[id]).filter(S => S && attempted(S));
     const errs = {}; Ss.forEach(S => S.errors.forEach(e => errs[e] = (errs[e] || 0) + 1));
-    const top = Object.entries(errs).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e, n]) => `<span class="tag">${esc(errName(e))} (${n})</span>`).join(" ");
-    return `<tr><td>${esc(skillName(id))}<br><small class="tier t${skillTier(id)}">${TIERS[skillTier(id)]}</small> <small>${esc((topicById[skillTopic(id)] || {}).name || "")}</small></td><td class="c">${Ss.length}</td>${cell(meanOf(id))}<td class="c">${Ss.filter(flagged).length}${Ss.filter(watch).length ? ` <small>(+${Ss.filter(watch).length})</small>` : ""}</td><td class="c">${Ss.reduce((a, S) => a + S.idk, 0)}</td><td class="c">${Ss.reduce((a, S) => a + (S.words || 0), 0)}</td><td>${top || "<span class='muted'>none recorded</span>"}</td></tr>`;
+    const top = Object.entries(errs).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e, n]) => `<div style="margin:0 0 .5rem">${errCite(e, errName(e), true)} <span class="n">(${n})</span></div>`).join("");
+    return `<tr><td>${esc(skillName(id))}<br><small class="tier t${skillTier(id)}">${TIERS[skillTier(id)]}</small> <small>${esc((topicById[skillTopic(id)] || {}).name || "")}</small></td><td class="c">${Ss.length}</td>${cell(meanOf(id))}<td class="c">${Ss.filter(flagged).length}${Ss.filter(watch).length ? ` <small>(+${Ss.filter(watch).length})</small>` : ""}</td><td class="c">${Ss.reduce((a, S) => a + S.idk, 0)}</td><td class="c">${Ss.reduce((a, S) => a + (S.words || 0), 0)}</td><td style="min-width:16rem">${top || "<span class='muted'>none recorded</span>"}</td></tr>`;
   }).join("");
   const skillChart = hbars(skillIds.map(id => ({label:skillName(id), value:meanOf(id) || 0, color:TOPIC_COLORS[skillTopic(id)]})).sort((a, b) => a.value - b.value), {rowH:20, label:"Mean percent correct by skill, lowest first"});
   const skills = `
@@ -1734,10 +1931,12 @@ function renderReport(results){
   /* ---------- errors ---------- */
   const errAll = {}; results.forEach(r => r.items.forEach(i => { if(i.error) errAll[i.error] = (errAll[i.error] || 0) + 1; }));
   const errRows = Object.entries(errAll).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([e, n]) => ({label:errName(e).length > 60 ? errName(e).slice(0, 58) + "…" : errName(e), value:n}));
+  const errTop15 = Object.entries(errAll).sort((a, b) => b[1] - a[1]).slice(0, 15);
   const errors = `
     <h2>Errors</h2>
     <p class="muted">Every wrong option in the bank is tagged with the misunderstanding it most likely shows. Each count here is one student giving that tagged answer once, so the same student can appear more than once for the same tag.</p>
-    ${errRows.length ? hbars(errRows, {max:Math.max(...errRows.map(r => r.value)), fmt:v => v + (v === 1 ? " answer" : " answers"), labelW:380, w:700, rowH:20, label:"Most frequent tagged errors"}) : "<p class='muted'>No tagged errors yet.</p>"}`;
+    ${errRows.length ? hbars(errRows, {max:Math.max(...errRows.map(r => r.value)), fmt:v => v + (v === 1 ? " answer" : " answers"), labelW:380, w:700, rowH:20, label:"Most frequent tagged errors"}) : "<p class='muted'>No tagged errors yet.</p>"}
+    ${errTop15.length ? `<h3>What each of those was, with an example</h3><ul class="errlist">${errTop15.map(([e, n]) => `<li>${errCite(e, errName(e), false)} <span class="n">(${n} time${n > 1 ? "s" : ""})</span></li>`).join("")}</ul>` : ""}`;
 
   /* ---------- confidence and wording ---------- */
   let confBlock = "<p class='muted'>Confidence was not asked in these sittings.</p>";
@@ -1787,7 +1986,7 @@ function renderReport(results){
   /* ---------- thresholds ---------- */
   const thresholds = `<h2>Thresholds</h2>
     <p>Every label on this page comes from a number on this tab. Change a number and the whole report is redrawn. The settings are kept in this browser, so they will still be here next time.</p>
-    <div class="thr">${Object.keys(TH_DEFAULT).map(k => `<label><span>${esc(TH_TEXT[k])}${k === "minItems" ? "" : k === "margin" ? " points" : "%"}</span><input type="number" data-th="${k}" value="${TH[k]}" min="0" max="${k === "minItems" ? 50 : 100}"></label>`).join("")}</div>
+    <div class="thr">${Object.keys(TH_DEFAULT).map(k => `<label><span>${esc(TH_TEXT[k])}${k === "minItems" ? "" : k === "margin" ? ", in points" : ", as a percent"}</span><input type="number" data-th="${k}" value="${TH[k]}" min="0" max="${k === "minItems" ? 50 : 100}"></label>`).join("")}</div>
     <div class="row" style="margin-top:1rem"><button class="quiet" id="thReset">Reset to the defaults</button><small>Defaults: foundation below ${TH_DEFAULT.found}%, strong at ${TH_DEFAULT.strongAdv}% advanced and ${TH_DEFAULT.strongCore}% core, ready at ${TH_DEFAULT.readyCore}% core, flag below ${TH_DEFAULT.flag}%, worth checking below ${TH_DEFAULT.watch}%, ${TH_DEFAULT.minItems} items per level, timeout line ${TH_DEFAULT.timeoutPct}%, narrow margin ${TH_DEFAULT.margin} points.</small></div>`;
 
   const tabs = [["overview","Overview"],["students","Students"],["skills","Skills"],["errors","Errors"],["confidence","Confidence and wording"],["time","Time"],["data","Data"],["thresholds","Thresholds"]];
@@ -1806,6 +2005,27 @@ function renderReport(results){
       ...results.map((r, i) => [names[i], BANDS[bands[i].band], bands[i].why, r.summary.correct, r.summary.answered, r.summary.total, ...[1,2,3].map(t => { const p = tierPct(r, t, TH); return p === null ? "" : Math.round(p * 100); }), r.summary.idk || 0, r.summary.words || 0, r.summary.task || 0, r.summary.skipped || 0, Math.round(r.elapsedSeconds / 60), r.timedOut ? "yes" : "no", skillIds.filter(id => flagged(r.summary.skills[id])).map(skillName).join("; ")])];
     downloadCSV(rows, "dewmath-class-students.csv");
   });
+}
+/* A small RFC 4180 reader: handles quoted fields, commas and quotes inside
+   them, and both CRLF and LF line endings, which is what Excel and Forms
+   both produce. */
+function parseCSV(text){
+  const rows = []; let row = [], field = "", inQuotes = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){ if(text[i + 1] === '"'){ field += '"'; i++; } else inQuotes = false; }
+      else field += c;
+    } else if(c === '"') inQuotes = true;
+    else if(c === ","){ row.push(field); field = ""; }
+    else if(c === "\n" || c === "\r"){
+      if(c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = ""; if(row.some(v => v !== "")) rows.push(row); row = [];
+    } else field += c;
+  }
+  if(field !== "" || row.length) row.push(field);
+  if(row.some(v => v !== "")) rows.push(row);
+  return rows;
 }
 function downloadCSV(rows, name){
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");

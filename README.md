@@ -32,11 +32,11 @@ On the analysis page, the file picker also accepts the CSV that Microsoft Forms 
 
 ## The builder's wizard tabs
 
-The builder's four tabs (Questions, Delivery, Results & Submission, Share) are numbered and styled deliberately larger than the analysis page's tabs, since this is the page a teacher is most likely to skim past on the way to the link. The sticky bar at the bottom shows "Next: <tab name>" on every tab except the last, and only offers "Copy link" once the Share tab is reached, so building a link means passing through every section at least once rather than grabbing the link from wherever it happens to be visible. Clicking a tab header directly still works, since this is a nudge, not a lock.
+The builder's four tabs (Questions, Delivery, Results & Submission, Share) are numbered and styled deliberately larger than the analysis page's tabs, since this is the page a teacher is most likely to skim past on the way to the link. The sticky bar at the bottom shows "Next: <tab name>" on every tab except the last, and only offers "Copy link" once the Share tab is reached, so building a link means passing through every section at least once. Clicking a tab header directly still works, so a teacher who knows the settings can jump straight to one.
 
 ## Error citations
 
-Every tagged error the analysis page shows (in the Skills tab, on a student's report card, and on the class-wide Errors tab) is followed by a real example pulled from the item bank itself: the question it was seen on and the wrong answer that was chosen. This is generated at render time from `ITEMS`, not written by hand, so it stays accurate as the bank grows and needs no separate upkeep.
+Every tagged error the analysis page shows (in the Skills tab, on a student's report card, and on the class-wide Errors tab) is followed by a real example pulled from the item bank itself: the question it was seen on and the wrong answer that was chosen. The example is generated from `ITEMS` each time the page draws, so it stays accurate as the bank grows and needs no separate upkeep.
 
 ## Reading the analysis page
 

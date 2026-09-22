@@ -98,6 +98,8 @@ details.level .desc{margin:.2rem 0 .6rem;color:var(--ink-soft)}
 .topic-block{margin:.4rem 0 .8rem;padding-left:.2rem}
 .topic-block .skills{padding-left:1.9rem}
 button.quiet.active{background:var(--accent);color:var(--accent-ink)}
+.btn.big,button.big{font-size:1.15rem;padding:.85rem 1.6rem;font-weight:700}
+.sendbox{padding:1.25rem 1.25rem 1rem;border:2px solid var(--accent);border-radius:.7rem;background:var(--wash);margin:1rem 0 1.25rem}
 .stickybar{position:sticky;bottom:0;background:var(--paper);border-top:1px solid var(--rule);padding:.6rem 0;margin-top:2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;z-index:2}
 .encourage{margin:.6rem 0 0;padding:.6rem .9rem;background:var(--good-wash);border-left:4px solid var(--good);border-radius:0 .4rem .4rem 0;font-size:1rem}
 .opt.idk{color:var(--ink-soft);font-size:1rem}
@@ -232,7 +234,7 @@ summary{cursor:pointer}
    Skill fields:  id, topic, name, tier (1 foundation, 2 core, 3 advanced), mod ("M", "C" or "MC")
    Item fields:   id, skill, plain, tech, fig?, opts (one ok:1, wrong ones carry e:"tag")
    ========================================================================== */
-const BANK_VERSION = "2026-09-18.3";
+const BANK_VERSION = "2026-09-22.4";
 
 const TOPICS = [
   {id:"num", name:"Number, fractions and percentages", desc:"Arithmetic with whole numbers, negatives, fractions, decimals, percentages, ratio and estimation."},
@@ -347,6 +349,8 @@ const ERRORS = {
   "frac-bigger-numbers-bigger":"Thinks the fraction with bigger numbers is bigger",
   "frac-larger-den-larger":"Thinks a larger denominator means a larger fraction",
   "frac-gap-rule":"Judges fractions by the gap between numerator and denominator",
+  "frac-rounds-to-half":"Rounds two fractions close to one half and treats them as equal",
+  "frac-same-numerator-equal":"Treats fractions with the same numerator as equal, whatever the denominator",
   "dec-place-value":"Misreads decimal place value",
   "dec-digits-as-fraction":"Turns the decimal digits into a fraction without regard to place value",
   "dec-approximation":"Substitutes a nearby familiar fraction",
@@ -712,13 +716,13 @@ const ITEMS = [
  opts:[{t:"$\\frac{1}{2}$",ok:1},{t:"$\\frac{1}{5}$",e:"dec-digits-as-fraction"},{t:"$\\frac{5}{100}$",e:"dec-place-value"},{t:"$5$",e:"dec-ignore-point"}]},
 {id:"FE1",skill:"frac-equiv",plain:"Which fraction is equal to $\\frac{3}{4}$?",tech:"Which fraction is equivalent to $\\frac{3}{4}$?",
  opts:[{t:"$\\frac{6}{8}$",ok:1},{t:"$\\frac{4}{5}$",e:"frac-add-one-to-both"},{t:"$\\frac{6}{4}$",e:"frac-scale-num-only"},{t:"$\\frac{3}{8}$",e:"frac-scale-den-only"}]},
-{id:"FE2",skill:"frac-equiv",plain:"Which is larger, $\\frac{2}{3}$ or $\\frac{3}{5}$?",tech:"Compare $\\frac{2}{3}$ and $\\frac{3}{5}$.",
- opts:[{t:"$\\frac{2}{3}$",ok:1},{t:"$\\frac{3}{5}$",e:"frac-bigger-numbers-bigger"},{t:"They are equal",e:"frac-gap-rule"}]},
+{id:"FE2",skill:"frac-equiv",plain:"Which is larger, $\\frac{3}{5}$ or $\\frac{1}{2}$?",tech:"Compare $\\frac{3}{5}$ and $\\frac{1}{2}$.",
+ opts:[{t:"$\\frac{3}{5}$",ok:1},{t:"$\\frac{1}{2}$",e:"frac-gap-rule"},{t:"They are equal",e:"frac-rounds-to-half"}]},
 {id:"FE3",skill:"frac-equiv",plain:"Which is larger, $\\frac{1}{3}$ or $\\frac{1}{4}$?",tech:"Compare $\\frac{1}{3}$ and $\\frac{1}{4}$.",
- opts:[{t:"$\\frac{1}{3}$",ok:1},{t:"$\\frac{1}{4}$",e:"frac-larger-den-larger"},{t:"They are equal",e:"frac-gap-rule"}]},
+ opts:[{t:"$\\frac{1}{3}$",ok:1},{t:"$\\frac{1}{4}$",e:"frac-larger-den-larger"},{t:"They are equal",e:"frac-same-numerator-equal"}]},
 {id:"R01",skill:"ratio",plain:"Share €120 between two people in the ratio $2:3$. What is the smaller share?",tech:"Divide €120 in the ratio $2:3$ and state the smaller share.",
  opts:[{t:"€48",ok:1},{t:"€40",e:"ratio-divide-by-part"},{t:"€60",e:"ratio-half"},{t:"€24",e:"ratio-parts-only"}]},
-{id:"R02",skill:"ratio",plain:"A recipe for 4 people uses 300 g of flour. How much flour is needed for 6 people?",tech:"300 g serves 4. Scale the quantity for 6 in direct proportion.",
+{id:"R02",skill:"ratio",plain:"A recipe for 4 people uses 300 g of flour. How much flour is needed for 6 people?",tech:"300 g of flour serves 4 people. Using direct proportion, find the flour needed for 6 people.",
  opts:[{t:"450 g",ok:1},{t:"600 g",e:"ratio-doubled"},{t:"302 g",e:"ratio-additive"},{t:"200 g",e:"ratio-inverted"}]},
 {id:"ES1",skill:"estimate",plain:"Roughly what is $19.6 \\times 4.9$?",tech:"Estimate $19.6 \\times 4.9$ to the nearest ten.",
  opts:[{t:"About $100$",ok:1},{t:"About $1000$",e:"est-magnitude"},{t:"About $25$",e:"est-added"},{t:"About $10$",e:"est-magnitude"}]},
@@ -754,7 +758,7 @@ const ITEMS = [
  opts:[{t:"$6$",ok:1},{t:"$18$",e:"root-halved"},{t:"$1296$",e:"root-squared"},{t:"$3$",e:"ind-frac-wrong-root"}]},
 {id:"I13",skill:"roots",plain:"Solve $x^2 = 36$.",tech:"Find all real solutions of $x^2 = 36$.",
  opts:[{t:"$x = 6$ or $x = -6$",ok:1},{t:"$x = 6$ only",e:"root-positive-only"},{t:"$x = 18$",e:"root-halved"},{t:"$x = 1296$",e:"root-squared"}]},
-{id:"I14",skill:"roots",plain:"Can $\\sqrt{x^2 + 9}$ be written more simply?",tech:"Simplify $\\sqrt{x^2 + 9}$ if possible.",
+{id:"I14",skill:"roots",plain:"Can $\\sqrt{x^2 + 9}$ be simplified?",tech:"Simplify $\\sqrt{x^2 + 9}$ if possible.",
  opts:[{t:"No, it cannot be simplified",ok:1},{t:"$x + 3$",e:"root-over-sum"},{t:"$x + 9$",e:"root-over-sum"},{t:"$x^2 + 3$",e:"root-over-sum"}]},
 {id:"SP1",skill:"sign-pow",plain:"What is $-3^2$?",tech:"Evaluate $-3^2$.",
  opts:[{t:"$-9$",ok:1},{t:"$9$",e:"sign-square-includes-minus"},{t:"$-6$",e:"ind-neg-multiplied"},{t:"$6$",e:"ind-neg-multiplied"}]},
@@ -762,7 +766,7 @@ const ITEMS = [
  opts:[{t:"$9$",ok:1},{t:"$-9$",e:"sign-bracket-ignored"},{t:"$-6$",e:"ind-neg-multiplied"},{t:"$6$",e:"ind-neg-multiplied"}]},
 {id:"SP3",skill:"sign-pow",plain:"What is $(-2)^3$?",tech:"Evaluate $(-2)^3$.",
  opts:[{t:"$-8$",ok:1},{t:"$8$",e:"sign-odd-power-positive"},{t:"$-6$",e:"ind-neg-multiplied"},{t:"$6$",e:"ind-neg-multiplied"}]},
-{id:"L01",skill:"log-def",plain:"$\\log_2 8$ asks: 2 to what power gives 8? What is the answer?",tech:"Evaluate $\\log_2 8$.",
+{id:"L01",skill:"log-def",plain:"$\\log_2 8$ is the power you raise 2 to in order to get 8. What is $\\log_2 8$?",tech:"Evaluate $\\log_2 8$.",
  opts:[{t:"$3$",ok:1},{t:"$4$",e:"log-as-quotient"},{t:"$16$",e:"log-as-product"},{t:"$64$",e:"log-as-power"}]},
 {id:"L02",skill:"log-def",plain:"If $\\log_{10} x = 2$, what is $x$?",tech:"Solve $\\log_{10} x = 2$.",
  opts:[{t:"$100$",ok:1},{t:"$20$",e:"log-multiplied"},{t:"$5$",e:"log-as-quotient"},{t:"$0.01$",e:"log-inverted"}]},
@@ -778,8 +782,8 @@ const ITEMS = [
  opts:[{t:"$x = 5$",ok:1},{t:"$x = 16$",e:"exp-divided"},{t:"$x = 4$",e:"exp-off-by-one"},{t:"$x = 30$",e:"exp-subtracted"}]},
 {id:"XE2",skill:"exp-eq",plain:"What is $\\log_3\\left(\\frac{1}{9}\\right)$?",tech:"Evaluate $\\log_3\\left(\\dfrac{1}{9}\\right)$.",
  opts:[{t:"$-2$",ok:1},{t:"$2$",e:"log-neg-lost"},{t:"$-3$",e:"log-as-quotient"},{t:"$\\frac{1}{2}$",e:"log-inverted"}]},
-{id:"XE3",skill:"exp-eq",plain:"Solve $10^x = 500$, giving $x$ to two decimal places.",tech:"Solve $10^x = 500$ to 2 d.p.",
- opts:[{t:"$x = 2.70$",ok:1},{t:"$x = 50$",e:"exp-divided"},{t:"$x = 3$",e:"exp-rounded-badly"},{t:"$x = 2.50$",e:"exp-linear-interpolation"}]},
+{id:"XE3",skill:"exp-eq",plain:"If $10^x = 500$, which of these is true about $x$?",tech:"Which statement about the solution of $10^x = 500$ is true?",
+ opts:[{t:"$x$ is between $2$ and $3$",ok:1},{t:"$x = 50$",e:"exp-divided"},{t:"$x = 3$",e:"exp-rounded-badly"},{t:"$x = 2.5$",e:"exp-linear-interpolation"}]},
 
 /* ---------------- algebra ---------------- */
 {id:"AN1",skill:"alg-not",plain:"If $n$ stands for a number, what is $n + n + n$?",tech:"Simplify $n + n + n$.",
@@ -793,7 +797,7 @@ const ITEMS = [
 {id:"A02",skill:"alg-like",plain:"Simplify $4a^2 + 3a - a^2$.",tech:"Simplify $4a^2 + 3a - a^2$.",
  opts:[{t:"$3a^2 + 3a$",ok:1},{t:"$6a$",e:"like-powers-merged"},{t:"$4a^2 + 2a$",e:"like-powers-merged"},{t:"$6a^2$",e:"like-all-combined"}]},
 {id:"A16",skill:"alg-like",plain:"Simplify $2x + 3$.",tech:"Simplify $2x + 3$ if possible.",
- opts:[{t:"It is already as simple as it gets",ok:1},{t:"$5x$",e:"like-all-combined"},{t:"$6x$",e:"like-all-combined"},{t:"$5$",e:"like-all-combined"}]},
+ opts:[{t:"It cannot be simplified any further",ok:1},{t:"$5x$",e:"like-all-combined"},{t:"$6x$",e:"like-all-combined"},{t:"$5$",e:"like-all-combined"}]},
 {id:"A03",skill:"alg-sub",plain:"If $x = -2$, what is the value of $x^2 + 3x$?",tech:"Evaluate $x^2 + 3x$ when $x = -2$.",
  opts:[{t:"$-2$",ok:1},{t:"$-10$",e:"sub-neg-squared-negative"},{t:"$10$",e:"sub-sign-dropped"},{t:"$2$",e:"sub-sign-slip"}]},
 {id:"A04",skill:"alg-sub",plain:"If $a = 3$ and $b = -1$, what is $2a - 4b$?",tech:"Evaluate $2a - 4b$ when $a = 3$ and $b = -1$.",
@@ -828,7 +832,7 @@ const ITEMS = [
 /* ---------------- equations ---------------- */
 {id:"ESG1",skill:"eq-sign",plain:"$3 + 4 = \\square + 2$. What number goes in the box?",tech:"Find the value that makes $3 + 4 = \\square + 2$ true.",
  opts:[{t:"$5$",ok:1},{t:"$7$",e:"eq-sign-as-answer"},{t:"$9$",e:"eq-sign-add-all"}]},
-{id:"ESG2",skill:"eq-sign",plain:"Which of these is written correctly?",tech:"Which of the following is a correctly written chain of statements?",
+{id:"ESG2",skill:"eq-sign",plain:"A student adds 2 and 3, then doubles the answer. Which line of working is written correctly?",tech:"Which line of working correctly records \"add 2 and 3, then double the result\"?",
  opts:[{t:"$2 + 3 = 5$, and then $5 \\times 2 = 10$",ok:1},{t:"$2 + 3 = 5 \\times 2 = 10$",e:"eq-sign-chained"},{t:"$2 + 3 \\times 2 = 10$",e:"ord-left-to-right"}]},
 {id:"E01",skill:"eq-lin",plain:"Solve $3x - 7 = 11$.",tech:"Solve for $x$: $3x - 7 = 11$.",
  opts:[{t:"$x = 6$",ok:1},{t:"$x = 18$",e:"lin-final-division-skipped"},{t:"$x = \\frac{4}{3}$",e:"lin-wrong-inverse"},{t:"$x = 54$",e:"lin-multiplied"}]},
@@ -846,15 +850,15 @@ const ITEMS = [
  opts:[{t:"$x < -3$",ok:1},{t:"$x > -3$",e:"ineq-not-flipped"},{t:"$x < 3$",e:"ineq-sign-dropped"},{t:"$x > 3$",e:"ineq-both"}]},
 {id:"E06",skill:"eq-ineq",plain:"Solve $3x + 1 \\le 10$.",tech:"Solve the inequality $3x + 1 \\le 10$.",
  opts:[{t:"$x \\le 3$",ok:1},{t:"$x \\ge 3$",e:"ineq-not-flipped"},{t:"$x \\le \\frac{11}{3}$",e:"lin-constant-sign"},{t:"$x \\le 9$",e:"lin-final-division-skipped"}]},
-{id:"E07",skill:"eq-expr",plain:"Which one of these is an equation (something you could solve), rather than an expression?",tech:"Which of the following is an equation rather than an expression?",
+{id:"E07",skill:"eq-expr",plain:"Which one of these is an equation, something you could solve?",tech:"Which of the following is an equation?",
  opts:[{t:"$3x + 2 = 8$",ok:1},{t:"$3x + 2$",e:"expr-eq-confused"},{t:"$3x^2 - 4x$",e:"expr-eq-confused"},{t:"$2(x + 1)$",e:"expr-eq-confused"}]},
-{id:"E08",skill:"eq-expr",plain:"You are asked to \"simplify $2x + 3x$\". What kind of answer does that need?",tech:"What does the instruction \"simplify $2x + 3x$\" call for?",
- opts:[{t:"A shorter expression, such as $5x$",ok:1},{t:"A value of $x$, such as $x = 0$",e:"expr-eq-confused"},{t:"An equation, such as $5x = 0$",e:"expr-eq-confused"},{t:"Nothing: it cannot be simplified",e:"like-wrong-pair"}]},
+{id:"E08",skill:"eq-expr",plain:"A question says \"simplify $2x + 3x$\". What does it want you to do?",tech:"What does the instruction \"simplify $2x + 3x$\" ask for?",
+ opts:[{t:"Write it as one shorter expression: $5x$",ok:1},{t:"Find what number $x$ is",e:"expr-eq-confused"},{t:"Turn it into an equation, such as $5x = 0$",e:"expr-eq-confused"},{t:"Nothing, because $2x + 3x$ cannot be simplified",e:"like-wrong-pair"}]},
 {id:"Q01",skill:"quad-solve",plain:"Solve $x^2 - 5x + 6 = 0$.",tech:"Solve $x^2 - 5x + 6 = 0$.",
  opts:[{t:"$x = 2$ or $x = 3$",ok:1},{t:"$x = -2$ or $x = -3$",e:"quad-sign-roots"},{t:"$x = 1$ or $x = 6$",e:"fac-product-only"},{t:"$x = 5$ or $x = 6$",e:"fac-coefficients-copied"}]},
 {id:"Q02",skill:"quad-solve",plain:"Solve $2x^2 + 3x - 2 = 0$.",tech:"Solve $2x^2 + 3x - 2 = 0$.",
  opts:[{t:"$x = \\frac{1}{2}$ or $x = -2$",ok:1},{t:"$x = -\\frac{1}{2}$ or $x = 2$",e:"quad-sign-roots"},{t:"$x = 1$ or $x = -2$",e:"quad-coeff-ignored"},{t:"$x = \\dfrac{-3 \\pm \\sqrt{17}}{4}$",e:"quad-formula-missing-4"}]},
-{id:"Q03",skill:"quad-solve",plain:"Solve $x^2 + 4 = 0$.",tech:"Solve $x^2 + 4 = 0$ over the complex numbers.",
+{id:"Q03",skill:"quad-solve",plain:"Solve $x^2 + 4 = 0$, allowing answers that use $i$, where $i^2 = -1$.",tech:"Solve $x^2 + 4 = 0$ over the complex numbers.",
  opts:[{t:"$x = 2i$ or $x = -2i$",ok:1},{t:"$x = 2$ or $x = -2$",e:"quad-root-of-negative"},{t:"There are no solutions of any kind",e:"quad-no-complex"},{t:"$x = -2$",e:"quad-linear-treatment"}]},
 {id:"CS1",skill:"quad-form",plain:"Write $x^2 + 6x + 5$ in the form $(x + a)^2 + b$.",tech:"Complete the square: $x^2 + 6x + 5$.",
  opts:[{t:"$(x + 3)^2 - 4$",ok:1},{t:"$(x + 3)^2 + 5$",e:"cs-constant-not-adjusted"},{t:"$(x + 6)^2 - 31$",e:"cs-coefficient-not-halved"},{t:"$(x + 3)^2 + 14$",e:"cs-added-instead"}]},
@@ -862,7 +866,7 @@ const ITEMS = [
  opts:[{t:"$(2, 3)$",ok:1},{t:"$(-2, 3)$",e:"cs-vertex-sign"},{t:"$(2, -3)$",e:"cs-vertex-sign"},{t:"$(3, 2)$",e:"cs-vertex-swapped"}]},
 {id:"SE1",skill:"simult",plain:"Solve the pair of equations $2x + y = 7$ and $x - y = 2$.",tech:"Solve simultaneously: $2x + y = 7$, $x - y = 2$.",
  opts:[{t:"$x = 3,\\ y = 1$",ok:1},{t:"$x = 1,\\ y = 3$",e:"sim-swapped"},{t:"$x = 3,\\ y = -1$",e:"sim-back-sub-error"},{t:"$x = 3,\\ y = 5$",e:"sim-sub-into-wrong"}]},
-{id:"SE2",skill:"simult",plain:"How many solutions do $x + y = 4$ and $2x + 2y = 8$ have together?",tech:"Determine the number of solutions of the system $x + y = 4$, $2x + 2y = 8$.",
+{id:"SE2",skill:"simult",plain:"How many pairs of numbers $(x, y)$ make both $x + y = 4$ and $2x + 2y = 8$ true?",tech:"Determine the number of solutions of the system $x + y = 4$, $2x + 2y = 8$.",
  opts:[{t:"Infinitely many",ok:1},{t:"Exactly one",e:"sim-no-check"},{t:"None",e:"sim-parallel-confused"},{t:"Exactly two",e:"sim-two"}]},
 
 /* ---------------- graphs and functions ---------------- */
@@ -910,7 +914,7 @@ const ITEMS = [
  opts:[{t:"$10$",ok:1},{t:"$14$",e:"pyth-added-legs"},{t:"$100$",e:"pyth-root-not-taken"},{t:"$\\sqrt{28}$",e:"pyth-subtracted"}]},
 {id:"PY2",skill:"pyth",plain:"A right-angled triangle has longest side $13$ and one shorter side $5$. How long is the other shorter side?",tech:"A right triangle has hypotenuse $13$ and one leg $5$. Find the other leg.",
  opts:[{t:"$12$",ok:1},{t:"$\\sqrt{194}$",e:"pyth-added-when-should-subtract"},{t:"$8$",e:"pyth-subtracted-lengths"},{t:"$144$",e:"pyth-root-not-taken"}]},
-{id:"PY3",skill:"pyth",plain:"In a right-angled triangle the side opposite angle $\\theta$ is $3$, the side next to it is $4$ and the longest side is $5$. What is $\\sin\\theta$?",tech:"In a right triangle with opposite $3$, adjacent $4$ and hypotenuse $5$, find $\\sin\\theta$.",
+{id:"PY3",skill:"pyth",plain:"In a right-angled triangle, the side opposite angle $\\theta$ is $3$, the other short side is $4$, and the longest side is $5$. What is $\\sin\\theta$?",tech:"In a right triangle with opposite $3$, adjacent $4$ and hypotenuse $5$, find $\\sin\\theta$.",
  opts:[{t:"$\\frac{3}{5}$",ok:1},{t:"$\\frac{4}{5}$",e:"trig-cos-for-sin"},{t:"$\\frac{3}{4}$",e:"trig-tan-for-sin"},{t:"$\\frac{5}{3}$",e:"trig-inverted"}]},
 {id:"TU1",skill:"trig-units",plain:"How many radians is $90^\\circ$?",tech:"Convert $90^\\circ$ to radians.",
  opts:[{t:"$\\frac{\\pi}{2}$",ok:1},{t:"$\\pi$",e:"rad-180-confused"},{t:"$90\\pi$",e:"rad-multiplied"},{t:"$2\\pi$",e:"rad-full-turn"}]},
@@ -932,12 +936,12 @@ const ITEMS = [
  opts:[{t:"$8$",ok:1},{t:"$3$",e:"set-elements-as-subsets"},{t:"$6$",e:"set-permutation"},{t:"$7$",e:"set-empty-forgotten"}]},
 {id:"ST3",skill:"sets",plain:"Set $A$ has 3 elements and set $B$ has 4. How many ordered pairs $(a, b)$ can be made with $a$ from $A$ and $b$ from $B$?",tech:"If $|A| = 3$ and $|B| = 4$, find $|A \\times B|$.",
  opts:[{t:"$12$",ok:1},{t:"$7$",e:"set-added"},{t:"$3$",e:"set-min"},{t:"$4$",e:"set-max"}]},
-{id:"LG1",skill:"logic",plain:"When is \"$A$ AND (NOT $A$)\" true?",tech:"Evaluate $A \\land \\lnot A$.",
+{id:"LG1",skill:"logic",plain:"When is \"$A$ AND (NOT $A$)\" true?",tech:"For which values of $A$ is $A \\land \\lnot A$ true?",
  opts:[{t:"Never: it is always false",ok:1},{t:"Always",e:"logic-and-or-confused"},{t:"Whenever $A$ is true",e:"logic-not-ignored"}]},
 {id:"LG2",skill:"logic",plain:"Which is the same as NOT ($A$ AND $B$)?",tech:"Apply De Morgan's law to $\\lnot(A \\land B)$.",
  opts:[{t:"(NOT $A$) OR (NOT $B$)",ok:1},{t:"(NOT $A$) AND (NOT $B$)",e:"logic-demorgan-and-kept"},{t:"$A$ OR $B$",e:"logic-not-dropped"},{t:"(NOT $A$) AND $B$",e:"logic-not-partial"}]},
-{id:"LG3",skill:"logic",plain:"\"$A$ XOR $B$\" is true when:",tech:"$A \\oplus B$ is true precisely when:",
- opts:[{t:"exactly one of $A$, $B$ is true",ok:1},{t:"both are true",e:"logic-xor-as-and"},{t:"at least one is true",e:"logic-xor-as-or"},{t:"neither is true",e:"logic-xor-as-nor"}]},
+{id:"LG3",skill:"logic",plain:"When is \"$A$ XOR $B$\" true?",tech:"When is $A \\oplus B$ true?",
+ opts:[{t:"When exactly one of $A$ and $B$ is true",ok:1},{t:"When both are true",e:"logic-xor-as-and"},{t:"When at least one is true",e:"logic-xor-as-or"},{t:"When neither is true",e:"logic-xor-as-nor"}]},
 {id:"BI1",skill:"binary",plain:"What is the binary number $1011$ in ordinary (base 10) numbers?",tech:"Convert $1011_2$ to base 10.",
  opts:[{t:"$11$",ok:1},{t:"$13$",e:"bin-reversed"},{t:"$1011$",e:"bin-digits-as-decimal"},{t:"$3$",e:"bin-count-ones"}]},
 {id:"BI2",skill:"binary",plain:"Write $13$ in binary.",tech:"Convert $13_{10}$ to binary.",
@@ -986,8 +990,8 @@ const ITEMS = [
  opts:[{t:"$\\frac{1}{4}$",ok:1},{t:"$\\frac{1}{2}$",e:"prob-outcomes-not-equally-likely"},{t:"$1$",e:"prob-added"},{t:"$\\frac{1}{3}$",e:"prob-three-outcomes"}]},
 {id:"PR2",skill:"prob",plain:"You roll two fair dice. What is the probability the total is $7$?",tech:"Find the probability that two fair dice sum to $7$.",
  opts:[{t:"$\\frac{6}{36}$",ok:1},{t:"$\\frac{1}{11}$",e:"prob-sums-equally-likely"},{t:"$\\frac{1}{36}$",e:"prob-one-combination"},{t:"$\\frac{7}{36}$",e:"prob-value-as-count"}]},
-{id:"PR3",skill:"prob",plain:"On one roll of a die, the events \"roll a 2\" and \"roll a 5\" are:",tech:"On a single die roll, the events $\\{2\\}$ and $\\{5\\}$ are:",
- opts:[{t:"mutually exclusive (they cannot both happen)",ok:1},{t:"independent (one does not affect the other)",e:"prob-excl-indep-confused"},{t:"both mutually exclusive and independent",e:"prob-both"},{t:"neither",e:"prob-neither"}]},
+{id:"PR3",skill:"prob",plain:"On one roll of a die, which description fits the events \"roll a 2\" and \"roll a 5\"?",tech:"On a single die roll, which description fits the events $\\{2\\}$ and $\\{5\\}$?",
+ opts:[{t:"Mutually exclusive: they cannot both happen",ok:1},{t:"Independent: one does not affect the other",e:"prob-excl-indep-confused"},{t:"Both mutually exclusive and independent",e:"prob-both"},{t:"Neither",e:"prob-neither"}]},
 {id:"SS1",skill:"stats-spread",plain:"For the data $2, 3, 3, 4, 40$ the mean is $10.4$ and the median is $3$. Why are they so different?",tech:"The data $2, 3, 3, 4, 40$ has mean $10.4$ and median $3$. Account for the difference.",
  opts:[{t:"One very large value pulls the mean up but not the median",ok:1},{t:"The median must have been calculated wrongly",e:"stats-median-distrust"},{t:"The mean is always larger than the median",e:"stats-mean-always-larger"}]},
 {id:"SS2",skill:"stats-spread",plain:"If $5$ is added to every value in a data set, what happens to the mean and the standard deviation?",tech:"Describe the effect on the mean and standard deviation of adding $5$ to every value.",
@@ -1000,8 +1004,8 @@ const ITEMS = [
  opts:[{t:"$3x^2$",ok:1},{t:"$x^2$",e:"deriv-power-not-multiplied"},{t:"$3x^3$",e:"deriv-power-not-reduced"},{t:"$3x$",e:"deriv-double-reduced"}]},
 {id:"DV2",skill:"deriv",plain:"Differentiate $x^2 + 3x - 5$.",tech:"Find $\\dfrac{d}{dx}\\left(x^2 + 3x - 5\\right)$.",
  opts:[{t:"$2x + 3$",ok:1},{t:"$2x + 3 - 5$",e:"deriv-constant-kept"},{t:"$2x$",e:"deriv-linear-term-dropped"},{t:"$x + 3$",e:"deriv-power-not-multiplied"}]},
-{id:"DV3",skill:"deriv",plain:"The derivative of a function at a point tells you:",tech:"Geometrically, $f'(a)$ gives:",
- opts:[{t:"the slope of the tangent to the curve at that point",ok:1},{t:"the $y$-value of the curve at that point",e:"deriv-value-confused"},{t:"the area under the curve up to that point",e:"deriv-integral-confused"},{t:"where the curve crosses the $x$-axis",e:"deriv-intercept-confused"}]},
+{id:"DV3",skill:"deriv",plain:"What does the derivative of a function at a point tell you?",tech:"What does $f'(a)$ represent on the graph of $f$?",
+ opts:[{t:"The slope of the tangent to the curve at that point",ok:1},{t:"The $y$-value of the curve at that point",e:"deriv-value-confused"},{t:"The area under the curve up to that point",e:"deriv-integral-confused"},{t:"Where the curve crosses the $x$-axis",e:"deriv-intercept-confused"}]},
 {id:"LM1",skill:"limit",plain:"What does $\\dfrac{x^2 - 1}{x - 1}$ get close to as $x$ gets close to $1$?",tech:"Evaluate $\\displaystyle\\lim_{x \\to 1} \\frac{x^2 - 1}{x - 1}$.",
  opts:[{t:"$2$",ok:1},{t:"$0$",e:"limit-numerator-zero"},{t:"It has no limit, because $\\frac{0}{0}$ is undefined",e:"limit-zero-over-zero-undefined"},{t:"$1$",e:"limit-x-value"}]},
 {id:"LM2",skill:"limit",plain:"What does $2x + 1$ get close to as $x$ gets close to $3$?",tech:"Evaluate $\\displaystyle\\lim_{x \\to 3} (2x + 1)$.",
@@ -1033,7 +1037,7 @@ function errExample(tag){
 function errCite(tag, description, skipSkill){
   const ex = errExample(tag);
   if(!ex) return esc(description);
-  const where = skipSkill ? `"${esc(ex.stem)}" answered "${esc(ex.wrong)}"` : `${esc(ex.skill)} — "${esc(ex.stem)}" answered "${esc(ex.wrong)}"`;
+  const where = skipSkill ? `"${esc(ex.stem)}" answered "${esc(ex.wrong)}"` : `${esc(ex.skill)}: "${esc(ex.stem)}" answered "${esc(ex.wrong)}"`;
   return `${esc(description)}<br><small>${where}</small>`;
 }
 const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
@@ -1481,7 +1485,7 @@ function renderBuilder(){
   app.querySelectorAll("input, select").forEach(el => el.addEventListener("input", sync));
   $("#reseed").addEventListener("click", () => { cfg.seed = Math.floor(Math.random() * 65536); sync(); });
   $("#url").addEventListener("click", () => { const r = document.createRange(); r.selectNodeContents($("#url")); getSelection().removeAllRanges(); getSelection().addRange(r); });
-  const copy = (btn, label) => () => navigator.clipboard.writeText($("#url").textContent).then(() => flashCopied(btn, label)).catch(() => { btn.textContent = "Could not copy — select and copy the box above"; setTimeout(() => btn.textContent = label || "Copy link", 2500); });
+  const copy = (btn, label) => () => navigator.clipboard.writeText($("#url").textContent).then(() => flashCopied(btn, label)).catch(() => { btn.textContent = "Could not copy. Select the link above and copy it by hand."; setTimeout(() => btn.textContent = label || "Copy link", 2500); });
   $("#copy").addEventListener("click", copy($("#copy")));
   $("#stickyAction").addEventListener("click", () => {
     const nxt = BUILDER_TABS[tabIndex(builderTab) + 1];
@@ -1503,7 +1507,7 @@ function renderIntro(code){
   if(!plan.length){ app.innerHTML = `<h1>Nothing to ask</h1><p>This link has no skills selected. Ask your teacher for a new one.</p>`; return; }
   const saved = localStorage.getItem("dewmath2:" + code), last = localStorage.getItem("dewmath2:last:" + code);
   const identLabel = ["", "It does not need to be your real name.", "", ""][c.ident];
-  const identEncourage = ["", "Pick a nickname you will remember and use it honestly, since your teacher reads the results against it. ", "Enter the code carefully, since it is what connects this sitting to you. ", "Enter your name clearly, since your teacher will look at these results with you. "][c.ident];
+  const identEncourage = ["", "Pick a nickname you will remember, since your teacher reads the results against it. ", "Enter the code carefully, since it is what connects this sitting to you. ", "Enter your name clearly, since your teacher will look at these results with you. "][c.ident];
   const layoutChoice = c.viewLock === 0 ? `<h2>How would you like the questions laid out?</h2>
     <label class="check"><input type="radio" name="vm" value="1" checked>One question at a time</label>
     <label class="check"><input type="radio" name="vm" value="2">All the questions on one page</label>
@@ -1656,15 +1660,35 @@ function finishRun(){
   const href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 1)], {type:"application/json"}));
   try { localStorage.setItem("dewmath2:last:" + run.code, JSON.stringify({...r, _filename:fname, _pasteCode:pasteCode})); } catch(e){}
   const isMail = /^mailto:/i.test(c.submitUrl || "");
-  const prefilled = /\{\{code\}\}/i.test(c.submitUrl || "");
-  const formUrl = prefilled ? c.submitUrl.replace(/\{\{code\}\}/gi, encodeURIComponent(pasteCode)) : c.submitUrl;
-  const send = c.submitUrl
-    ? `<li><span>${
-        isMail ? `Send an email with your results already in it. <a class="btn quiet" href="${esc(c.submitUrl)}?subject=${encodeURIComponent("Maths diagnostic: " + (r.student.identity || "results"))}&body=${encodeURIComponent(pasteCode)}">Open a new email</a><br><small>The text is already in the body. Check it is there, then press send.</small>`
-        : prefilled ? `Go to where your teacher asked. The results code is already filled in. <a class="btn quiet" href="${esc(formUrl)}" target="_blank" rel="noopener">Open that page</a>${c.submitNote ? "" : "<br><small>Check the box shows your results, then submit the form.</small>"}`
-        : `Go to where your teacher asked, and either upload the file or paste the text. <a class="btn quiet" href="${esc(c.submitUrl)}" target="_blank" rel="noopener">Open that page</a>`
-      }${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`
-    : `<li><span>Send it to your teacher in the way they asked, either the file or the text below.${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>`;
+  /* Forms writes the marker URL-encoded (%7B%7Bcode%7D%7D) when it builds a pre-filled link,
+     and a teacher may also type it by hand as {{CODE}}. Both spellings are accepted. */
+  const MARKER = /(\{\{|%7B%7B)code(\}\}|%7D%7D)/gi;
+  const prefilled = new RegExp(MARKER.source, "i").test(c.submitUrl || "");
+  const formUrl = prefilled ? c.submitUrl.replace(MARKER, encodeURIComponent(pasteCode)) : c.submitUrl;
+  /* When the teacher gave a link, sending is the one thing left to do, so it becomes the page's
+     main button and the file and text versions move into a fallback section. Without a link
+     the page keeps its two numbered steps, since the student has to choose the route. */
+  const sep = (c.submitUrl || "").includes("?") ? "&" : "?";
+  const mailHref = isMail ? `${c.submitUrl}${sep}subject=${encodeURIComponent("Maths diagnostic: " + (r.student.identity || "results"))}&body=${encodeURIComponent(pasteCode)}` : "";
+  const primary = !c.submitUrl ? null
+    : isMail ? {html:`<a class="btn big" id="sendBtn" href="${esc(mailHref)}">Email my results</a>`, help:"A new email opens with your results already written in it. Press Send in your email program.", after:"If no email opened, use one of the other ways below."}
+    : prefilled ? {html:`<a class="btn big" id="sendBtn" href="${esc(formUrl)}" target="_blank" rel="noopener">Submit my results</a>`, help:"The form opens in a new tab with your results already in the box. Check the box is filled in, then press Submit on the form.", after:"The form is open in a new tab. You are finished once you have pressed Submit there."}
+    : {html:`<button class="big" id="sendBtn">Copy my results and open the form</button>`, help:"Pressing the button copies your results and opens the form in a new tab. Paste them into the box on the form, then press Submit.", after:"Your results are copied and the form is open in a new tab. Paste them into the box, then press Submit."};
+  const fileAndText = `<div class="row" style="margin-top:.5rem"><a class="btn${primary ? " quiet" : ""}" id="dl" href="${href}" download="${fname}">Download my results file</a><button class="quiet" id="showPaste">Show the text version instead</button></div>
+      <div id="pasteBlock" hidden style="margin-top:.75rem">
+        <textarea id="pasteCode" readonly rows="3" style="font-family:ui-monospace,monospace;font-size:.85rem" onclick="this.select()">${esc(pasteCode)}</textarea>
+        <div class="row" style="margin-top:.4rem"><button class="quiet small" id="copyPaste">Copy this text</button><small>Paste it into the box, form field or email your teacher asked for.</small></div>
+      </div>
+      <p><small>The file is called <span class="code">${esc(fname)}</span> and goes to your Downloads folder. Both versions record only your answers, and both stay on this device until you send them.</small></p>`;
+  const sendSection = primary
+    ? `<p class="lead">Thank you. One step is left: send your results to your teacher.</p>
+  <div class="sendbox">${primary.html}<p style="margin:.75rem 0 0">${esc(primary.help)}</p>${c.submitNote ? `<p style="margin:.4rem 0 0"><strong>${esc(c.submitNote)}</strong></p>` : ""}<p id="sentMsg" class="notice good" hidden>${esc(primary.after)}</p></div>
+  <details class="card"><summary>Other ways to send your results</summary><p>Use these if the button above does not work, or if your teacher asked for a file.</p>${fileAndText}</details>`
+    : `<p class="lead">Thank you. Two more steps and you are done.</p>
+  <ol class="steps">
+    <li><span>Choose one: download a file, or copy a short piece of text. Both carry the same answers.${fileAndText}</span></li>
+    <li><span>Send it to your teacher in the way they asked.${c.submitNote ? `<br><small>${esc(c.submitNote)}</small>` : ""}</span></li>
+  </ol>`;
   const list = c.showItems ? `<h2>Question by question</h2><ul class="result-list">${r.items.filter(i => !i.skipped).map((i, k) => {
     const p = run.plan[k]; const mark = !i.answered ? ["skip", "–", "Not attempted"] : i.noAnswer ? ["skip", "?", i.choice] : i.correct ? ["ok", "✓", "Correct"] : ["no", "✗", "Wrong this time"];
     const ans = c.showAnswers && !i.correct ? `<small>Correct answer: ${p.opts.find(o => o.ok).fig ? "Graph " + "ABCDEF"[p.opts.findIndex(o => o.ok)] : tex(p.opts.find(o => o.ok).t)}</small>` : "";
@@ -1672,21 +1696,19 @@ function finishRun(){
   app.innerHTML = `
   <h1>Finished</h1>
   ${run.timedOut ? `<p class="notice">The time ran out, so this is what you had answered by then.</p>` : ""}
-  <p class="lead">Thank you. Two more steps and you are done.</p>
-  <ol class="steps">
-    <li><span>Choose one: download a file, or copy a short piece of text. Either one carries the same answers.
-      <div class="row" style="margin-top:.5rem"><a class="btn" id="dl" href="${href}" download="${fname}">Download my results file</a><button class="quiet" id="showPaste">Show the text version instead</button></div>
-      <div id="pasteBlock" hidden style="margin-top:.75rem">
-        <textarea id="pasteCode" readonly rows="3" style="font-family:ui-monospace,monospace;font-size:.85rem" onclick="this.select()">${esc(pasteCode)}</textarea>
-        <div class="row" style="margin-top:.4rem"><button class="quiet small" id="copyPaste">Copy this text</button><small>Paste it into the box, form field or email your teacher asked for.</small></div>
-      </div>
-      <br><small>The file is called <span class="code">${esc(fname)}</span> and will be in your Downloads folder. Either version records only your answers, and stays on this device until you send it.</small></span></li>
-    ${send}
-  </ol>
-  <p class="muted">If you lose these, open this same link again on this device and you can get them again.</p>
+  ${sendSection}
+  <p class="muted">If anything goes wrong, open this same link again on this device. Your results will still be here.</p>
   ${c.showScore ? `<h2>Your score</h2><p class="lead">${r.summary.correct} out of ${r.summary.total}${r.summary.answered < r.summary.total ? ` (${r.summary.total - r.summary.answered} not attempted)` : ""}${r.summary.skipped ? `, with ${r.summary.skipped} skipped` : ""}</p><p>A low score on some topics is a useful outcome here. It tells your teacher where to start.</p>` : ""}
   ${list}`;
   window.scrollTo(0, 0);
+  if(primary){
+    const btn = $("#sendBtn");
+    btn.addEventListener("click", () => {
+      if(!isMail && !prefilled){ navigator.clipboard.writeText(pasteCode).catch(() => {}); window.open(c.submitUrl, "_blank", "noopener"); }
+      $("#sentMsg").hidden = false;
+    });
+    btn.focus();
+  }
   $("#showPaste").addEventListener("click", () => {
     const b = $("#pasteBlock"); b.hidden = !b.hidden; $("#showPaste").textContent = b.hidden ? "Show the text version instead" : "Hide the text version";
     if(!b.hidden){
@@ -1699,7 +1721,7 @@ function finishRun(){
       while(ta.scrollHeight > ta.clientHeight + 2 && ta.rows < 20 && guard++ < 20) ta.rows++;
     }
   });
-  $("#copyPaste").addEventListener("click", () => { navigator.clipboard.writeText(pasteCode).then(() => flashCopied($("#copyPaste"))).catch(() => { $("#copyPaste").textContent = "Could not copy — tap the box above and select all"; setTimeout(() => $("#copyPaste").textContent = "Copy this text", 2500); }); });
+  $("#copyPaste").addEventListener("click", () => { navigator.clipboard.writeText(pasteCode).then(() => flashCopied($("#copyPaste"))).catch(() => { $("#copyPaste").textContent = "Could not copy. Tap the box above, select all, and copy."; setTimeout(() => $("#copyPaste").textContent = "Copy this text", 2500); }); });
 }
 
 /* ==========================================================================
@@ -1714,7 +1736,7 @@ function renderAnalysis(){
   <div class="row"><input type="file" id="files" multiple accept=".json,application/json,.csv,text/csv"><button class="quiet" id="sample">Load a sample class of 12</button><button class="quiet" id="clear">Clear</button></div>
   <p><small>Select a results file from each student, or the CSV that Microsoft Forms (or Google Forms) exports, with one row per response. Select several files at once, or add more in a second selection. Re-uploading a CSV you have downloaded before will not double-count a student it already read. The sample class is simulated from twelve invented profiles so you can see every chart with data in it.</small></p>
   <details style="margin:1rem 0"><summary>Or paste text results, one per line</summary>
-    <p class="muted">If a student sent the short text version instead of a file, paste it here. One code per line, in any order, from any number of students.</p>
+    <p class="muted">If a student sent the short text version, paste it here. One code per line, in any order, from any number of students.</p>
     <textarea id="pasteIn" rows="4" placeholder="Paste one or more results codes, one per line"></textarea>
     <div class="row" style="margin-top:.5rem"><button class="quiet" id="addPaste">Add these results</button><span id="pasteMsg" class="muted"></span></div>
   </details>
